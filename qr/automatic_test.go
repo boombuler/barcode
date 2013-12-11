@@ -7,9 +7,9 @@ import (
 
 func Test_AutomaticEncoding(t *testing.T) {
 	tests := map[string]encodeFn{
-		"0123456789":          Numeric.getEncoder(),
-		"ALPHA NUMERIC":       AlphaNumeric.getEncoder(),
-		"no matching encoing": nil,
+		"0123456789":      Numeric.getEncoder(),
+		"ALPHA NUMERIC":   AlphaNumeric.getEncoder(),
+		"unicode encoing": Unicode.getEncoder(),
 	}
 
 	for str, enc := range tests {
