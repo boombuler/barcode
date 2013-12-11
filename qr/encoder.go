@@ -1,3 +1,4 @@
+// package for QR barcode generation.
 package qr
 
 import (

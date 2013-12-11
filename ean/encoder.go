@@ -1,3 +1,4 @@
+// package for EAN barcode generation.
 package ean
 
 import (
