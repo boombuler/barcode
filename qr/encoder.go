@@ -6,13 +6,42 @@ import (
 	"image"
 )
 
-type Encoding interface {
-	fmt.Stringer
-	encode(content string, eccLevel ErrorCorrectionLevel) (*barcode.BitList, *versionInfo, error)
+type encodeFn func(content string, eccLevel ErrorCorrectionLevel) (*barcode.BitList, *versionInfo, error)
+
+type Encoding byte
+
+const (
+	Auto Encoding = iota
+	Numeric
+	AlphaNumeric
+)
+
+func (e Encoding) getEncoder() encodeFn {
+	switch e {
+	case Auto:
+		return encodeAuto
+	case Numeric:
+		return encodeNumeric
+	case AlphaNumeric:
+		return encodeAlphaNumeric
+	}
+	return nil
+}
+
+func (e Encoding) String() string {
+	switch e {
+	case Auto:
+		return "Auto"
+	case Numeric:
+		return "Numeric"
+	case AlphaNumeric:
+		return "AlphaNumeric"
+	}
+	return ""
 }
 
 func Encode(content string, eccLevel ErrorCorrectionLevel, mode Encoding) (barcode.Barcode, error) {
-	bits, vi, err := mode.encode(content, eccLevel)
+	bits, vi, err := mode.getEncoder()(content, eccLevel)
 	if err != nil {
 		return nil, err
 	}

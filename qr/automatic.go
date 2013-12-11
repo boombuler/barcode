@@ -5,22 +5,12 @@ import (
 	"github.com/boombuler/barcode"
 )
 
-type autoEncoding struct {
-}
-
-// choose the best matching encoding
-var Auto Encoding = autoEncoding{}
-
-func (ne autoEncoding) String() string {
-	return "Auto"
-}
-
-func (ne autoEncoding) encode(content string, ecl ErrorCorrectionLevel) (*barcode.BitList, *versionInfo, error) {
-	bits, vi, _ := Numeric.encode(content, ecl)
+func encodeAuto(content string, ecl ErrorCorrectionLevel) (*barcode.BitList, *versionInfo, error) {
+	bits, vi, _ := Numeric.getEncoder()(content, ecl)
 	if bits != nil && vi != nil {
 		return bits, vi, nil
 	}
-	bits, vi, _ = AlphaNumeric.encode(content, ecl)
+	bits, vi, _ = AlphaNumeric.getEncoder()(content, ecl)
 	if bits != nil && vi != nil {
 		return bits, vi, nil
 	}

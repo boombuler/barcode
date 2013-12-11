@@ -6,16 +6,16 @@ import (
 )
 
 func Test_AutomaticEncoding(t *testing.T) {
-	tests := map[string]Encoding{
-		"0123456789":          Numeric,
-		"ALPHA NUMERIC":       AlphaNumeric,
+	tests := map[string]encodeFn{
+		"0123456789":          Numeric.getEncoder(),
+		"ALPHA NUMERIC":       AlphaNumeric.getEncoder(),
 		"no matching encoing": nil,
 	}
 
 	for str, enc := range tests {
-		testValue, _, _ := Auto.encode(str, M)
+		testValue, _, _ := Auto.getEncoder()(str, M)
 		if enc != nil {
-			correctValue, _, _ := enc.encode(str, M)
+			correctValue, _, _ := enc(str, M)
 			if testValue == nil || bytes.Compare(correctValue.GetBytes(), testValue.GetBytes()) != 0 {
 				t.Errorf("wrong encoding used for '%s'", str)
 			}

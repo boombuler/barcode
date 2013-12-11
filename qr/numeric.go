@@ -7,16 +7,7 @@ import (
 	"strconv"
 )
 
-type numericEncoding struct {
-}
-
-var Numeric Encoding = numericEncoding{}
-
-func (ne numericEncoding) String() string {
-	return "Numeric"
-}
-
-func (ne numericEncoding) encode(content string, ecl ErrorCorrectionLevel) (*barcode.BitList, *versionInfo, error) {
+func encodeNumeric(content string, ecl ErrorCorrectionLevel) (*barcode.BitList, *versionInfo, error) {
 	contentBitCount := (len(content) / 3) * 10
 	switch len(content) % 3 {
 	case 1:
@@ -44,7 +35,7 @@ func (ne numericEncoding) encode(content string, ecl ErrorCorrectionLevel) (*bar
 
 		i, err := strconv.Atoi(curStr)
 		if err != nil || i < 0 {
-			return nil, nil, fmt.Errorf("\"%s\" can not be encoded as %s", content, ne)
+			return nil, nil, fmt.Errorf("\"%s\" can not be encoded as %s", content, Numeric)
 		}
 		var bitCnt byte
 		switch len(curStr) % 3 {
