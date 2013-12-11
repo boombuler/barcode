@@ -237,6 +237,7 @@ func encodeEAN13(code string, result *eancode) bool {
 	return true
 }
 
+// encodes the given EAN 8 or EAN 13 number to a barcode image
 func Encode(code string) (barcode.Barcode, error) {
 	if len(code) == 7 || len(code) == 12 {
 		code += string(calcCheckNum(code))

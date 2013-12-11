@@ -43,13 +43,14 @@ func (e Encoding) String() string {
 	return ""
 }
 
-func Encode(content string, eccLevel ErrorCorrectionLevel, mode Encoding) (barcode.Barcode, error) {
-	bits, vi, err := mode.getEncoder()(content, eccLevel)
+// Encodes the given content to a QR barcode
+func Encode(content string, level ErrorCorrectionLevel, mode Encoding) (barcode.Barcode, error) {
+	bits, vi, err := mode.getEncoder()(content, level)
 	if err != nil {
 		return nil, err
 	}
 	if bits == nil || vi == nil {
-		return nil, fmt.Errorf("Unable to encode \"%s\" with error correction level %s and encoding mode %s", content, eccLevel, mode)
+		return nil, fmt.Errorf("Unable to encode \"%s\" with error correction level %s and encoding mode %s", content, level, mode)
 	}
 
 	blocks := splitToBlocks(bits.ItterateBytes(), vi)
