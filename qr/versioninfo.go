@@ -5,9 +5,13 @@ import "math"
 type ErrorCorrectionLevel byte
 
 const (
+	// Recovers 7% of data
 	L ErrorCorrectionLevel = iota
+	// Recovers 15% of data
 	M
+	// Recovers 25% of data
 	Q
+	// Recovers 30% of data
 	H
 )
 

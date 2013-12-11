@@ -11,8 +11,11 @@ type encodeFn func(content string, eccLevel ErrorCorrectionLevel) (*barcode.BitL
 type Encoding byte
 
 const (
+	// Choose best matching encoding
 	Auto Encoding = iota
+	// Encode only numbers [0-9]
 	Numeric
+	// Encode only uppercase letters, numbers and  [Space], $, %, *, +, -, ., /, :
 	AlphaNumeric
 )
 
