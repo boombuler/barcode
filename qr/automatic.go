@@ -14,6 +14,9 @@ func encodeAuto(content string, ecl ErrorCorrectionLevel) (*barcode.BitList, *ve
 	if bits != nil && vi != nil {
 		return bits, vi, nil
 	}
-
+	bits, vi, _ = Unicode.getEncoder()(content, ecl)
+	if bits != nil && vi != nil {
+		return bits, vi, nil
+	}
 	return nil, nil, fmt.Errorf("No encoding found to encode \"%s\"", content)
 }

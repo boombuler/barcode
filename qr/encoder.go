@@ -18,6 +18,8 @@ const (
 	Numeric
 	// Encode only uppercase letters, numbers and  [Space], $, %, *, +, -, ., /, :
 	AlphaNumeric
+	// Encodes string as utf-8
+	Unicode
 )
 
 func (e Encoding) getEncoder() encodeFn {
@@ -28,6 +30,8 @@ func (e Encoding) getEncoder() encodeFn {
 		return encodeNumeric
 	case AlphaNumeric:
 		return encodeAlphaNumeric
+	case Unicode:
+		return encodeUnicode
 	}
 	return nil
 }
@@ -40,6 +44,8 @@ func (e Encoding) String() string {
 		return "Numeric"
 	case AlphaNumeric:
 		return "AlphaNumeric"
+	case Unicode:
+		return "Unicode"
 	}
 	return ""
 }
