@@ -1,10 +1,13 @@
 package barcode
 
+// utility class that contains bits
 type BitList struct {
 	count int
 	data  []int32
 }
 
+// returns a new BitList with the given length
+// all bits are initialize with false
 func NewBitList(capacity int) *BitList {
 	bl := new(BitList)
 	bl.count = capacity
@@ -16,12 +19,9 @@ func NewBitList(capacity int) *BitList {
 	return bl
 }
 
+// returns the number of contained bits
 func (bl *BitList) Len() int {
 	return bl.count
-}
-
-func (bl *BitList) Cap() int {
-	return len(bl.data) * 32
 }
 
 func (bl *BitList) grow() {
@@ -37,6 +37,7 @@ func (bl *BitList) grow() {
 	bl.data = nd
 }
 
+// appends the given bit to the end of the list
 func (bl *BitList) AddBit(bit bool) {
 	itmIndex := bl.count / 32
 	for itmIndex >= len(bl.data) {
@@ -46,6 +47,7 @@ func (bl *BitList) AddBit(bit bool) {
 	bl.count++
 }
 
+// sets the bit at the given index to the given value
 func (bl *BitList) SetBit(index int, value bool) {
 	itmIndex := index / 32
 	itmBitShift := 31 - (index % 32)
@@ -56,24 +58,28 @@ func (bl *BitList) SetBit(index int, value bool) {
 	}
 }
 
+// returns the bit at the given index
 func (bl *BitList) GetBit(index int) bool {
 	itmIndex := index / 32
 	itmBitShift := 31 - (index % 32)
 	return ((bl.data[itmIndex] >> uint(itmBitShift)) & 1) == 1
 }
 
+// appends all 8 bits of the given byte to the end of the list
 func (bl *BitList) AddByte(b byte) {
 	for i := 7; i >= 0; i-- {
 		bl.AddBit(((b >> uint(i)) & 1) == 1)
 	}
 }
 
+// appends the last (LSB) 'count' bits of 'b' the the end of the list
 func (bl *BitList) AddBits(b int, count byte) {
 	for i := int(count - 1); i >= 0; i-- {
 		bl.AddBit(((b >> uint(i)) & 1) == 1)
 	}
 }
 
+// returns all bits of the BitList as a []byte
 func (bl *BitList) GetBytes() []byte {
 	len := bl.count >> 3
 	if (bl.count % 8) != 0 {
@@ -87,6 +93,7 @@ func (bl *BitList) GetBytes() []byte {
 	return result
 }
 
+// itterates through all bytes contained in the BitList
 func (bl *BitList) ItterateBytes() <-chan byte {
 	res := make(chan byte)
 
