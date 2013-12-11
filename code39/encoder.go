@@ -92,6 +92,7 @@ func Encode(content string, includeChecksum bool) (barcode.Barcode, error) {
 	data += "*"
 
 	cd := newCode()
+	cd.content = content
 
 	for i, r := range data {
 		if i != 0 {
