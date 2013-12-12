@@ -4,6 +4,17 @@ import "testing"
 
 var testvi *versionInfo = &versionInfo{7, M, 0, 1, 10, 2, 5} // Fake versionInfo to run some of the tests
 
+func Test_ErrorCorrectionStringer(t *testing.T) {
+	tests := map[ErrorCorrectionLevel]string{
+		L: "L", M: "M", Q: "Q", H: "H", ErrorCorrectionLevel(99): "unknown",
+	}
+	for ecl, str := range tests {
+		if ecl.String() != str {
+			t.Fail()
+		}
+	}
+}
+
 func Test_CharCountBits(t *testing.T) {
 	v1 := &versionInfo{5, M, 0, 0, 0, 0, 0}
 	v2 := &versionInfo{15, M, 0, 0, 0, 0, 0}
