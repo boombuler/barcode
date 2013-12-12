@@ -93,8 +93,8 @@ func (bl *BitList) GetBytes() []byte {
 	return result
 }
 
-// itterates through all bytes contained in the BitList
-func (bl *BitList) ItterateBytes() <-chan byte {
+// iterates through all bytes contained in the BitList
+func (bl *BitList) IterateBytes() <-chan byte {
 	res := make(chan byte)
 
 	go func() {
