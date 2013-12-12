@@ -1,6 +1,10 @@
 package qr
 
 import (
+	"fmt"
+	"github.com/boombuler/barcode"
+	"image/png"
+	"os"
 	"testing"
 )
 
@@ -49,6 +53,23 @@ func Test_Encode(t *testing.T) {
 		y := i / qrCode.dimension
 		if qrCode.Get(x, y) != qrHelloWorldHUni[i] {
 			t.Errorf("Failed at index %d", i)
+		}
+	}
+}
+
+func ExampleEncode() {
+	f, _ := os.Create("qrcode.png")
+	defer f.Close()
+
+	qrcode, err := Encode("hello world", L, Auto)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		qrcode, err = barcode.Scale(qrcode, 100, 100)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			png.Encode(f, qrcode)
 		}
 	}
 }
