@@ -60,7 +60,7 @@ func Encode(content string, level ErrorCorrectionLevel, mode Encoding) (barcode.
 		return nil, fmt.Errorf("Unable to encode \"%s\" with error correction level %s and encoding mode %s", content, level, mode)
 	}
 
-	blocks := splitToBlocks(bits.ItterateBytes(), vi)
+	blocks := splitToBlocks(bits.IterateBytes(), vi)
 	data := blocks.interleave(vi)
 	result := render(data, vi)
 	result.content = content
@@ -108,7 +108,7 @@ func render(data []byte, vi *versionInfo) *qrcode {
 	// Write the data
 	var curBitNo int = 0
 
-	for pos := range itterateModules(occupied) {
+	for pos := range iterateModules(occupied) {
 		var curBit bool
 		if curBitNo < len(data)*8 {
 			curBit = ((data[curBitNo/8] >> uint(7-(curBitNo%8))) & 1) == 1
@@ -163,7 +163,7 @@ func setMasked(x, y int, val bool, mask int, set func(int, int, bool)) {
 	set(x, y, val)
 }
 
-func itterateModules(occupied *qrcode) <-chan image.Point {
+func iterateModules(occupied *qrcode) <-chan image.Point {
 	result := make(chan image.Point)
 	allPoints := make(chan image.Point)
 	go func() {
