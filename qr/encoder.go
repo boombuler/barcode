@@ -109,13 +109,17 @@ func render(data []byte, vi *versionInfo) *qrcode {
 	var curBitNo int = 0
 
 	for pos := range itterateModules(occupied) {
+		var curBit bool
 		if curBitNo < len(data)*8 {
-			curBit := ((data[curBitNo/8] >> uint(7-(curBitNo%8))) & 1) == 1
-			for i := 0; i < 8; i++ {
-				setMasked(pos.X, pos.Y, curBit, i, results[i].Set)
-			}
-			curBitNo += 1
+			curBit = ((data[curBitNo/8] >> uint(7-(curBitNo%8))) & 1) == 1
+		} else {
+			curBit = false
 		}
+
+		for i := 0; i < 8; i++ {
+			setMasked(pos.X, pos.Y, curBit, i, results[i].Set)
+		}
+		curBitNo += 1
 	}
 
 	lowestPenalty := ^uint(0)
