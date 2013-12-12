@@ -12,10 +12,8 @@ func encodeNumeric(content string, ecl ErrorCorrectionLevel) (*barcode.BitList, 
 	switch len(content) % 3 {
 	case 1:
 		contentBitCount += 4
-		break
 	case 2:
 		contentBitCount += 7
-		break
 	}
 	vi := findSmallestVersionInfo(ecl, numericMode, contentBitCount)
 	if vi == nil {

@@ -264,114 +264,78 @@ func drawFormatInfo(vi *versionInfo, usedMask int, set func(int, int, bool)) {
 		switch usedMask {
 		case 0:
 			formatInfo = []bool{true, true, true, false, true, true, true, true, true, false, false, false, true, false, false}
-			break
 		case 1:
 			formatInfo = []bool{true, true, true, false, false, true, false, true, true, true, true, false, false, true, true}
-			break
 		case 2:
 			formatInfo = []bool{true, true, true, true, true, false, true, true, false, true, false, true, false, true, false}
-			break
 		case 3:
 			formatInfo = []bool{true, true, true, true, false, false, false, true, false, false, true, true, true, false, true}
-			break
 		case 4:
 			formatInfo = []bool{true, true, false, false, true, true, false, false, false, true, false, true, true, true, true}
-			break
 		case 5:
 			formatInfo = []bool{true, true, false, false, false, true, true, false, false, false, true, true, false, false, false}
-			break
 		case 6:
 			formatInfo = []bool{true, true, false, true, true, false, false, false, true, false, false, false, false, false, true}
-			break
 		case 7:
 			formatInfo = []bool{true, true, false, true, false, false, true, false, true, true, true, false, true, true, false}
-			break
 		}
-		break
 	case M:
 		switch usedMask {
 		case 0:
 			formatInfo = []bool{true, false, true, false, true, false, false, false, false, false, true, false, false, true, false}
-			break
 		case 1:
 			formatInfo = []bool{true, false, true, false, false, false, true, false, false, true, false, false, true, false, true}
-			break
 		case 2:
 			formatInfo = []bool{true, false, true, true, true, true, false, false, true, true, true, true, true, false, false}
-			break
 		case 3:
 			formatInfo = []bool{true, false, true, true, false, true, true, false, true, false, false, true, false, true, true}
-			break
 		case 4:
 			formatInfo = []bool{true, false, false, false, true, false, true, true, true, true, true, true, false, false, true}
-			break
 		case 5:
 			formatInfo = []bool{true, false, false, false, false, false, false, true, true, false, false, true, true, true, false}
-			break
 		case 6:
 			formatInfo = []bool{true, false, false, true, true, true, true, true, false, false, true, false, true, true, true}
-			break
 		case 7:
 			formatInfo = []bool{true, false, false, true, false, true, false, true, false, true, false, false, false, false, false}
-			break
 		}
-		break
 	case Q:
 		switch usedMask {
 		case 0:
 			formatInfo = []bool{false, true, true, false, true, false, true, false, true, false, true, true, true, true, true}
-			break
 		case 1:
 			formatInfo = []bool{false, true, true, false, false, false, false, false, true, true, false, true, false, false, false}
-			break
 		case 2:
 			formatInfo = []bool{false, true, true, true, true, true, true, false, false, true, true, false, false, false, true}
-			break
 		case 3:
 			formatInfo = []bool{false, true, true, true, false, true, false, false, false, false, false, false, true, true, false}
-			break
 		case 4:
 			formatInfo = []bool{false, true, false, false, true, false, false, true, false, true, true, false, true, false, false}
-			break
 		case 5:
 			formatInfo = []bool{false, true, false, false, false, false, true, true, false, false, false, false, false, true, true}
-			break
 		case 6:
 			formatInfo = []bool{false, true, false, true, true, true, false, true, true, false, true, true, false, true, false}
-			break
 		case 7:
 			formatInfo = []bool{false, true, false, true, false, true, true, true, true, true, false, true, true, false, true}
-			break
 		}
-		break
 	case H:
 		switch usedMask {
 		case 0:
 			formatInfo = []bool{false, false, true, false, true, true, false, true, false, false, false, true, false, false, true}
-			break
 		case 1:
 			formatInfo = []bool{false, false, true, false, false, true, true, true, false, true, true, true, true, true, false}
-			break
 		case 2:
 			formatInfo = []bool{false, false, true, true, true, false, false, true, true, true, false, false, true, true, true}
-			break
 		case 3:
 			formatInfo = []bool{false, false, true, true, false, false, true, true, true, false, true, false, false, false, false}
-			break
 		case 4:
 			formatInfo = []bool{false, false, false, false, true, true, true, false, true, true, false, false, false, true, false}
-			break
 		case 5:
 			formatInfo = []bool{false, false, false, false, false, true, false, false, true, false, true, false, true, false, true}
-			break
 		case 6:
 			formatInfo = []bool{false, false, false, true, true, false, true, false, false, false, false, true, true, false, false}
-			break
 		case 7:
 			formatInfo = []bool{false, false, false, true, false, false, false, false, false, true, true, true, false, true, true}
-			break
 		}
-		break
 	}
 
 	if usedMask == -1 {
@@ -420,106 +384,72 @@ func drawVersionInfo(vi *versionInfo, set func(int, int, bool)) {
 	switch vi.Version {
 	case 7:
 		versionInfoBits = []bool{false, false, false, true, true, true, true, true, false, false, true, false, false, true, false, true, false, false}
-		break
 	case 8:
 		versionInfoBits = []bool{false, false, true, false, false, false, false, true, false, true, true, false, true, true, true, true, false, false}
-		break
 	case 9:
 		versionInfoBits = []bool{false, false, true, false, false, true, true, false, true, false, true, false, false, true, true, false, false, true}
-		break
 	case 10:
 		versionInfoBits = []bool{false, false, true, false, true, false, false, true, false, false, true, true, false, true, false, false, true, true}
-		break
 	case 11:
 		versionInfoBits = []bool{false, false, true, false, true, true, true, false, true, true, true, true, true, true, false, true, true, false}
-		break
 	case 12:
 		versionInfoBits = []bool{false, false, true, true, false, false, false, true, true, true, false, true, true, false, false, false, true, false}
-		break
 	case 13:
 		versionInfoBits = []bool{false, false, true, true, false, true, true, false, false, false, false, true, false, false, false, true, true, true}
-		break
 	case 14:
 		versionInfoBits = []bool{false, false, true, true, true, false, false, true, true, false, false, false, false, false, true, true, false, true}
-		break
 	case 15:
 		versionInfoBits = []bool{false, false, true, true, true, true, true, false, false, true, false, false, true, false, true, false, false, false}
-		break
 	case 16:
 		versionInfoBits = []bool{false, true, false, false, false, false, true, false, true, true, false, true, true, true, true, false, false, false}
-		break
 	case 17:
 		versionInfoBits = []bool{false, true, false, false, false, true, false, true, false, false, false, true, false, true, true, true, false, true}
-		break
 	case 18:
 		versionInfoBits = []bool{false, true, false, false, true, false, true, false, true, false, false, false, false, true, false, true, true, true}
-		break
 	case 19:
 		versionInfoBits = []bool{false, true, false, false, true, true, false, true, false, true, false, false, true, true, false, false, true, false}
-		break
 	case 20:
 		versionInfoBits = []bool{false, true, false, true, false, false, true, false, false, true, true, false, true, false, false, true, true, false}
-		break
 	case 21:
 		versionInfoBits = []bool{false, true, false, true, false, true, false, true, true, false, true, false, false, false, false, false, true, true}
-		break
 	case 22:
 		versionInfoBits = []bool{false, true, false, true, true, false, true, false, false, false, true, true, false, false, true, false, false, true}
-		break
 	case 23:
 		versionInfoBits = []bool{false, true, false, true, true, true, false, true, true, true, true, true, true, false, true, true, false, false}
-		break
 	case 24:
 		versionInfoBits = []bool{false, true, true, false, false, false, true, true, true, false, true, true, false, false, false, true, false, false}
-		break
 	case 25:
 		versionInfoBits = []bool{false, true, true, false, false, true, false, false, false, true, true, true, true, false, false, false, false, true}
-		break
 	case 26:
 		versionInfoBits = []bool{false, true, true, false, true, false, true, true, true, true, true, false, true, false, true, false, true, true}
-		break
 	case 27:
 		versionInfoBits = []bool{false, true, true, false, true, true, false, false, false, false, true, false, false, false, true, true, true, false}
-		break
 	case 28:
 		versionInfoBits = []bool{false, true, true, true, false, false, true, true, false, false, false, false, false, true, true, false, true, false}
-		break
 	case 29:
 		versionInfoBits = []bool{false, true, true, true, false, true, false, false, true, true, false, false, true, true, true, true, true, true}
-		break
 	case 30:
 		versionInfoBits = []bool{false, true, true, true, true, false, true, true, false, true, false, true, true, true, false, true, false, true}
-		break
 	case 31:
 		versionInfoBits = []bool{false, true, true, true, true, true, false, false, true, false, false, true, false, true, false, false, false, false}
-		break
 	case 32:
 		versionInfoBits = []bool{true, false, false, false, false, false, true, false, false, true, true, true, false, true, false, true, false, true}
-		break
 	case 33:
 		versionInfoBits = []bool{true, false, false, false, false, true, false, true, true, false, true, true, true, true, false, false, false, false}
-		break
 	case 34:
 		versionInfoBits = []bool{true, false, false, false, true, false, true, false, false, false, true, false, true, true, true, false, true, false}
-		break
 	case 35:
 		versionInfoBits = []bool{true, false, false, false, true, true, false, true, true, true, true, false, false, true, true, true, true, true}
-		break
 	case 36:
 		versionInfoBits = []bool{true, false, false, true, false, false, true, false, true, true, false, false, false, false, true, false, true, true}
-		break
 	case 37:
 		versionInfoBits = []bool{true, false, false, true, false, true, false, true, false, false, false, false, true, false, true, true, true, false}
-		break
 	case 38:
 		versionInfoBits = []bool{true, false, false, true, true, false, true, false, true, false, false, true, true, false, false, true, false, false}
-		break
 	case 39:
 		versionInfoBits = []bool{true, false, false, true, true, true, false, true, false, true, false, true, false, false, false, false, false, true}
-		break
 	case 40:
 		versionInfoBits = []bool{true, false, true, false, false, false, true, true, false, false, false, true, true, false, true, false, false, true}
-		break
 	}
 
 	if len(versionInfoBits) > 0 {
