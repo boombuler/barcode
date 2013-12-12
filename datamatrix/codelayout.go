@@ -95,7 +95,7 @@ func (l *codeLayout) Corner4(value byte) {
 	l.Set(1, l.size.MatrixColumns()-1, value, 7, true)
 }
 
-func (l *codeLayout) ItterateSetter() <-chan setValFunc {
+func (l *codeLayout) IterateSetter() <-chan setValFunc {
 	result := make(chan setValFunc)
 	go func() {
 		row := 4

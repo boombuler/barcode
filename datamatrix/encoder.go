@@ -32,7 +32,7 @@ func Encode(content string) (barcode.Barcode, error) {
 func render(data []byte, size *dmCodeSize) *datamatrixCode {
 	cl := newCodeLayout(size)
 
-	setters := cl.ItterateSetter()
+	setters := cl.IterateSetter()
 	for _, b := range data {
 		(<-setters)(b)
 	}
