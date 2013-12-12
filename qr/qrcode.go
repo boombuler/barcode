@@ -64,7 +64,7 @@ func (qr *qrcode) calcPenaltyRule1() uint {
 				if cntX >= 5 {
 					result += cntX - 2
 				}
-				cntX = 0
+				cntX = 1
 			}
 
 			if qr.Get(y, x) == checkForY {
@@ -74,7 +74,7 @@ func (qr *qrcode) calcPenaltyRule1() uint {
 				if cntY >= 5 {
 					result += cntY - 2
 				}
-				cntY = 0
+				cntY = 1
 			}
 		}
 
