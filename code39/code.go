@@ -2,17 +2,18 @@ package code39
 
 import (
 	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/utils"
 	"image"
 	"image/color"
 )
 
 type code struct {
-	*barcode.BitList
+	*utils.BitList
 	content string
 }
 
 func newCode() *code {
-	return &code{&barcode.BitList{}, ""}
+	return &code{new(utils.BitList), ""}
 }
 
 func (c *code) Content() string {

@@ -2,10 +2,10 @@ package qr
 
 import (
 	"errors"
-	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/utils"
 )
 
-func encodeUnicode(content string, ecl ErrorCorrectionLevel) (*barcode.BitList, *versionInfo, error) {
+func encodeUnicode(content string, ecl ErrorCorrectionLevel) (*utils.BitList, *versionInfo, error) {
 	data := []byte(content)
 
 	vi := findSmallestVersionInfo(ecl, byteMode, len(data)*8)
@@ -15,7 +15,7 @@ func encodeUnicode(content string, ecl ErrorCorrectionLevel) (*barcode.BitList, 
 
 	// It's not correct to add the unicode bytes to the result directly but most readers can't handle the
 	// required ECI header...
-	res := new(barcode.BitList)
+	res := new(utils.BitList)
 	res.AddBits(int(byteMode), 4)
 	res.AddBits(len(content), vi.charCountBits(byteMode))
 	for _, b := range data {

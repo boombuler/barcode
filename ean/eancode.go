@@ -2,12 +2,13 @@ package ean
 
 import (
 	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/utils"
 	"image"
 	"image/color"
 )
 
 type eancode struct {
-	*barcode.BitList
+	*utils.BitList
 	content string
 }
 
@@ -16,7 +17,7 @@ func newEANCode(isEAN8 bool) *eancode {
 	if isEAN8 {
 		capacity = 67
 	}
-	return &eancode{barcode.NewBitList(capacity), ""}
+	return &eancode{utils.NewBitList(capacity), ""}
 }
 
 func (c *eancode) Content() string {

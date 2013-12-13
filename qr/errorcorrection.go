@@ -1,73 +1,56 @@
 package qr
 
-type galoisField struct {
-	aLogTbl   []byte
-	logTbl    []byte
+import (
+	"github.com/boombuler/barcode/utils"
+)
+
+type errorCorrection struct {
+	fld       *utils.GaloisField
 	polynomes map[byte][]byte
 }
 
-var gf *galoisField = newGF()
+var ec *errorCorrection = newGF()
 
-func newGF() *galoisField {
-	result := new(galoisField)
-	result.polynomes = make(map[byte][]byte)
-	result.aLogTbl = make([]byte, 255)
-	result.logTbl = make([]byte, 256)
-
-	result.aLogTbl[0] = 1
-
-	x := 1
-	for i := 1; i < 255; i++ {
-		x = x * 2
-		if x > 255 {
-			x = x ^ 285
-		}
-		result.aLogTbl[i] = byte(x)
-	}
-
-	for i := 1; i < 255; i++ {
-		result.logTbl[result.aLogTbl[i]] = byte(i)
-	}
-
-	return result
+func newGF() *errorCorrection {
+	return &errorCorrection{utils.NewGaloisField(285), make(map[byte][]byte)}
 }
 
-func (gf *galoisField) getPolynom(eccc byte) []byte {
-	_, ok := gf.polynomes[eccc]
+func (ec *errorCorrection) getPolynomial(eccc byte) []byte {
+	_, ok := ec.polynomes[eccc]
 	if !ok {
 		if eccc == 1 {
-			gf.polynomes[eccc] = []byte{0, 0}
+			ec.polynomes[eccc] = []byte{0, 0}
 		} else {
-			b1 := gf.getPolynom(eccc - 1)
+			b1 := ec.getPolynomial(eccc - 1)
 			result := make([]byte, eccc+1)
 			for x := 0; x < len(b1); x++ {
 				tmp1 := (int(b1[x]) + int(eccc-1)) % 255
 				if x == 0 {
 					result[x] = b1[x]
 				} else {
-					tmp0 := int(gf.aLogTbl[result[x]]) ^ int(gf.aLogTbl[b1[x]])
-					result[x] = gf.logTbl[tmp0]
+					tmp0 := int(ec.fld.ALogTbl[result[x]]) ^ int(ec.fld.ALogTbl[b1[x]])
+					result[x] = byte(ec.fld.LogTbl[tmp0])
 				}
 				result[x+1] = byte(tmp1)
 			}
-			gf.polynomes[eccc] = result
+			ec.polynomes[eccc] = result
 
 		}
 	}
-	return gf.polynomes[eccc]
+	return ec.polynomes[eccc]
 }
 
-func (gf *galoisField) calcECC(data []byte, eccCount byte) []byte {
+func (ec *errorCorrection) calcECC(data []byte, eccCount byte) []byte {
 	tmp := make([]byte, len(data)+int(eccCount))
 	copy(tmp, data)
-	generator := gf.getPolynom(eccCount)
+	generator := ec.getPolynomial(eccCount)
 
 	for i := 0; i < len(data); i++ {
-		alpha := gf.logTbl[tmp[i]]
+		alpha := ec.fld.LogTbl[tmp[i]]
 		for j := 0; j < len(generator); j++ {
 			idx := (int(alpha) + int(generator[j])) % 255
-			polyJ := gf.aLogTbl[idx]
-			tmp[i+j] = (tmp[i+j] ^ polyJ)
+			polyJ := ec.fld.ALogTbl[idx]
+			tmp[i+j] = byte(ec.fld.AddOrSub(int(tmp[i+j]), polyJ))
 		}
 	}
 

@@ -15,7 +15,7 @@ func splitToBlocks(data <-chan byte, vi *versionInfo) blockList {
 		for cw := 0; cw < int(vi.DataCodeWordsPerBlockInGroup1); cw++ {
 			blk.data[cw] = <-data
 		}
-		blk.ecc = gf.calcECC(blk.data, vi.ErrorCorrectionCodewordsPerBlock)
+		blk.ecc = ec.calcECC(blk.data, vi.ErrorCorrectionCodewordsPerBlock)
 		result[b] = blk
 	}
 
@@ -25,7 +25,7 @@ func splitToBlocks(data <-chan byte, vi *versionInfo) blockList {
 		for cw := 0; cw < int(vi.DataCodeWordsPerBlockInGroup2); cw++ {
 			blk.data[cw] = <-data
 		}
-		blk.ecc = gf.calcECC(blk.data, vi.ErrorCorrectionCodewordsPerBlock)
+		blk.ecc = ec.calcECC(blk.data, vi.ErrorCorrectionCodewordsPerBlock)
 		result[int(vi.NumberOfBlocksInGroup1)+b] = blk
 	}
 

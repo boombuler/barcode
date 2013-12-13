@@ -4,10 +4,11 @@ package qr
 import (
 	"fmt"
 	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/utils"
 	"image"
 )
 
-type encodeFn func(content string, eccLevel ErrorCorrectionLevel) (*barcode.BitList, *versionInfo, error)
+type encodeFn func(content string, eccLevel ErrorCorrectionLevel) (*utils.BitList, *versionInfo, error)
 
 type Encoding byte
 
@@ -463,7 +464,7 @@ func drawVersionInfo(vi *versionInfo, set func(int, int, bool)) {
 
 }
 
-func addPaddingAndTerminator(bl *barcode.BitList, vi *versionInfo) {
+func addPaddingAndTerminator(bl *utils.BitList, vi *versionInfo) {
 	for i := 0; i < 4 && bl.Len() < vi.totalDataBytes()*8; i++ {
 		bl.AddBit(false)
 	}

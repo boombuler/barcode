@@ -2,10 +2,10 @@ package qr
 
 import (
 	"fmt"
-	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/utils"
 )
 
-func encodeAuto(content string, ecl ErrorCorrectionLevel) (*barcode.BitList, *versionInfo, error) {
+func encodeAuto(content string, ecl ErrorCorrectionLevel) (*utils.BitList, *versionInfo, error) {
 	bits, vi, _ := Numeric.getEncoder()(content, ecl)
 	if bits != nil && vi != nil {
 		return bits, vi, nil

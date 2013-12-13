@@ -1,4 +1,4 @@
-package barcode
+package utils
 
 // utility class that contains bits
 type BitList struct {

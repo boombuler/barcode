@@ -2,18 +2,19 @@ package datamatrix
 
 import (
 	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/utils"
 	"image"
 	"image/color"
 )
 
 type datamatrixCode struct {
-	*barcode.BitList
+	*utils.BitList
 	*dmCodeSize
 	content string
 }
 
 func newDataMatrixCode(size *dmCodeSize) *datamatrixCode {
-	return &datamatrixCode{barcode.NewBitList(size.Rows * size.Columns), size, ""}
+	return &datamatrixCode{utils.NewBitList(size.Rows * size.Columns), size, ""}
 }
 
 func (c *datamatrixCode) Content() string {

@@ -2,6 +2,7 @@ package qr
 
 import (
 	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/utils"
 	"image"
 	"image/color"
 	"math"
@@ -9,7 +10,7 @@ import (
 
 type qrcode struct {
 	dimension int
-	data      *barcode.BitList
+	data      *utils.BitList
 	content   string
 }
 
@@ -159,6 +160,6 @@ func (qr *qrcode) calcPenaltyRule4() uint {
 func newBarcode(dim int) *qrcode {
 	res := new(qrcode)
 	res.dimension = dim
-	res.data = barcode.NewBitList(dim * dim)
+	res.data = utils.NewBitList(dim * dim)
 	return res
 }

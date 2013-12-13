@@ -7,22 +7,22 @@ import (
 
 func Test_LogTables(t *testing.T) {
 	for i := 1; i <= 255; i++ {
-		tmp := gf.logTbl[i]
-		if byte(i) != gf.aLogTbl[tmp] {
+		tmp := ec.fld.LogTbl[i]
+		if i != ec.fld.ALogTbl[tmp] {
 			t.Errorf("Invalid LogTables: %d", i)
 		}
 	}
 
-	if gf.aLogTbl[11] != 232 || gf.aLogTbl[87] != 127 || gf.aLogTbl[225] != 36 {
+	if ec.fld.ALogTbl[11] != 232 || ec.fld.ALogTbl[87] != 127 || ec.fld.ALogTbl[225] != 36 {
 		t.Fail()
 	}
 }
 
-func Test_Polynoms(t *testing.T) {
+func Test_GetPolynomial(t *testing.T) {
 	doTest := func(b []byte) {
 		cnt := byte(len(b) - 1)
-		if bytes.Compare(gf.getPolynom(cnt), b) != 0 {
-			t.Errorf("Failed getPolynom(%d)", cnt)
+		if bytes.Compare(ec.getPolynomial(cnt), b) != 0 {
+			t.Errorf("Failed getPolynomial(%d)", cnt)
 		}
 	}
 	doTest([]byte{0, 0})
@@ -34,7 +34,7 @@ func Test_Polynoms(t *testing.T) {
 func Test_ErrorCorrection(t *testing.T) {
 	doTest := func(b []byte, ecc []byte) {
 		cnt := byte(len(ecc))
-		if bytes.Compare(gf.calcECC(b, cnt), ecc) != 0 {
+		if bytes.Compare(ec.calcECC(b, cnt), ecc) != 0 {
 			t.Fail()
 		}
 	}

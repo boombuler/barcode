@@ -3,7 +3,7 @@ package qr
 import (
 	"errors"
 	"fmt"
-	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/utils"
 	"strings"
 )
 
@@ -25,7 +25,7 @@ func stringToAlphaIdx(content string) <-chan int {
 	return result
 }
 
-func encodeAlphaNumeric(content string, ecl ErrorCorrectionLevel) (*barcode.BitList, *versionInfo, error) {
+func encodeAlphaNumeric(content string, ecl ErrorCorrectionLevel) (*utils.BitList, *versionInfo, error) {
 
 	contentLenIsOdd := len(content)%2 == 1
 	contentBitCount := (len(content) / 2) * 11
@@ -37,7 +37,7 @@ func encodeAlphaNumeric(content string, ecl ErrorCorrectionLevel) (*barcode.BitL
 		return nil, nil, errors.New("To much data to encode")
 	}
 
-	res := new(barcode.BitList)
+	res := new(utils.BitList)
 	res.AddBits(int(alphaNumericMode), 4)
 	res.AddBits(len(content), vi.charCountBits(alphaNumericMode))
 

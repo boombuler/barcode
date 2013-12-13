@@ -1,21 +1,21 @@
 package datamatrix
 
 import (
-	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/utils"
 )
 
 type setValFunc func(byte)
 
 type codeLayout struct {
-	matrix *barcode.BitList
-	occupy *barcode.BitList
+	matrix *utils.BitList
+	occupy *utils.BitList
 	size   *dmCodeSize
 }
 
 func newCodeLayout(size *dmCodeSize) *codeLayout {
 	result := new(codeLayout)
-	result.matrix = barcode.NewBitList(size.MatrixColumns() * size.MatrixRows())
-	result.occupy = barcode.NewBitList(size.MatrixColumns() * size.MatrixRows())
+	result.matrix = utils.NewBitList(size.MatrixColumns() * size.MatrixRows())
+	result.occupy = utils.NewBitList(size.MatrixColumns() * size.MatrixRows())
 	result.size = size
 	return result
 }

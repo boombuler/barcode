@@ -3,11 +3,11 @@ package qr
 import (
 	"errors"
 	"fmt"
-	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/utils"
 	"strconv"
 )
 
-func encodeNumeric(content string, ecl ErrorCorrectionLevel) (*barcode.BitList, *versionInfo, error) {
+func encodeNumeric(content string, ecl ErrorCorrectionLevel) (*utils.BitList, *versionInfo, error) {
 	contentBitCount := (len(content) / 3) * 10
 	switch len(content) % 3 {
 	case 1:
@@ -19,7 +19,7 @@ func encodeNumeric(content string, ecl ErrorCorrectionLevel) (*barcode.BitList, 
 	if vi == nil {
 		return nil, nil, errors.New("To much data to encode")
 	}
-	res := new(barcode.BitList)
+	res := new(utils.BitList)
 	res.AddBits(int(numericMode), 4)
 	res.AddBits(len(content), vi.charCountBits(numericMode))
 
