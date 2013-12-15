@@ -79,6 +79,13 @@ func (bl *BitList) AddBits(b int, count byte) {
 	}
 }
 
+// appends all bits in the bool-slice to the end of the list
+func (bl *BitList) AddRange(bits []bool) {
+	for _, b := range bits {
+		bl.AddBit(b)
+	}
+}
+
 // returns all bits of the BitList as a []byte
 func (bl *BitList) GetBytes() []byte {
 	len := bl.count >> 3
