@@ -44,9 +44,7 @@ func Encode(content string) (barcode.Barcode, error) {
 		if !ok {
 			return nil, fmt.Errorf("can not encode \"%s\"", content)
 		}
-		for _, bit := range bits {
-			resBits.AddBit(bit)
-		}
+		resBits.AddBit(bits...)
 	}
-	return &codabarcode{resBits, content}, nil
+	return utils.New1DCode("Codabar", content, resBits), nil
 }

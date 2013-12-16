@@ -3,6 +3,7 @@ package code39
 import (
 	"errors"
 	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/utils"
 	"strings"
 )
 
@@ -91,22 +92,19 @@ func Encode(content string, includeChecksum bool) (barcode.Barcode, error) {
 	}
 	data += "*"
 
-	cd := newCode()
-	cd.content = content
+	result := new(utils.BitList)
 
 	for i, r := range data {
 		if i != 0 {
-			cd.AddBit(false)
+			result.AddBit(false)
 		}
 
 		info, ok := encodeTable[r]
 		if !ok {
 			return nil, errors.New("invalid data")
 		}
-		for _, bit := range info.data {
-			cd.AddBit(bit)
-		}
+		result.AddBit(info.data...)
 	}
 
-	return cd, nil
+	return utils.New1DCode("Code 39", content, result), nil
 }

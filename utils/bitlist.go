@@ -37,14 +37,16 @@ func (bl *BitList) grow() {
 	bl.data = nd
 }
 
-// appends the given bit to the end of the list
-func (bl *BitList) AddBit(bit bool) {
-	itmIndex := bl.count / 32
-	for itmIndex >= len(bl.data) {
-		bl.grow()
+// appends the given bits to the end of the list
+func (bl *BitList) AddBit(bits ...bool) {
+	for _, bit := range bits {
+		itmIndex := bl.count / 32
+		for itmIndex >= len(bl.data) {
+			bl.grow()
+		}
+		bl.SetBit(bl.count, bit)
+		bl.count++
 	}
-	bl.SetBit(bl.count, bit)
-	bl.count++
 }
 
 // sets the bit at the given index to the given value
@@ -76,13 +78,6 @@ func (bl *BitList) AddByte(b byte) {
 func (bl *BitList) AddBits(b int, count byte) {
 	for i := int(count - 1); i >= 0; i-- {
 		bl.AddBit(((b >> uint(i)) & 1) == 1)
-	}
-}
-
-// appends all bits in the bool-slice to the end of the list
-func (bl *BitList) AddRange(bits []bool) {
-	for _, b := range bits {
-		bl.AddBit(b)
 	}
 }
 

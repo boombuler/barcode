@@ -4,6 +4,7 @@ package ean
 import (
 	"errors"
 	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/utils"
 )
 
 type encodedNumber struct {
@@ -146,21 +147,14 @@ func calcCheckNum(code string) rune {
 	return intToRune((10 - (sum % 10)) % 10)
 }
 
-func encodeEAN8(code string, result *eancode) bool {
-	pos := 0
-	appendBit := func(b bool) {
-		result.SetBit(pos, b)
-		pos++
-	}
-
-	appendBit(true)
-	appendBit(false)
-	appendBit(true)
+func encodeEAN8(code string) *utils.BitList {
+	result := new(utils.BitList)
+	result.AddBit(true, false, true)
 
 	for cpos, r := range code {
 		num, ok := encoderTable[r]
 		if !ok {
-			return false
+			return nil
 		}
 		var data []bool
 		if cpos < 4 {
@@ -170,39 +164,24 @@ func encodeEAN8(code string, result *eancode) bool {
 		}
 
 		if cpos == 4 {
-			appendBit(false)
-			appendBit(true)
-			appendBit(false)
-			appendBit(true)
-			appendBit(false)
+			result.AddBit(false, true, false, true, false)
 		}
-		for _, bit := range data {
-			appendBit(bit)
-		}
+		result.AddBit(data...)
 	}
+	result.AddBit(true, false, true)
 
-	appendBit(true)
-	appendBit(false)
-	appendBit(true)
-	return true
+	return result
 }
 
-func encodeEAN13(code string, result *eancode) bool {
-	pos := 0
-	appendBit := func(b bool) {
-		result.SetBit(pos, b)
-		pos++
-	}
-
-	appendBit(true)
-	appendBit(false)
-	appendBit(true)
+func encodeEAN13(code string) *utils.BitList {
+	result := new(utils.BitList)
+	result.AddBit(true, false, true)
 
 	var firstNum []bool
 	for cpos, r := range code {
 		num, ok := encoderTable[r]
 		if !ok {
-			return false
+			return nil
 		}
 		if cpos == 0 {
 			firstNum = num.CheckSum
@@ -221,21 +200,12 @@ func encodeEAN13(code string, result *eancode) bool {
 		}
 
 		if cpos == 7 {
-			appendBit(false)
-			appendBit(true)
-			appendBit(false)
-			appendBit(true)
-			appendBit(false)
+			result.AddBit(false, true, false, true, false)
 		}
-
-		for _, bit := range data {
-			appendBit(bit)
-		}
+		result.AddBit(data...)
 	}
-	appendBit(true)
-	appendBit(false)
-	appendBit(true)
-	return true
+	result.AddByte(true, false, true)
+	return result
 }
 
 // encodes the given EAN 8 or EAN 13 number to a barcode image
@@ -249,18 +219,17 @@ func Encode(code string) (barcode.Barcode, error) {
 			return nil, errors.New("checksum missmatch!")
 		}
 	}
-	ean8 := false
+	var result *utils.BitList = nil
 	if len(code) == 8 {
-		ean8 = true
-
-	} else if len(code) != 13 {
-		return nil, errors.New("invalid ean code data")
+		result := encodeEAN8(code)
+		if result != nil {
+			return utils.New1DCode("EAN 8", code, result), nil
+		}
+	} else if len(code) == 13 {
+		result := encodeEAN13(code)
+		if result != nil {
+			return utils.New1DCode("EAN 13", code, result), nil
+		}
 	}
-	result := newEANCode(ean8)
-	if (ean8 && encodeEAN8(code, result)) || (!ean8 && encodeEAN13(code, result)) {
-		result.content = code
-		return result, nil
-	}
-
-	return nil, errors.New("ean code contains invalid characters")
+	return nil, errors.New("invalid ean code data")
 }

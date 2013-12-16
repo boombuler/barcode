@@ -114,3 +114,5 @@ const startASymbol byte = 103
 const startBSymbol byte = 104
 const startCSymbol byte = 105
 const stopSymbol byte = 106
+
+const bTable = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
