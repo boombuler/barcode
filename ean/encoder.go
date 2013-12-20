@@ -78,14 +78,14 @@ var encoderTable map[rune]encodedNumber = map[rune]encodedNumber{
 }
 
 func runeToInt(r rune) int {
-	if r >= '0' || r <= '9' {
+	if r >= '0' && r <= '9' {
 		return int(r - '0')
 	}
 	return -1
 }
 
 func intToRune(i int) rune {
-	if i >= 0 || i <= 9 {
+	if i >= 0 && i <= 9 {
 		return rune(i + '0')
 	}
 	return 'F'
