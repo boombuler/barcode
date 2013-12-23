@@ -59,6 +59,19 @@ var encodeTable map[rune]encodeInfo = map[rune]encodeInfo{
 	'*': encodeInfo{-1, []bool{true, false, false, true, false, true, true, false, true, true, false, true}},
 }
 
+var extendedTable map[rune]string = map[rune]string{
+	0: `%U`, 1: `$A`, 2: `$B`, 3: `$C`, 4: `$D`, 5: `$E`, 6: `$F`, 7: `$G`, 8: `$H`, 9: `$I`, 10: `$J`,
+	11: `$K`, 12: `$L`, 13: `$M`, 14: `$N`, 15: `$O`, 16: `$P`, 17: `$Q`, 18: `$R`, 19: `$S`, 20: `$T`,
+	21: `$U`, 22: `$V`, 23: `$W`, 24: `$X`, 25: `$Y`, 26: `$Z`, 27: `%A`, 28: `%B`, 29: `%C`, 30: `%D`,
+	31: `%E`, 33: `/A`, 34: `/B`, 35: `/C`, 36: `/D`, 37: `/E`, 38: `/F`, 39: `/G`, 40: `/H`, 41: `/I`,
+	42: `/J`, 43: `/K`, 44: `/L`, 47: `/O`, 58: `/Z`, 59: `%F`, 60: `%G`, 61: `%H`, 62: `%I`, 63: `%J`,
+	64: `%V`, 91: `%K`, 92: `%L`, 93: `%M`, 94: `%N`, 95: `%O`, 96: `%W`, 97: `+A`, 98: `+B`, 99: `+C`,
+	100: `+D`, 101: `+E`, 102: `+F`, 103: `+G`, 104: `+H`, 105: `+I`, 106: `+J`, 107: `+K`, 108: `+L`,
+	109: `+M`, 110: `+N`, 111: `+O`, 112: `+P`, 113: `+Q`, 114: `+R`, 115: `+S`, 116: `+T`, 117: `+U`,
+	118: `+V`, 119: `+W`, 120: `+X`, 121: `+Y`, 122: `+Z`, 123: `%P`, 124: `%Q`, 125: `%R`, 126: `%S`,
+	127: `%T`,
+}
+
 func getChecksum(content string) string {
 	sum := 0
 	for _, r := range content {
@@ -79,11 +92,33 @@ func getChecksum(content string) string {
 	return "#"
 }
 
+func prepare(content string) (string, error) {
+	result := ""
+	for _, r := range content {
+		if r > 127 {
+			return "", errors.New("Only ASCII strings can be encoded")
+		}
+		val, ok := extendedTable[r]
+		if ok {
+			result += val
+		} else {
+			result += string([]rune{r})
+		}
+	}
+	return result, nil
+}
+
 // encodes the given string as a code39 barcode
 // if includeChecksum is set to true, a checksum character is calculated and added to the content
-func Encode(content string, includeChecksum bool) (barcode.Barcode, error) {
-	if strings.ContainsRune(content, '*') {
-		return nil, errors.New("invalid data")
+func Encode(content string, includeChecksum bool, fullASCIIMode bool) (barcode.Barcode, error) {
+	if fullASCIIMode {
+		var err error
+		content, err = prepare(content)
+		if err != nil {
+			return nil, err
+		}
+	} else if strings.ContainsRune(content, '*') {
+		return nil, errors.New("invalid data! try full ascii mode")
 	}
 
 	data := "*" + content
@@ -101,7 +136,7 @@ func Encode(content string, includeChecksum bool) (barcode.Barcode, error) {
 
 		info, ok := encodeTable[r]
 		if !ok {
-			return nil, errors.New("invalid data")
+			return nil, errors.New("invalid data! try full ascii mode")
 		}
 		result.AddBit(info.data...)
 	}
