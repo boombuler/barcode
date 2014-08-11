@@ -55,7 +55,7 @@ func scale2DCode(bc Barcode, width, height int) (Barcode, error) {
 
 	factor := int(math.Min(float64(width)/float64(orgWidth), float64(height)/float64(orgHeight)))
 	if factor <= 0 {
-		return nil, fmt.Errorf("can no scale barcode to an image smaller then %dx%d", orgWidth, orgHeight)
+		return nil, fmt.Errorf("can not scale barcode to an image smaller then %dx%d", orgWidth, orgHeight)
 	}
 
 	offsetX := (width - (orgWidth * factor)) / 2
@@ -86,7 +86,7 @@ func scale1DCode(bc Barcode, width, height int) (Barcode, error) {
 	factor := int(float64(width) / float64(orgWidth))
 
 	if factor <= 0 {
-		return nil, fmt.Errorf("can no scale barcode to an image smaller then %dx1", orgWidth)
+		return nil, fmt.Errorf("can not scale barcode to an image smaller then %dx1", orgWidth)
 	}
 	offsetX := (width - (orgWidth * factor)) / 2
 
