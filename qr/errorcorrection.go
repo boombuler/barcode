@@ -9,7 +9,7 @@ type errorCorrection struct {
 	polynomes map[byte][]byte
 }
 
-var ec *errorCorrection = newGF()
+var ec = newGF()
 
 func newGF() *errorCorrection {
 	return &errorCorrection{utils.NewGaloisField(285), make(map[byte][]byte)}

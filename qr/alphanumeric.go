@@ -3,8 +3,9 @@ package qr
 import (
 	"errors"
 	"fmt"
-	"github.com/boombuler/barcode/utils"
 	"strings"
+
+	"github.com/boombuler/barcode/utils"
 )
 
 const charSet string = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:"

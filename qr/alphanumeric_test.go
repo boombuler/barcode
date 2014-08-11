@@ -5,11 +5,11 @@ import (
 	"testing"
 )
 
-func makeString(length int) string {
+func makeString(length int, content string) string {
 	res := ""
 
 	for i := 0; i < length; i++ {
-		res += "A"
+		res += content
 	}
 
 	return res
@@ -24,11 +24,11 @@ func Test_AlphaNumericEncoding(t *testing.T) {
 		t.Errorf("\"HELLO WORLD\" failed to encode: %s", err)
 	}
 
-	x, vi, err = encode(makeString(4296), L)
+	x, vi, err = encode(makeString(4296, "A"), L)
 	if x == nil || vi == nil || err != nil {
 		t.Fail()
 	}
-	x, vi, err = encode(makeString(4297), L)
+	x, vi, err = encode(makeString(4297, "A"), L)
 	if x != nil || vi != nil || err == nil {
 		t.Fail()
 	}

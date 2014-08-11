@@ -2,7 +2,7 @@ package qr
 
 import "testing"
 
-var testvi *versionInfo = &versionInfo{7, M, 0, 1, 10, 2, 5} // Fake versionInfo to run some of the tests
+var testvi = &versionInfo{7, M, 0, 1, 10, 2, 5} // Fake versionInfo to run some of the tests
 
 func Test_ErrorCorrectionStringer(t *testing.T) {
 	tests := map[ErrorCorrectionLevel]string{
@@ -56,6 +56,9 @@ func Test_CharCountBits(t *testing.T) {
 	if v3.charCountBits(kanjiMode) != 12 {
 		t.Fail()
 	}
+	if v1.charCountBits(encodingMode(3)) != 0 {
+		t.Fail()
+	}
 }
 
 func Test_TotalDataBytes(t *testing.T) {
@@ -92,7 +95,7 @@ type aligmnentTest struct {
 	patterns []int
 }
 
-var allAligmnentTests []*aligmnentTest = []*aligmnentTest{
+var allAligmnentTests = []*aligmnentTest{
 	&aligmnentTest{1, []int{}},
 	&aligmnentTest{2, []int{6, 18}},
 	&aligmnentTest{3, []int{6, 22}},

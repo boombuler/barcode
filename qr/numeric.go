@@ -3,8 +3,9 @@ package qr
 import (
 	"errors"
 	"fmt"
-	"github.com/boombuler/barcode/utils"
 	"strconv"
+
+	"github.com/boombuler/barcode/utils"
 )
 
 func encodeNumeric(content string, ecl ErrorCorrectionLevel) (*utils.BitList, *versionInfo, error) {

@@ -2,6 +2,7 @@ package qr
 
 import (
 	"errors"
+
 	"github.com/boombuler/barcode/utils"
 )
 

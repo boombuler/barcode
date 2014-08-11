@@ -1,11 +1,12 @@
 package qr
 
 import (
-	"github.com/boombuler/barcode"
-	"github.com/boombuler/barcode/utils"
 	"image"
 	"image/color"
 	"math"
+
+	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/utils"
 )
 
 type qrcode struct {
@@ -50,16 +51,16 @@ func (qr *qrcode) calcPenalty() uint {
 }
 
 func (qr *qrcode) calcPenaltyRule1() uint {
-	var result uint = 0
+	var result uint
 	for x := 0; x < qr.dimension; x++ {
 		checkForX := false
-		var cntX uint = 0
+		var cntX uint
 		checkForY := false
-		var cntY uint = 0
+		var cntY uint
 
 		for y := 0; y < qr.dimension; y++ {
 			if qr.Get(x, y) == checkForX {
-				cntX += 1
+				cntX++
 			} else {
 				checkForX = !checkForX
 				if cntX >= 5 {
@@ -69,7 +70,7 @@ func (qr *qrcode) calcPenaltyRule1() uint {
 			}
 
 			if qr.Get(y, x) == checkForY {
-				cntY += 1
+				cntY++
 			} else {
 				checkForY = !checkForY
 				if cntY >= 5 {
@@ -91,7 +92,7 @@ func (qr *qrcode) calcPenaltyRule1() uint {
 }
 
 func (qr *qrcode) calcPenaltyRule2() uint {
-	var result uint = 0
+	var result uint
 	for x := 0; x < qr.dimension-1; x++ {
 		for y := 0; y < qr.dimension-1; y++ {
 			check := qr.Get(x, y)
@@ -104,10 +105,10 @@ func (qr *qrcode) calcPenaltyRule2() uint {
 }
 
 func (qr *qrcode) calcPenaltyRule3() uint {
-	var pattern1 []bool = []bool{true, false, true, true, true, false, true, false, false, false, false}
-	var pattern2 []bool = []bool{false, false, false, false, true, false, true, true, true, false, true}
+	pattern1 := []bool{true, false, true, true, true, false, true, false, false, false, false}
+	pattern2 := []bool{false, false, false, false, true, false, true, true, true, false, true}
 
-	var result uint = 0
+	var result uint
 	for x := 0; x <= qr.dimension-len(pattern1); x++ {
 		for y := 0; y < qr.dimension; y++ {
 			pattern1XFound := true
@@ -148,7 +149,7 @@ func (qr *qrcode) calcPenaltyRule4() uint {
 	trueCnt := 0
 	for i := 0; i < totalNum; i++ {
 		if qr.data.GetBit(i) {
-			trueCnt += 1
+			trueCnt++
 		}
 	}
 	percDark := float64(trueCnt) * 100 / float64(totalNum)

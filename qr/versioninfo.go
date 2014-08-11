@@ -2,16 +2,17 @@ package qr
 
 import "math"
 
+// ErrorCorrectionLevel indicates the amount of "backup data" stored in the QR code
 type ErrorCorrectionLevel byte
 
 const (
-	// Recovers 7% of data
+	// L recovers 7% of data
 	L ErrorCorrectionLevel = iota
-	// Recovers 15% of data
+	// M recovers 15% of data
 	M
-	// Recovers 25% of data
+	// Q recovers 25% of data
 	Q
-	// Recovers 30% of data
+	// H recovers 30% of data
 	H
 )
 
@@ -48,7 +49,7 @@ type versionInfo struct {
 	DataCodeWordsPerBlockInGroup2    byte
 }
 
-var versionInfos []*versionInfo = []*versionInfo{
+var versionInfos = []*versionInfo{
 	&versionInfo{1, L, 7, 1, 19, 0, 0},
 	&versionInfo{1, M, 10, 1, 16, 0, 0},
 	&versionInfo{1, Q, 13, 1, 13, 0, 0},
@@ -218,38 +219,39 @@ func (vi *versionInfo) totalDataBytes() int {
 }
 
 func (vi *versionInfo) charCountBits(m encodingMode) byte {
-	if m == numericMode {
+	switch m {
+	case numericMode:
 		if vi.Version < 10 {
 			return 10
 		} else if vi.Version < 27 {
 			return 12
-		} else {
-			return 14
 		}
-	} else if m == alphaNumericMode {
+		return 14
+
+	case alphaNumericMode:
 		if vi.Version < 10 {
 			return 9
 		} else if vi.Version < 27 {
 			return 11
-		} else {
-			return 13
 		}
-	} else if m == byteMode {
+		return 13
+
+	case byteMode:
 		if vi.Version < 10 {
 			return 8
-		} else {
-			return 16
 		}
-	} else if m == kanjiMode {
+		return 16
+
+	case kanjiMode:
 		if vi.Version < 10 {
 			return 8
 		} else if vi.Version < 27 {
 			return 10
-		} else {
-			return 12
 		}
+		return 12
+	default:
+		return 0
 	}
-	return 0
 }
 
 func (vi *versionInfo) modulWidth() int {
@@ -261,9 +263,9 @@ func (vi *versionInfo) alignmentPatternPlacements() []int {
 		return make([]int, 0)
 	}
 
-	var first int = 6
-	var last int = vi.modulWidth() - 7
-	var space float64 = float64(last - first)
+	first := 6
+	last := vi.modulWidth() - 7
+	space := float64(last - first)
 	count := int(math.Ceil(space/28)) + 1
 
 	result := make([]int, count)
@@ -281,9 +283,9 @@ func (vi *versionInfo) alignmentPatternPlacements() []int {
 			}
 
 			if int(frac)%2 == 0 {
-				step -= 1
+				step--
 			} else {
-				step += 1
+				step++
 			}
 		}
 

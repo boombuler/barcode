@@ -1,26 +1,29 @@
-// package for QR barcode generation.
+// Package qr can be used to create QR barcodes.
 package qr
 
 import (
-	"fmt"
+	"image"
+
 	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/utils"
-	"image"
 )
 
 type encodeFn func(content string, eccLevel ErrorCorrectionLevel) (*utils.BitList, *versionInfo, error)
 
+// Encoding mode for QR Codes.
 type Encoding byte
 
 const (
-	// Choose best matching encoding
+	// Auto will choose ths best matching encoding
 	Auto Encoding = iota
-	// Encode only numbers [0-9]
+	// Numeric encoding only encodes numbers [0-9]
 	Numeric
-	// Encode only uppercase letters, numbers and  [Space], $, %, *, +, -, ., /, :
+	// AlphaNumeric encoding only encodes uppercase letters, numbers and  [Space], $, %, *, +, -, ., /, :
 	AlphaNumeric
-	// Encodes string as utf-8
+	// Unicode encoding encodes the string as utf-8
 	Unicode
+	// only for testing purpose
+	unknownEncoding
 )
 
 func (e Encoding) getEncoder() encodeFn {
@@ -51,14 +54,11 @@ func (e Encoding) String() string {
 	return ""
 }
 
-// Encodes the given content to a QR barcode
+// Encode returns a QR barcode with the given content, error correction level and uses the given encoding
 func Encode(content string, level ErrorCorrectionLevel, mode Encoding) (barcode.Barcode, error) {
 	bits, vi, err := mode.getEncoder()(content, level)
 	if err != nil {
 		return nil, err
-	}
-	if bits == nil || vi == nil {
-		return nil, fmt.Errorf("Unable to encode \"%s\" with error correction level %s and encoding mode %s", content, level, mode)
 	}
 
 	blocks := splitToBlocks(bits.IterateBytes(), vi)
@@ -107,7 +107,7 @@ func render(data []byte, vi *versionInfo) *qrcode {
 	}
 
 	// Write the data
-	var curBitNo int = 0
+	var curBitNo int
 
 	for pos := range iterateModules(occupied) {
 		var curBit bool
@@ -120,7 +120,7 @@ func render(data []byte, vi *versionInfo) *qrcode {
 		for i := 0; i < 8; i++ {
 			setMasked(pos.X, pos.Y, curBit, i, results[i].Set)
 		}
-		curBitNo += 1
+		curBitNo++
 	}
 
 	lowestPenalty := ^uint(0)
@@ -176,12 +176,12 @@ func iterateModules(occupied *qrcode) <-chan image.Point {
 			if isUpward {
 				allPoints <- image.Pt(curX, curY)
 				allPoints <- image.Pt(curX-1, curY)
-				curY -= 1
+				curY--
 				if curY < 0 {
 					curY = 0
 					curX -= 2
 					if curX == 6 {
-						curX -= 1
+						curX--
 					}
 					if curX < 0 {
 						break
@@ -191,12 +191,12 @@ func iterateModules(occupied *qrcode) <-chan image.Point {
 			} else {
 				allPoints <- image.Pt(curX, curY)
 				allPoints <- image.Pt(curX-1, curY)
-				curY += 1
+				curY++
 				if curY >= occupied.dimension {
 					curY = occupied.dimension - 1
 					curX -= 2
 					if curX == 6 {
-						curX -= 1
+						curX--
 					}
 					isUpward = true
 					if curX < 0 {
@@ -258,89 +258,56 @@ func drawAlignmentPatterns(occupied *qrcode, vi *versionInfo, set func(int, int,
 	}
 }
 
+var formatInfos = map[ErrorCorrectionLevel]map[int][]bool{
+	L: {
+		0: []bool{true, true, true, false, true, true, true, true, true, false, false, false, true, false, false},
+		1: []bool{true, true, true, false, false, true, false, true, true, true, true, false, false, true, true},
+		2: []bool{true, true, true, true, true, false, true, true, false, true, false, true, false, true, false},
+		3: []bool{true, true, true, true, false, false, false, true, false, false, true, true, true, false, true},
+		4: []bool{true, true, false, false, true, true, false, false, false, true, false, true, true, true, true},
+		5: []bool{true, true, false, false, false, true, true, false, false, false, true, true, false, false, false},
+		6: []bool{true, true, false, true, true, false, false, false, true, false, false, false, false, false, true},
+		7: []bool{true, true, false, true, false, false, true, false, true, true, true, false, true, true, false},
+	},
+	M: {
+		0: []bool{true, false, true, false, true, false, false, false, false, false, true, false, false, true, false},
+		1: []bool{true, false, true, false, false, false, true, false, false, true, false, false, true, false, true},
+		2: []bool{true, false, true, true, true, true, false, false, true, true, true, true, true, false, false},
+		3: []bool{true, false, true, true, false, true, true, false, true, false, false, true, false, true, true},
+		4: []bool{true, false, false, false, true, false, true, true, true, true, true, true, false, false, true},
+		5: []bool{true, false, false, false, false, false, false, true, true, false, false, true, true, true, false},
+		6: []bool{true, false, false, true, true, true, true, true, false, false, true, false, true, true, true},
+		7: []bool{true, false, false, true, false, true, false, true, false, true, false, false, false, false, false},
+	},
+	Q: {
+		0: []bool{false, true, true, false, true, false, true, false, true, false, true, true, true, true, true},
+		1: []bool{false, true, true, false, false, false, false, false, true, true, false, true, false, false, false},
+		2: []bool{false, true, true, true, true, true, true, false, false, true, true, false, false, false, true},
+		3: []bool{false, true, true, true, false, true, false, false, false, false, false, false, true, true, false},
+		4: []bool{false, true, false, false, true, false, false, true, false, true, true, false, true, false, false},
+		5: []bool{false, true, false, false, false, false, true, true, false, false, false, false, false, true, true},
+		6: []bool{false, true, false, true, true, true, false, true, true, false, true, true, false, true, false},
+		7: []bool{false, true, false, true, false, true, true, true, true, true, false, true, true, false, true},
+	},
+	H: {
+		0: []bool{false, false, true, false, true, true, false, true, false, false, false, true, false, false, true},
+		1: []bool{false, false, true, false, false, true, true, true, false, true, true, true, true, true, false},
+		2: []bool{false, false, true, true, true, false, false, true, true, true, false, false, true, true, true},
+		3: []bool{false, false, true, true, false, false, true, true, true, false, true, false, false, false, false},
+		4: []bool{false, false, false, false, true, true, true, false, true, true, false, false, false, true, false},
+		5: []bool{false, false, false, false, false, true, false, false, true, false, true, false, true, false, true},
+		6: []bool{false, false, false, true, true, false, true, false, false, false, false, true, true, false, false},
+		7: []bool{false, false, false, true, false, false, false, false, false, true, true, true, false, true, true},
+	},
+}
+
 func drawFormatInfo(vi *versionInfo, usedMask int, set func(int, int, bool)) {
 	var formatInfo []bool
-	switch vi.Level {
-	case L:
-		switch usedMask {
-		case 0:
-			formatInfo = []bool{true, true, true, false, true, true, true, true, true, false, false, false, true, false, false}
-		case 1:
-			formatInfo = []bool{true, true, true, false, false, true, false, true, true, true, true, false, false, true, true}
-		case 2:
-			formatInfo = []bool{true, true, true, true, true, false, true, true, false, true, false, true, false, true, false}
-		case 3:
-			formatInfo = []bool{true, true, true, true, false, false, false, true, false, false, true, true, true, false, true}
-		case 4:
-			formatInfo = []bool{true, true, false, false, true, true, false, false, false, true, false, true, true, true, true}
-		case 5:
-			formatInfo = []bool{true, true, false, false, false, true, true, false, false, false, true, true, false, false, false}
-		case 6:
-			formatInfo = []bool{true, true, false, true, true, false, false, false, true, false, false, false, false, false, true}
-		case 7:
-			formatInfo = []bool{true, true, false, true, false, false, true, false, true, true, true, false, true, true, false}
-		}
-	case M:
-		switch usedMask {
-		case 0:
-			formatInfo = []bool{true, false, true, false, true, false, false, false, false, false, true, false, false, true, false}
-		case 1:
-			formatInfo = []bool{true, false, true, false, false, false, true, false, false, true, false, false, true, false, true}
-		case 2:
-			formatInfo = []bool{true, false, true, true, true, true, false, false, true, true, true, true, true, false, false}
-		case 3:
-			formatInfo = []bool{true, false, true, true, false, true, true, false, true, false, false, true, false, true, true}
-		case 4:
-			formatInfo = []bool{true, false, false, false, true, false, true, true, true, true, true, true, false, false, true}
-		case 5:
-			formatInfo = []bool{true, false, false, false, false, false, false, true, true, false, false, true, true, true, false}
-		case 6:
-			formatInfo = []bool{true, false, false, true, true, true, true, true, false, false, true, false, true, true, true}
-		case 7:
-			formatInfo = []bool{true, false, false, true, false, true, false, true, false, true, false, false, false, false, false}
-		}
-	case Q:
-		switch usedMask {
-		case 0:
-			formatInfo = []bool{false, true, true, false, true, false, true, false, true, false, true, true, true, true, true}
-		case 1:
-			formatInfo = []bool{false, true, true, false, false, false, false, false, true, true, false, true, false, false, false}
-		case 2:
-			formatInfo = []bool{false, true, true, true, true, true, true, false, false, true, true, false, false, false, true}
-		case 3:
-			formatInfo = []bool{false, true, true, true, false, true, false, false, false, false, false, false, true, true, false}
-		case 4:
-			formatInfo = []bool{false, true, false, false, true, false, false, true, false, true, true, false, true, false, false}
-		case 5:
-			formatInfo = []bool{false, true, false, false, false, false, true, true, false, false, false, false, false, true, true}
-		case 6:
-			formatInfo = []bool{false, true, false, true, true, true, false, true, true, false, true, true, false, true, false}
-		case 7:
-			formatInfo = []bool{false, true, false, true, false, true, true, true, true, true, false, true, true, false, true}
-		}
-	case H:
-		switch usedMask {
-		case 0:
-			formatInfo = []bool{false, false, true, false, true, true, false, true, false, false, false, true, false, false, true}
-		case 1:
-			formatInfo = []bool{false, false, true, false, false, true, true, true, false, true, true, true, true, true, false}
-		case 2:
-			formatInfo = []bool{false, false, true, true, true, false, false, true, true, true, false, false, true, true, true}
-		case 3:
-			formatInfo = []bool{false, false, true, true, false, false, true, true, true, false, true, false, false, false, false}
-		case 4:
-			formatInfo = []bool{false, false, false, false, true, true, true, false, true, true, false, false, false, true, false}
-		case 5:
-			formatInfo = []bool{false, false, false, false, false, true, false, false, true, false, true, false, true, false, true}
-		case 6:
-			formatInfo = []bool{false, false, false, true, true, false, true, false, false, false, false, true, true, false, false}
-		case 7:
-			formatInfo = []bool{false, false, false, true, false, false, false, false, false, true, true, true, false, true, true}
-		}
-	}
 
 	if usedMask == -1 {
 		formatInfo = []bool{true, true, true, true, true, true, true, true, true, true, true, true, true, true, true} // Set all to true cause -1 --> occupied mask.
+	} else {
+		formatInfo = formatInfos[vi.Level][usedMask]
 	}
 
 	if len(formatInfo) == 15 {
@@ -379,81 +346,47 @@ func drawFormatInfo(vi *versionInfo, usedMask int, set func(int, int, bool)) {
 	}
 }
 
+var versionInfoBitsByVersion = map[byte][]bool{
+	7:  []bool{false, false, false, true, true, true, true, true, false, false, true, false, false, true, false, true, false, false},
+	8:  []bool{false, false, true, false, false, false, false, true, false, true, true, false, true, true, true, true, false, false},
+	9:  []bool{false, false, true, false, false, true, true, false, true, false, true, false, false, true, true, false, false, true},
+	10: []bool{false, false, true, false, true, false, false, true, false, false, true, true, false, true, false, false, true, true},
+	11: []bool{false, false, true, false, true, true, true, false, true, true, true, true, true, true, false, true, true, false},
+	12: []bool{false, false, true, true, false, false, false, true, true, true, false, true, true, false, false, false, true, false},
+	13: []bool{false, false, true, true, false, true, true, false, false, false, false, true, false, false, false, true, true, true},
+	14: []bool{false, false, true, true, true, false, false, true, true, false, false, false, false, false, true, true, false, true},
+	15: []bool{false, false, true, true, true, true, true, false, false, true, false, false, true, false, true, false, false, false},
+	16: []bool{false, true, false, false, false, false, true, false, true, true, false, true, true, true, true, false, false, false},
+	17: []bool{false, true, false, false, false, true, false, true, false, false, false, true, false, true, true, true, false, true},
+	18: []bool{false, true, false, false, true, false, true, false, true, false, false, false, false, true, false, true, true, true},
+	19: []bool{false, true, false, false, true, true, false, true, false, true, false, false, true, true, false, false, true, false},
+	20: []bool{false, true, false, true, false, false, true, false, false, true, true, false, true, false, false, true, true, false},
+	21: []bool{false, true, false, true, false, true, false, true, true, false, true, false, false, false, false, false, true, true},
+	22: []bool{false, true, false, true, true, false, true, false, false, false, true, true, false, false, true, false, false, true},
+	23: []bool{false, true, false, true, true, true, false, true, true, true, true, true, true, false, true, true, false, false},
+	24: []bool{false, true, true, false, false, false, true, true, true, false, true, true, false, false, false, true, false, false},
+	25: []bool{false, true, true, false, false, true, false, false, false, true, true, true, true, false, false, false, false, true},
+	26: []bool{false, true, true, false, true, false, true, true, true, true, true, false, true, false, true, false, true, true},
+	27: []bool{false, true, true, false, true, true, false, false, false, false, true, false, false, false, true, true, true, false},
+	28: []bool{false, true, true, true, false, false, true, true, false, false, false, false, false, true, true, false, true, false},
+	29: []bool{false, true, true, true, false, true, false, false, true, true, false, false, true, true, true, true, true, true},
+	30: []bool{false, true, true, true, true, false, true, true, false, true, false, true, true, true, false, true, false, true},
+	31: []bool{false, true, true, true, true, true, false, false, true, false, false, true, false, true, false, false, false, false},
+	32: []bool{true, false, false, false, false, false, true, false, false, true, true, true, false, true, false, true, false, true},
+	33: []bool{true, false, false, false, false, true, false, true, true, false, true, true, true, true, false, false, false, false},
+	34: []bool{true, false, false, false, true, false, true, false, false, false, true, false, true, true, true, false, true, false},
+	35: []bool{true, false, false, false, true, true, false, true, true, true, true, false, false, true, true, true, true, true},
+	36: []bool{true, false, false, true, false, false, true, false, true, true, false, false, false, false, true, false, true, true},
+	37: []bool{true, false, false, true, false, true, false, true, false, false, false, false, true, false, true, true, true, false},
+	38: []bool{true, false, false, true, true, false, true, false, true, false, false, true, true, false, false, true, false, false},
+	39: []bool{true, false, false, true, true, true, false, true, false, true, false, true, false, false, false, false, false, true},
+	40: []bool{true, false, true, false, false, false, true, true, false, false, false, true, true, false, true, false, false, true},
+}
+
 func drawVersionInfo(vi *versionInfo, set func(int, int, bool)) {
-	var versionInfoBits []bool
+	versionInfoBits, ok := versionInfoBitsByVersion[vi.Version]
 
-	switch vi.Version {
-	case 7:
-		versionInfoBits = []bool{false, false, false, true, true, true, true, true, false, false, true, false, false, true, false, true, false, false}
-	case 8:
-		versionInfoBits = []bool{false, false, true, false, false, false, false, true, false, true, true, false, true, true, true, true, false, false}
-	case 9:
-		versionInfoBits = []bool{false, false, true, false, false, true, true, false, true, false, true, false, false, true, true, false, false, true}
-	case 10:
-		versionInfoBits = []bool{false, false, true, false, true, false, false, true, false, false, true, true, false, true, false, false, true, true}
-	case 11:
-		versionInfoBits = []bool{false, false, true, false, true, true, true, false, true, true, true, true, true, true, false, true, true, false}
-	case 12:
-		versionInfoBits = []bool{false, false, true, true, false, false, false, true, true, true, false, true, true, false, false, false, true, false}
-	case 13:
-		versionInfoBits = []bool{false, false, true, true, false, true, true, false, false, false, false, true, false, false, false, true, true, true}
-	case 14:
-		versionInfoBits = []bool{false, false, true, true, true, false, false, true, true, false, false, false, false, false, true, true, false, true}
-	case 15:
-		versionInfoBits = []bool{false, false, true, true, true, true, true, false, false, true, false, false, true, false, true, false, false, false}
-	case 16:
-		versionInfoBits = []bool{false, true, false, false, false, false, true, false, true, true, false, true, true, true, true, false, false, false}
-	case 17:
-		versionInfoBits = []bool{false, true, false, false, false, true, false, true, false, false, false, true, false, true, true, true, false, true}
-	case 18:
-		versionInfoBits = []bool{false, true, false, false, true, false, true, false, true, false, false, false, false, true, false, true, true, true}
-	case 19:
-		versionInfoBits = []bool{false, true, false, false, true, true, false, true, false, true, false, false, true, true, false, false, true, false}
-	case 20:
-		versionInfoBits = []bool{false, true, false, true, false, false, true, false, false, true, true, false, true, false, false, true, true, false}
-	case 21:
-		versionInfoBits = []bool{false, true, false, true, false, true, false, true, true, false, true, false, false, false, false, false, true, true}
-	case 22:
-		versionInfoBits = []bool{false, true, false, true, true, false, true, false, false, false, true, true, false, false, true, false, false, true}
-	case 23:
-		versionInfoBits = []bool{false, true, false, true, true, true, false, true, true, true, true, true, true, false, true, true, false, false}
-	case 24:
-		versionInfoBits = []bool{false, true, true, false, false, false, true, true, true, false, true, true, false, false, false, true, false, false}
-	case 25:
-		versionInfoBits = []bool{false, true, true, false, false, true, false, false, false, true, true, true, true, false, false, false, false, true}
-	case 26:
-		versionInfoBits = []bool{false, true, true, false, true, false, true, true, true, true, true, false, true, false, true, false, true, true}
-	case 27:
-		versionInfoBits = []bool{false, true, true, false, true, true, false, false, false, false, true, false, false, false, true, true, true, false}
-	case 28:
-		versionInfoBits = []bool{false, true, true, true, false, false, true, true, false, false, false, false, false, true, true, false, true, false}
-	case 29:
-		versionInfoBits = []bool{false, true, true, true, false, true, false, false, true, true, false, false, true, true, true, true, true, true}
-	case 30:
-		versionInfoBits = []bool{false, true, true, true, true, false, true, true, false, true, false, true, true, true, false, true, false, true}
-	case 31:
-		versionInfoBits = []bool{false, true, true, true, true, true, false, false, true, false, false, true, false, true, false, false, false, false}
-	case 32:
-		versionInfoBits = []bool{true, false, false, false, false, false, true, false, false, true, true, true, false, true, false, true, false, true}
-	case 33:
-		versionInfoBits = []bool{true, false, false, false, false, true, false, true, true, false, true, true, true, true, false, false, false, false}
-	case 34:
-		versionInfoBits = []bool{true, false, false, false, true, false, true, false, false, false, true, false, true, true, true, false, true, false}
-	case 35:
-		versionInfoBits = []bool{true, false, false, false, true, true, false, true, true, true, true, false, false, true, true, true, true, true}
-	case 36:
-		versionInfoBits = []bool{true, false, false, true, false, false, true, false, true, true, false, false, false, false, true, false, true, true}
-	case 37:
-		versionInfoBits = []bool{true, false, false, true, false, true, false, true, false, false, false, false, true, false, true, true, true, false}
-	case 38:
-		versionInfoBits = []bool{true, false, false, true, true, false, true, false, true, false, false, true, true, false, false, true, false, false}
-	case 39:
-		versionInfoBits = []bool{true, false, false, true, true, true, false, true, false, true, false, true, false, false, false, false, false, true}
-	case 40:
-		versionInfoBits = []bool{true, false, true, false, false, false, true, true, false, false, false, true, true, false, true, false, false, true}
-	}
-
-	if len(versionInfoBits) > 0 {
+	if ok && len(versionInfoBits) > 0 {
 		for i := 0; i < len(versionInfoBits); i++ {
 			x := (vi.modulWidth() - 11) + i%3
 			y := i / 3

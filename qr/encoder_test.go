@@ -2,13 +2,14 @@ package qr
 
 import (
 	"fmt"
-	"github.com/boombuler/barcode"
 	"image/png"
 	"os"
 	"testing"
+
+	"github.com/boombuler/barcode"
 )
 
-var qrHelloWorldHUni []bool = []bool{true, true, true, true, true, true, true, false, true, false, true, false, true, false, false, false, true, false, true, true, true, true, true, true, true,
+var qrHelloWorldHUni = []bool{true, true, true, true, true, true, true, false, true, false, true, false, true, false, false, false, true, false, true, true, true, true, true, true, true,
 	true, false, false, false, false, false, true, false, true, true, false, false, false, true, true, true, false, false, true, false, false, false, false, false, true,
 	true, false, true, true, true, false, true, false, true, false, true, false, true, true, false, true, true, false, true, false, true, true, true, false, true,
 	true, false, true, true, true, false, true, false, false, false, false, true, true, false, true, true, false, false, true, false, true, true, true, false, true,
@@ -33,6 +34,35 @@ var qrHelloWorldHUni []bool = []bool{true, true, true, true, true, true, true, f
 	true, false, true, true, true, false, true, false, true, true, false, true, true, true, true, true, false, false, true, true, false, true, false, false, true,
 	true, false, false, false, false, false, true, false, false, true, true, true, false, false, true, true, false, true, false, true, true, false, false, false, true,
 	true, true, true, true, true, true, true, false, false, false, false, true, false, false, true, false, true, false, false, true, false, false, true, true, true,
+}
+
+func Test_GetUnknownEncoder(t *testing.T) {
+	if unknownEncoding.getEncoder() != nil {
+		t.Fail()
+	}
+}
+
+func Test_EncodingStringer(t *testing.T) {
+	tests := map[Encoding]string{
+		Auto:            "Auto",
+		Numeric:         "Numeric",
+		AlphaNumeric:    "AlphaNumeric",
+		Unicode:         "Unicode",
+		unknownEncoding: "",
+	}
+
+	for enc, str := range tests {
+		if enc.String() != str {
+			t.Fail()
+		}
+	}
+}
+
+func Test_InvalidEncoding(t *testing.T) {
+	_, err := Encode("hello world", H, Numeric)
+	if err == nil {
+		t.Fail()
+	}
 }
 
 func Test_Encode(t *testing.T) {
