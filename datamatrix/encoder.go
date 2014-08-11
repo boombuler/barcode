@@ -1,15 +1,17 @@
+// Package datamatrix can create Datamatrix barcodes
 package datamatrix
 
 import (
 	"errors"
+
 	"github.com/boombuler/barcode"
 )
 
-// Encodes the given content as a DataMatrix code
+// Encode returns a Datamatrix barcode for the given content
 func Encode(content string) (barcode.Barcode, error) {
 	data := encodeText(content)
 
-	var size *dmCodeSize = nil
+	var size *dmCodeSize
 	for _, s := range codeSizes {
 		if s.DataCodewords() >= len(data) {
 			size = s
@@ -40,7 +42,7 @@ func render(data []byte, size *dmCodeSize) *datamatrixCode {
 }
 
 func encodeText(content string) []byte {
-	result := make([]byte, 0)
+	var result []byte
 	input := []byte(content)
 
 	for i := 0; i < len(input); {

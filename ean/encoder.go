@@ -1,8 +1,9 @@
-// package for EAN barcode generation.
+// Package ean can create EAN 8 and EAN 13 barcodes.
 package ean
 
 import (
 	"errors"
+
 	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/utils"
 )
@@ -14,7 +15,7 @@ type encodedNumber struct {
 	CheckSum []bool
 }
 
-var encoderTable map[rune]encodedNumber = map[rune]encodedNumber{
+var encoderTable = map[rune]encodedNumber{
 	'0': encodedNumber{
 		[]bool{false, false, false, true, true, false, true},
 		[]bool{false, true, false, false, true, true, true},
@@ -170,7 +171,7 @@ func encodeEAN13(code string) *utils.BitList {
 	return result
 }
 
-// encodes the given EAN 8 or EAN 13 number to a barcode image
+// Encode returns a EAN 8 or EAN 13 barcode for the given code
 func Encode(code string) (barcode.Barcode, error) {
 	if len(code) == 7 || len(code) == 12 {
 		code += string(calcCheckNum(code))
@@ -178,7 +179,7 @@ func Encode(code string) (barcode.Barcode, error) {
 		check := code[0 : len(code)-1]
 		check += string(calcCheckNum(check))
 		if check != code {
-			return nil, errors.New("checksum missmatch!")
+			return nil, errors.New("checksum missmatch")
 		}
 	}
 

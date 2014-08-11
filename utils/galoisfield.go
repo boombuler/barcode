@@ -1,10 +1,12 @@
 package utils
 
+// GaloisField encapsulates galois field arithmetics
 type GaloisField struct {
 	ALogTbl []int
 	LogTbl  []int
 }
 
+// NewGaloisField creates a new falois field
 func NewGaloisField(pp int) *GaloisField {
 	result := new(GaloisField)
 	fldSize := 256
@@ -28,10 +30,12 @@ func NewGaloisField(pp int) *GaloisField {
 	return result
 }
 
+// AddOrSub add or substract two numbers
 func (gf *GaloisField) AddOrSub(a, b int) int {
 	return a ^ b
 }
 
+// Multiply multiplys two numbers
 func (gf *GaloisField) Multiply(a, b int) int {
 	if a == 0 || b == 0 {
 		return 0
@@ -39,6 +43,7 @@ func (gf *GaloisField) Multiply(a, b int) int {
 	return gf.ALogTbl[(gf.LogTbl[a]+gf.LogTbl[b])%255]
 }
 
+// Divide divides two numbers
 func (gf *GaloisField) Divide(a, b int) int {
 	if b == 0 {
 		panic("divide by zero")

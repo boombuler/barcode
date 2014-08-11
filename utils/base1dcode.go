@@ -1,9 +1,11 @@
+// Package utils contain some utilities which are needed to create barcodes
 package utils
 
 import (
-	"github.com/boombuler/barcode"
 	"image"
 	"image/color"
+
+	"github.com/boombuler/barcode"
 )
 
 type base1DCode struct {
@@ -35,6 +37,7 @@ func (c *base1DCode) At(x, y int) color.Color {
 	return color.White
 }
 
+// New1DCode creates a new 1D barcode where the bars are represented by the bits in the bars BitList
 func New1DCode(codeKind, content string, bars *BitList) barcode.Barcode {
 	return &base1DCode{bars, codeKind, content}
 }

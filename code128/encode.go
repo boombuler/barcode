@@ -1,11 +1,13 @@
+// Package code128 can create Code128 barcodes
 package code128
 
 import (
 	"fmt"
-	"github.com/boombuler/barcode"
-	"github.com/boombuler/barcode/utils"
 	"strings"
 	"unicode/utf8"
+
+	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/utils"
 )
 
 func strToRunes(str string) []rune {
@@ -65,6 +67,7 @@ func getCodeIndexList(content []rune) *utils.BitList {
 	return result
 }
 
+// Encode creates a Code 128 barcode for the given content
 func Encode(content string) (barcode.Barcode, error) {
 	contentRunes := strToRunes(content)
 	if len(contentRunes) < 0 || len(contentRunes) > 80 {

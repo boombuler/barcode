@@ -1,12 +1,12 @@
 package utils
 
-// utility class that contains bits
+// BitList is a list that contains bits
 type BitList struct {
 	count int
 	data  []int32
 }
 
-// returns a new BitList with the given length
+// NewBitList returns a new BitList with the given length
 // all bits are initialize with false
 func NewBitList(capacity int) *BitList {
 	bl := new(BitList)
@@ -19,7 +19,7 @@ func NewBitList(capacity int) *BitList {
 	return bl
 }
 
-// returns the number of contained bits
+// Len returns the number of contained bits
 func (bl *BitList) Len() int {
 	return bl.count
 }
@@ -37,7 +37,7 @@ func (bl *BitList) grow() {
 	bl.data = nd
 }
 
-// appends the given bits to the end of the list
+// AddBit appends the given bits to the end of the list
 func (bl *BitList) AddBit(bits ...bool) {
 	for _, bit := range bits {
 		itmIndex := bl.count / 32
@@ -49,7 +49,7 @@ func (bl *BitList) AddBit(bits ...bool) {
 	}
 }
 
-// sets the bit at the given index to the given value
+// SetBit sets the bit at the given index to the given value
 func (bl *BitList) SetBit(index int, value bool) {
 	itmIndex := index / 32
 	itmBitShift := 31 - (index % 32)
@@ -60,32 +60,32 @@ func (bl *BitList) SetBit(index int, value bool) {
 	}
 }
 
-// returns the bit at the given index
+// GetBit returns the bit at the given index
 func (bl *BitList) GetBit(index int) bool {
 	itmIndex := index / 32
 	itmBitShift := 31 - (index % 32)
 	return ((bl.data[itmIndex] >> uint(itmBitShift)) & 1) == 1
 }
 
-// appends all 8 bits of the given byte to the end of the list
+// AddByte appends all 8 bits of the given byte to the end of the list
 func (bl *BitList) AddByte(b byte) {
 	for i := 7; i >= 0; i-- {
 		bl.AddBit(((b >> uint(i)) & 1) == 1)
 	}
 }
 
-// appends the last (LSB) 'count' bits of 'b' the the end of the list
+// AddBits appends the last (LSB) 'count' bits of 'b' the the end of the list
 func (bl *BitList) AddBits(b int, count byte) {
 	for i := int(count - 1); i >= 0; i-- {
 		bl.AddBit(((b >> uint(i)) & 1) == 1)
 	}
 }
 
-// returns all bits of the BitList as a []byte
+// GetBytes returns all bits of the BitList as a []byte
 func (bl *BitList) GetBytes() []byte {
 	len := bl.count >> 3
 	if (bl.count % 8) != 0 {
-		len += 1
+		len++
 	}
 	result := make([]byte, len)
 	for i := 0; i < len; i++ {
@@ -95,7 +95,7 @@ func (bl *BitList) GetBytes() []byte {
 	return result
 }
 
-// iterates through all bytes contained in the BitList
+// IterateBytes iterates through all bytes contained in the BitList
 func (bl *BitList) IterateBytes() <-chan byte {
 	res := make(chan byte)
 
@@ -108,7 +108,7 @@ func (bl *BitList) IterateBytes() <-chan byte {
 			shift -= 8
 			if shift < 0 {
 				shift = 24
-				i += 1
+				i++
 			}
 			c -= 8
 		}

@@ -1,13 +1,15 @@
+// Package codabar can create Codabar barcodes
 package codabar
 
 import (
 	"fmt"
+	"regexp"
+
 	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/utils"
-	"regexp"
 )
 
-var encodingTable map[rune][]bool = map[rune][]bool{
+var encodingTable = map[rune][]bool{
 	'0': []bool{true, false, true, false, true, false, false, true, true},
 	'1': []bool{true, false, true, false, true, true, false, false, true},
 	'2': []bool{true, false, true, false, false, true, false, true, true},
@@ -30,6 +32,7 @@ var encodingTable map[rune][]bool = map[rune][]bool{
 	'D': []bool{true, false, true, false, false, true, true, false, false, true},
 }
 
+// Encode creates a codabar barcode for the given content
 func Encode(content string) (barcode.Barcode, error) {
 	checkValid, _ := regexp.Compile(`[ABCD][0123456789\-\$\:/\.\+]*[ABCD]$`)
 	if content == "!" || checkValid.ReplaceAllString(content, "!") != "!" {
@@ -40,11 +43,7 @@ func Encode(content string) (barcode.Barcode, error) {
 		if i > 0 {
 			resBits.AddBit(false)
 		}
-		bits, ok := encodingTable[r]
-		if !ok {
-			return nil, fmt.Errorf("can not encode \"%s\"", content)
-		}
-		resBits.AddBit(bits...)
+		resBits.AddBit(encodingTable[r]...)
 	}
 	return utils.New1DCode("Codabar", content, resBits), nil
 }

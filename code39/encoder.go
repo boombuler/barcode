@@ -1,10 +1,12 @@
+// Package code39 can create Code39 barcodes
 package code39
 
 import (
 	"errors"
+	"strings"
+
 	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/utils"
-	"strings"
 )
 
 type encodeInfo struct {
@@ -12,7 +14,7 @@ type encodeInfo struct {
 	data  []bool
 }
 
-var encodeTable map[rune]encodeInfo = map[rune]encodeInfo{
+var encodeTable = map[rune]encodeInfo{
 	'0': encodeInfo{0, []bool{true, false, true, false, false, true, true, false, true, true, false, true}},
 	'1': encodeInfo{1, []bool{true, true, false, true, false, false, true, false, true, false, true, true}},
 	'2': encodeInfo{2, []bool{true, false, true, true, false, false, true, false, true, false, true, true}},
@@ -59,7 +61,7 @@ var encodeTable map[rune]encodeInfo = map[rune]encodeInfo{
 	'*': encodeInfo{-1, []bool{true, false, false, true, false, true, true, false, true, true, false, true}},
 }
 
-var extendedTable map[rune]string = map[rune]string{
+var extendedTable = map[rune]string{
 	0: `%U`, 1: `$A`, 2: `$B`, 3: `$C`, 4: `$D`, 5: `$E`, 6: `$F`, 7: `$G`, 8: `$H`, 9: `$I`, 10: `$J`,
 	11: `$K`, 12: `$L`, 13: `$M`, 14: `$N`, 15: `$O`, 16: `$P`, 17: `$Q`, 18: `$R`, 19: `$S`, 20: `$T`,
 	21: `$U`, 22: `$V`, 23: `$W`, 24: `$X`, 25: `$Y`, 26: `$Z`, 27: `%A`, 28: `%B`, 29: `%C`, 30: `%D`,
@@ -108,7 +110,7 @@ func prepare(content string) (string, error) {
 	return result, nil
 }
 
-// encodes the given string as a code39 barcode
+// Encode returns a code39 barcode for the given content
 // if includeChecksum is set to true, a checksum character is calculated and added to the content
 func Encode(content string, includeChecksum bool, fullASCIIMode bool) (barcode.Barcode, error) {
 	if fullASCIIMode {
