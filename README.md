@@ -9,6 +9,7 @@ This is a package for GO which can be used to create different types of barcodes
 * EAN 13
 * Datamatrix
 * QR Codes
+* 2 of 5
 
 ##Documentation##
 See [GoDoc](https://godoc.org/github.com/boombuler/barcode)
