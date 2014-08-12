@@ -43,7 +43,11 @@ func getCodeIndexList(content []rune) *utils.BitList {
 
 		if shouldUseCTable(content[i:], curEncoding) {
 			if curEncoding != startCSymbol {
-				result.AddByte(startCSymbol)
+				if curEncoding == byte(0) {
+					result.AddByte(startCSymbol)
+				} else {
+					result.AddByte(codeCSymbol)
+				}
 				curEncoding = startCSymbol
 			}
 			idx := (content[i] - '0') * 10
@@ -53,24 +57,45 @@ func getCodeIndexList(content []rune) *utils.BitList {
 			result.AddByte(byte(idx))
 		} else {
 			if curEncoding != startBSymbol {
-				result.AddByte(startBSymbol)
+				if curEncoding == byte(0) {
+					result.AddByte(startBSymbol)
+				} else {
+					result.AddByte(codeBSymbol)
+				}
 				curEncoding = startBSymbol
 			}
-			idx := strings.IndexRune(bTable, content[i])
+			var idx int
+			switch content[i] {
+			case FNC1:
+				idx = 102
+				break
+			case FNC2:
+				idx = 97
+				break
+			case FNC3:
+				idx = 96
+				break
+			case FNC4:
+				idx = 100
+				break
+			default:
+				idx = strings.IndexRune(bTable, content[i])
+				break
+			}
+
 			if idx < 0 {
 				return nil
 			}
 			result.AddByte(byte(idx))
 		}
 	}
-	fmt.Println(result.GetBytes())
 	return result
 }
 
 // Encode creates a Code 128 barcode for the given content
 func Encode(content string) (barcode.Barcode, error) {
 	contentRunes := strToRunes(content)
-	if len(contentRunes) < 0 || len(contentRunes) > 80 {
+	if len(contentRunes) <= 0 || len(contentRunes) > 80 {
 		return nil, fmt.Errorf("content length should be between 1 and 80 runes but got %d", len(contentRunes))
 	}
 	idxList := getCodeIndexList(contentRunes)
