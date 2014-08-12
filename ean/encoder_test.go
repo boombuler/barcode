@@ -44,24 +44,3 @@ func Test_EncodeEAN(t *testing.T) {
 		t.Error("\"invalid error\" should not be encodable")
 	}
 }
-
-func Test_RuneToIntIntToRune(t *testing.T) {
-	if intToRune(0) != '0' {
-		t.Errorf("failed intToRune(0) returned %d", string(intToRune(0)))
-	}
-	if intToRune(9) != '9' {
-		t.Errorf("failed intToRune(9) returned %d", intToRune(9))
-	}
-	if intToRune(10) != 'F' {
-		t.Errorf("failed intToRune(10) returned %d", intToRune(10))
-	}
-	if runeToInt('0') != 0 {
-		t.Error("failed runeToInt('0') returned %d", runeToInt(0))
-	}
-	if runeToInt('9') != 9 {
-		t.Error("failed runeToInt('9') returned %d", runeToInt(9))
-	}
-	if runeToInt('F') != -1 {
-		t.Error("failed runeToInt('F') returned %d", runeToInt('F'))
-	}
-}

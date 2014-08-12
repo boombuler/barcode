@@ -78,25 +78,11 @@ var encoderTable = map[rune]encodedNumber{
 	},
 }
 
-func runeToInt(r rune) int {
-	if r >= '0' && r <= '9' {
-		return int(r - '0')
-	}
-	return -1
-}
-
-func intToRune(i int) rune {
-	if i >= 0 && i <= 9 {
-		return rune(i + '0')
-	}
-	return 'F'
-}
-
 func calcCheckNum(code string) rune {
 	x3 := len(code) == 7
 	sum := 0
 	for _, r := range code {
-		curNum := runeToInt(r)
+		curNum := utils.RuneToInt(r)
 		if curNum < 0 || curNum > 9 {
 			return 'B'
 		}
@@ -107,7 +93,7 @@ func calcCheckNum(code string) rune {
 		sum += curNum
 	}
 
-	return intToRune((10 - (sum % 10)) % 10)
+	return utils.IntToRune((10 - (sum % 10)) % 10)
 }
 
 func encodeEAN8(code string) *utils.BitList {
