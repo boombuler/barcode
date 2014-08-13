@@ -9,31 +9,45 @@ import (
 	"github.com/boombuler/barcode"
 )
 
-var qrHelloWorldHUni = []bool{true, true, true, true, true, true, true, false, true, false, true, false, true, false, false, false, true, false, true, true, true, true, true, true, true,
-	true, false, false, false, false, false, true, false, true, true, false, false, false, true, true, true, false, false, true, false, false, false, false, false, true,
-	true, false, true, true, true, false, true, false, true, false, true, false, true, true, false, true, true, false, true, false, true, true, true, false, true,
-	true, false, true, true, true, false, true, false, false, false, false, true, true, false, true, true, false, false, true, false, true, true, true, false, true,
-	true, false, true, true, true, false, true, false, false, true, false, false, false, true, true, false, true, false, true, false, true, true, true, false, true,
-	true, false, false, false, false, false, true, false, true, false, false, true, false, false, true, true, true, false, true, false, false, false, false, false, true,
-	true, true, true, true, true, true, true, false, true, false, true, false, true, false, true, false, true, false, true, true, true, true, true, true, true,
-	false, false, false, false, false, false, false, false, true, true, false, false, true, false, false, true, false, false, false, false, false, false, false, false, false,
-	false, false, true, true, true, false, true, false, true, true, true, false, true, false, true, true, true, true, true, true, false, false, true, true, true,
-	true, true, true, false, false, true, false, false, true, false, false, false, true, true, false, true, false, false, false, true, false, false, true, false, false,
-	true, false, false, false, true, false, true, true, true, true, false, false, false, false, true, true, false, true, false, false, true, true, false, true, true,
-	true, true, false, true, false, true, false, true, true, false, false, false, true, false, false, false, true, false, true, false, false, false, false, true, true,
-	false, false, true, false, false, true, true, true, false, true, false, true, true, true, true, true, false, true, true, true, true, true, true, true, true,
-	true, false, true, true, true, false, false, false, true, false, false, true, true, false, false, true, true, false, false, true, false, false, true, false, false,
-	true, false, false, false, false, false, true, false, false, true, false, true, false, false, false, false, false, true, true, true, true, true, false, true, true,
-	true, false, true, true, true, false, false, false, false, false, true, false, false, false, true, false, true, false, true, true, true, false, false, false, true,
-	true, false, true, false, false, true, true, true, false, false, false, true, true, false, true, false, true, true, true, true, true, true, true, false, false,
-	false, false, false, false, false, false, false, false, true, false, false, false, false, true, true, false, true, false, false, false, true, false, true, false, false,
-	true, true, true, true, true, true, true, false, false, false, false, false, false, true, true, true, true, false, true, false, true, false, true, true, true,
-	true, false, false, false, false, false, true, false, false, false, false, true, false, false, false, true, true, false, false, false, true, true, false, true, false,
-	true, false, true, true, true, false, true, false, true, false, true, false, false, false, true, true, true, true, true, true, true, true, true, false, false,
-	true, false, true, true, true, false, true, false, true, true, false, false, false, true, true, false, false, false, true, false, true, true, false, false, true,
-	true, false, true, true, true, false, true, false, true, true, false, true, true, true, true, true, false, false, true, true, false, true, false, false, true,
-	true, false, false, false, false, false, true, false, false, true, true, true, false, false, true, true, false, true, false, true, true, false, false, false, true,
-	true, true, true, true, true, true, true, false, false, false, false, true, false, false, true, false, true, false, false, true, false, false, true, true, true,
+type test struct {
+	Text   string
+	Mode   Encoding
+	ECL    ErrorCorrectionLevel
+	Result string
+}
+
+var tests = []test{
+	test{
+		Text: "hello world",
+		Mode: Unicode,
+		ECL:  H,
+		Result: `
++++++++.+.+.+...+.+++++++
++.....+.++...+++..+.....+
++.+++.+.+.+.++.++.+.+++.+
++.+++.+....++.++..+.+++.+
++.+++.+..+...++.+.+.+++.+
++.....+.+..+..+++.+.....+
++++++++.+.+.+.+.+.+++++++
+........++..+..+.........
+..+++.+.+++.+.++++++..+++
++++..+..+...++.+...+..+..
++...+.++++....++.+..++.++
+++.+.+.++...+...+.+....++
+..+..+++.+.+++++.++++++++
++.+++...+..++..++..+..+..
++.....+..+.+.....+++++.++
++.+++.....+...+.+.+++...+
++.+..+++...++.+.+++++++..
+........+....++.+...+.+..
++++++++......++++.+.+.+++
++.....+....+...++...++.+.
++.+++.+.+.+...+++++++++..
++.+++.+.++...++...+.++..+
++.+++.+.++.+++++..++.+..+
++.....+..+++..++.+.++...+
++++++++....+..+.+..+..+++`,
+	},
 }
 
 func Test_GetUnknownEncoder(t *testing.T) {
@@ -65,24 +79,39 @@ func Test_InvalidEncoding(t *testing.T) {
 	}
 }
 
+func imgStrToBools(str string) []bool {
+	res := make([]bool, 0, len(str))
+	for _, r := range str {
+		if r == '+' {
+			res = append(res, true)
+		} else if r == '.' {
+			res = append(res, false)
+		}
+	}
+	return res
+}
+
 func Test_Encode(t *testing.T) {
-	res, err := Encode("hello world", H, Unicode)
-	if err != nil {
-		t.Error(err)
-	}
-	qrCode, ok := res.(*qrcode)
-	if !ok {
-		t.Fail()
-	}
-	if (qrCode.dimension * qrCode.dimension) != len(qrHelloWorldHUni) {
-		t.Fail()
-	}
-	t.Logf("dim %d", qrCode.dimension)
-	for i := 0; i < len(qrHelloWorldHUni); i++ {
-		x := i % qrCode.dimension
-		y := i / qrCode.dimension
-		if qrCode.Get(x, y) != qrHelloWorldHUni[i] {
-			t.Errorf("Failed at index %d", i)
+	for _, tst := range tests {
+		res, err := Encode(tst.Text, tst.ECL, tst.Mode)
+		if err != nil {
+			t.Error(err)
+		}
+		qrCode, ok := res.(*qrcode)
+		if !ok {
+			t.Fail()
+		}
+		testRes := imgStrToBools(tst.Result)
+		if (qrCode.dimension * qrCode.dimension) != len(testRes) {
+			t.Fail()
+		}
+		t.Logf("dim %d", qrCode.dimension)
+		for i := 0; i < len(testRes); i++ {
+			x := i % qrCode.dimension
+			y := i / qrCode.dimension
+			if qrCode.Get(x, y) != testRes[i] {
+				t.Errorf("Failed at index %d", i)
+			}
 		}
 	}
 }
