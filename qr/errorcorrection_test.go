@@ -48,3 +48,12 @@ func Test_ErrorCorrection(t *testing.T) {
 	doTest(data2, []byte{171, 81, 216, 241, 210})
 	doTest(data2, []byte{12, 183, 205, 34, 73, 117, 36, 75, 237, 235})
 }
+
+func Test_Issue5(t *testing.T) {
+	data := []byte{66, 196, 148, 21, 99, 19, 151, 151, 53, 149, 54, 195, 4, 133, 87, 84, 115, 85, 22, 148, 52, 71, 102, 68, 134, 182, 247, 119, 22, 68, 117, 134, 35, 4, 134, 38, 21, 84, 21, 117, 87, 164, 135, 115, 211, 208, 236, 17, 236, 17, 236, 17, 236, 17, 236}
+	correct := []byte{187, 187, 171, 253, 164, 129, 104, 133, 3, 75, 87, 98, 241, 146, 138}
+	ecc := ec.calcECC(data, byte(len(correct)))
+	if bytes.Compare(ecc, correct) != 0 {
+		t.Errorf("ECC error!\nGot: %v\nExpected:%v", ecc, correct)
+	}
+}
