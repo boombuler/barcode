@@ -30,6 +30,10 @@ func NewGaloisField(pp int) *GaloisField {
 	return result
 }
 
+func (gf *GaloisField) Zero() *GFPoly {
+	return NewGFPoly(gf, []byte{0})
+}
+
 // AddOrSub add or substract two numbers
 func (gf *GaloisField) AddOrSub(a, b int) int {
 	return a ^ b
@@ -51,4 +55,8 @@ func (gf *GaloisField) Divide(a, b int) int {
 		return 0
 	}
 	return gf.ALogTbl[(gf.LogTbl[a]-gf.LogTbl[b])%255]
+}
+
+func (gf *GaloisField) Invers(num int) int {
+	return gf.ALogTbl[255-gf.LogTbl[num]]
 }
