@@ -10,8 +10,9 @@ import (
 
 type base1DCode struct {
 	*BitList
-	kind    string
-	content string
+	kind     string
+	content  string
+	checksum int
 }
 
 func (c *base1DCode) Content() string {
@@ -37,7 +38,11 @@ func (c *base1DCode) At(x, y int) color.Color {
 	return color.White
 }
 
+func (c *base1DCode) CheckSum() int {
+	return c.checksum
+}
+
 // New1DCode creates a new 1D barcode where the bars are represented by the bits in the bars BitList
-func New1DCode(codeKind, content string, bars *BitList) barcode.Barcode {
-	return &base1DCode{bars, codeKind, content}
+func New1DCode(codeKind, content string, bars *BitList, checksum int) barcode.Barcode {
+	return &base1DCode{bars, codeKind, content, checksum}
 }

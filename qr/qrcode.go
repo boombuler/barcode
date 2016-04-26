@@ -46,6 +46,10 @@ func (qr *qrcode) Set(x, y int, val bool) {
 	qr.data.SetBit(x*qr.dimension+y, val)
 }
 
+func (qr *qrcode) CheckSum() int {
+	return 0
+}
+
 func (qr *qrcode) calcPenalty() uint {
 	return qr.calcPenaltyRule1() + qr.calcPenaltyRule2() + qr.calcPenaltyRule3() + qr.calcPenaltyRule4()
 }
