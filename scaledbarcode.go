@@ -36,6 +36,10 @@ func (bc *scaledBarcode) At(x, y int) color.Color {
 	return bc.wrapperFunc(x, y)
 }
 
+func (bc *scaledBarcode) CheckSum() int {
+	return bc.wrapped.CheckSum()
+}
+
 // Scale returns a resized barcode with the given width and height.
 func Scale(bc Barcode, width, height int) (Barcode, error) {
 	switch bc.Metadata().Dimensions {

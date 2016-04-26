@@ -159,25 +159,28 @@ func encodeEAN13(code string) *utils.BitList {
 
 // Encode returns a EAN 8 or EAN 13 barcode for the given code
 func Encode(code string) (barcode.Barcode, error) {
+	var checkSum int
 	if len(code) == 7 || len(code) == 12 {
 		code += string(calcCheckNum(code))
+		checkSum = utils.RuneToInt(calcCheckNum(code))
 	} else if len(code) == 8 || len(code) == 13 {
 		check := code[0 : len(code)-1]
 		check += string(calcCheckNum(check))
 		if check != code {
 			return nil, errors.New("checksum missmatch")
 		}
+		checkSum = utils.RuneToInt(rune(code[len(code)-1]))
 	}
 
 	if len(code) == 8 {
 		result := encodeEAN8(code)
 		if result != nil {
-			return utils.New1DCode("EAN 8", code, result), nil
+			return utils.New1DCode("EAN 8", code, result, checkSum), nil
 		}
 	} else if len(code) == 13 {
 		result := encodeEAN13(code)
 		if result != nil {
-			return utils.New1DCode("EAN 13", code, result), nil
+			return utils.New1DCode("EAN 13", code, result, checkSum), nil
 		}
 	}
 	return nil, errors.New("invalid ean code data")

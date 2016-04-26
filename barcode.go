@@ -17,4 +17,5 @@ type Barcode interface {
 	Metadata() Metadata
 	// the data that was encoded in this barcode
 	Content() string
+	CheckSum() int
 }

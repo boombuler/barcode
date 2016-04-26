@@ -116,5 +116,5 @@ func Encode(content string) (barcode.Barcode, error) {
 	}
 	result.AddBit(encodingTable[sum%103]...)
 	result.AddBit(encodingTable[stopSymbol]...)
-	return utils.New1DCode("Code 128", content, result), nil
+	return utils.New1DCode("Code 128", content, result, sum%103), nil
 }
