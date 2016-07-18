@@ -54,7 +54,7 @@ func (ec *errorCorrection) calcECCBlock(data []byte, poly []int) []byte {
 }
 
 func (ec *errorCorrection) calcECC(data []byte, size *dmCodeSize) []byte {
-	buff := make([]byte, size.DataCodewordsPerBlock())
+
 	poly := ec.getPolynomial(size.ErrorCorrectionCodewordsPerBlock())
 
 	dataSize := len(data)
@@ -62,6 +62,9 @@ func (ec *errorCorrection) calcECC(data []byte, size *dmCodeSize) []byte {
 	data = append(data, make([]byte, size.ECCCount)...)
 
 	for block := 0; block < size.BlockCount; block++ {
+		dataCnt := size.DataCodewordsForBlock(block)
+
+		buff := make([]byte, dataCnt)
 		// copy the data for the current block to buff
 		j := 0
 		for i := block; i < dataSize; i += size.BlockCount {

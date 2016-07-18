@@ -29,7 +29,15 @@ func (s *dmCodeSize) DataCodewords() int {
 	return ((s.MatrixColumns() * s.MatrixRows()) / 8) - s.ECCCount
 }
 
-func (s *dmCodeSize) DataCodewordsPerBlock() int {
+func (s *dmCodeSize) DataCodewordsForBlock(idx int) int {
+	if s.Rows == 144 && s.Columns == 144 {
+		// Special Case...
+		if idx < 8 {
+			return 156
+		} else {
+			return 155
+		}
+	}
 	return s.DataCodewords() / s.BlockCount
 }
 
