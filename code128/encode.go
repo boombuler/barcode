@@ -29,6 +29,9 @@ func shouldUseCTable(nextRunes []rune, curEncoding byte) bool {
 		return false
 	}
 	for i := 0; i < requiredDigits; i++ {
+		if i%2 == 0 && nextRunes[i] == FNC1 {
+			continue
+		}
 		if nextRunes[i] < '0' || nextRunes[i] > '9' {
 			return false
 		}
@@ -40,7 +43,6 @@ func getCodeIndexList(content []rune) *utils.BitList {
 	result := new(utils.BitList)
 	curEncoding := byte(0)
 	for i := 0; i < len(content); i++ {
-
 		if shouldUseCTable(content[i:], curEncoding) {
 			if curEncoding != startCSymbol {
 				if curEncoding == byte(0) {
@@ -50,11 +52,15 @@ func getCodeIndexList(content []rune) *utils.BitList {
 				}
 				curEncoding = startCSymbol
 			}
-			idx := (content[i] - '0') * 10
-			i++
-			idx = idx + (content[i] - '0')
+			if content[i] == FNC1 {
+				result.AddByte(102)
+			} else {
 
-			result.AddByte(byte(idx))
+				idx := (content[i] - '0') * 10
+				i++
+				idx = idx + (content[i] - '0')
+				result.AddByte(byte(idx))
+			}
 		} else {
 			if curEncoding != startBSymbol {
 				if curEncoding == byte(0) {
