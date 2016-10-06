@@ -70,3 +70,21 @@ func Test_EncodeCTable(t *testing.T) {
 			"11101001100"+ // CheckSum == 24
 			"1100011101011") // Stop
 }
+
+func Test_shouldUseCTable(t *testing.T) {
+	if !shouldUseCTable([]rune{FNC1, '1', '2'}, startCSymbol) {
+		t.Error("[FNC1]12 failed")
+	}
+	if shouldUseCTable([]rune{FNC1, '1'}, startCSymbol) {
+		t.Error("[FNC1]1 failed")
+	}
+	if shouldUseCTable([]rune{'0', FNC1, '1'}, startCSymbol) {
+		t.Error("0[FNC1]1 failed")
+	}
+	if !shouldUseCTable([]rune{'0', '1', FNC1, '2', '3'}, startBSymbol) {
+		t.Error("01[FNC1]23 failed")
+	}
+	if shouldUseCTable([]rune{'0', '1', FNC1}, startBSymbol) {
+		t.Error("01[FNC1] failed")
+	}
+}

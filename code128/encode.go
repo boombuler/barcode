@@ -30,6 +30,10 @@ func shouldUseCTable(nextRunes []rune, curEncoding byte) bool {
 	}
 	for i := 0; i < requiredDigits; i++ {
 		if i%2 == 0 && nextRunes[i] == FNC1 {
+			requiredDigits++
+			if len(nextRunes) < requiredDigits {
+				return false
+			}
 			continue
 		}
 		if nextRunes[i] < '0' || nextRunes[i] > '9' {
