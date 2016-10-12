@@ -2,10 +2,13 @@ package qr
 
 import (
 	"github.com/boombuler/barcode/utils"
+	"sync"
 )
 
 type errorCorrection struct {
-	fld       *utils.GaloisField
+	fld *utils.GaloisField
+
+	m         *sync.Mutex
 	polynomes []*utils.GFPoly
 }
 
@@ -15,6 +18,7 @@ func newGF() *errorCorrection {
 	fld := utils.NewGaloisField(285)
 
 	return &errorCorrection{fld,
+		new(sync.Mutex),
 		[]*utils.GFPoly{
 			utils.NewGFPoly(fld, []byte{1}),
 		},
@@ -22,6 +26,9 @@ func newGF() *errorCorrection {
 }
 
 func (ec *errorCorrection) getPolynomial(degree int) *utils.GFPoly {
+	ec.m.Lock()
+	defer ec.m.Unlock()
+
 	if degree >= len(ec.polynomes) {
 		last := ec.polynomes[len(ec.polynomes)-1]
 		for d := len(ec.polynomes); d <= degree; d++ {
