@@ -5,19 +5,6 @@ import (
 	"testing"
 )
 
-func Test_LogTables(t *testing.T) {
-	for i := 1; i <= 255; i++ {
-		tmp := ec.fld.LogTbl[i]
-		if i != ec.fld.ALogTbl[tmp] {
-			t.Errorf("Invalid LogTables: %d", i)
-		}
-	}
-
-	if ec.fld.ALogTbl[11] != 232 || ec.fld.ALogTbl[87] != 127 || ec.fld.ALogTbl[225] != 36 {
-		t.Fail()
-	}
-}
-
 func Test_ErrorCorrection(t *testing.T) {
 	doTest := func(b []byte, ecc []byte) {
 		cnt := byte(len(ecc))

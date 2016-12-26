@@ -43,7 +43,7 @@ func Test_GF(t *testing.T) {
 		3, 6, 12, 24, 48, 96, 192, 173, 119, 238, 241, 207, 179, 75, 150, 1,
 	}
 
-	gf := NewGaloisField(301)
+	gf := NewGaloisField(301, 256, 1)
 	if len(gf.LogTbl) != len(gf.ALogTbl) || len(gf.LogTbl) != len(log) {
 		t.Fail()
 	}
