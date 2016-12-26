@@ -2,6 +2,7 @@
 This is a package for GO which can be used to create different types of barcodes.
 
 ##Supported Barcode Types##
+# Aztec Code
 * Codabar
 * Code 128
 * Code 39
