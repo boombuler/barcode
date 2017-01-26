@@ -42,10 +42,6 @@ func (c *aztecCode) At(x, y int) color.Color {
 	return color.White
 }
 
-func (c *aztecCode) CheckSum() int {
-	return 0
-}
-
 func (c *aztecCode) set(x, y int) {
 	c.SetBit(x*c.size+y, true)
 }

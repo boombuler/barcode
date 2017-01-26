@@ -17,5 +17,11 @@ type Barcode interface {
 	Metadata() Metadata
 	// the data that was encoded in this barcode
 	Content() string
+}
+
+// Additional interface that some barcodes might implement to provide
+// the value of its checksum.
+type BarcodeIntCS interface {
+	Barcode
 	CheckSum() int
 }

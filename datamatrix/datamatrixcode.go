@@ -40,10 +40,6 @@ func (c *datamatrixCode) At(x, y int) color.Color {
 	return color.White
 }
 
-func (c *datamatrixCode) CheckSum() int {
-	return 0
-}
-
 func (c *datamatrixCode) get(x, y int) bool {
 	return c.GetBit(x*c.Rows + y)
 }
