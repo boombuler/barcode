@@ -182,3 +182,22 @@ func Encode(content string) (barcode.BarcodeIntCS, error) {
 	result.AddBit(encodingTable[stopSymbol]...)
 	return utils.New1DCodeIntCheckSum("Code 128", content, result, sum), nil
 }
+
+func EncodeWithoutChecksum(content string) (barcode.Barcode, error) {
+	contentRunes := strToRunes(content)
+	if len(contentRunes) <= 0 || len(contentRunes) > 80 {
+		return nil, fmt.Errorf("content length should be between 1 and 80 runes but got %d", len(contentRunes))
+	}
+	idxList := getCodeIndexList(contentRunes)
+
+	if idxList == nil {
+		return nil, fmt.Errorf("\"%s\" could not be encoded", content)
+	}
+
+	result := new(utils.BitList)
+	for _, idx := range idxList.GetBytes() {
+		result.AddBit(encodingTable[idx]...)
+	}
+	result.AddBit(encodingTable[stopSymbol]...)
+	return utils.New1DCode("Code 128", content, result), nil
+}
