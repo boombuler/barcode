@@ -11,7 +11,7 @@ func testEncode(t *testing.T, txt, testResult string) {
 		t.Error(err)
 	} else {
 		if code.Bounds().Max.X != len(testResult) {
-			t.Errorf("%v: length missmatch", txt)
+			t.Errorf("%v: length missmatch. Got %d expected %d", txt, code.Bounds().Max.X, len(testResult))
 		} else {
 			encoded := ""
 			failed := false
@@ -87,4 +87,17 @@ func Test_shouldUseCTable(t *testing.T) {
 	if shouldUseCTable([]rune{'0', '1', FNC1}, startBSymbol) {
 		t.Error("01[FNC1] failed")
 	}
+}
+
+func Test_Issue16(t *testing.T) {
+	if !shouldUseATable([]rune{'\r', 'A'}, 0) {
+		t.Error("Code should start with A-Table if the text start with \\r")
+	}
+	if !shouldUseATable([]rune{FNC1, '\r'}, 0) {
+		t.Error("Code should start with A-Table if the text start with <FNC1>\\r")
+	}
+	if shouldUseATable([]rune{FNC1, '1', '2', '3'}, 0) {
+		t.Error("Code should not start with A-Table if the text start with <FNC1>123")
+	}
+	testEncode(t, string(FNC3)+"$P\rI", "110100001001011110001010010001100111011101101111011101011000100010110001010001100011101011")
 }

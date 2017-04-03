@@ -43,6 +43,29 @@ func shouldUseCTable(nextRunes []rune, curEncoding byte) bool {
 	return true
 }
 
+func tableContainsRune(table string, r rune) bool {
+	return strings.ContainsRune(table, r) || r == FNC1 || r == FNC2 || r == FNC3 || r == FNC4
+}
+
+func shouldUseATable(nextRunes []rune, curEncoding byte) bool {
+	nextRune := nextRunes[0]
+	if !tableContainsRune(bTable, nextRune) || curEncoding == startASymbol {
+		return tableContainsRune(aTable, nextRune)
+	}
+	if curEncoding == 0 {
+		for _, r := range nextRunes {
+			if tableContainsRune(abTable, r) {
+				continue
+			}
+			if strings.ContainsRune(aOnlyTable, r) {
+				return true
+			}
+			break
+		}
+	}
+	return false
+}
+
 func getCodeIndexList(content []rune) *utils.BitList {
 	result := new(utils.BitList)
 	curEncoding := byte(0)
@@ -59,12 +82,42 @@ func getCodeIndexList(content []rune) *utils.BitList {
 			if content[i] == FNC1 {
 				result.AddByte(102)
 			} else {
-
 				idx := (content[i] - '0') * 10
 				i++
 				idx = idx + (content[i] - '0')
 				result.AddByte(byte(idx))
 			}
+		} else if shouldUseATable(content[i:], curEncoding) {
+			if curEncoding != startASymbol {
+				if curEncoding == byte(0) {
+					result.AddByte(startASymbol)
+				} else {
+					result.AddByte(codeASymbol)
+				}
+				curEncoding = startASymbol
+			}
+			var idx int
+			switch content[i] {
+			case FNC1:
+				idx = 102
+				break
+			case FNC2:
+				idx = 97
+				break
+			case FNC3:
+				idx = 96
+				break
+			case FNC4:
+				idx = 101
+				break
+			default:
+				idx = strings.IndexRune(aTable, content[i])
+				break
+			}
+			if idx < 0 {
+				return nil
+			}
+			result.AddByte(byte(idx))
 		} else {
 			if curEncoding != startBSymbol {
 				if curEncoding == byte(0) {
