@@ -1,4 +1,4 @@
-// Package code39 can create Code39 barcodes
+// Package code93 can create Code93 barcodes
 package code93
 
 import (
