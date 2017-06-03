@@ -44,9 +44,46 @@ var encodeTable = map[rune]encodeInfo{
 	FNC3: encodeInfo{45, 0x1D6}, FNC4: encodeInfo{46, 0x132}, '*': encodeInfo{47, 0x15E},
 }
 
+var extendedTable = []string{
+	"\u00f2U", "\u00f1A", "\u00f1B", "\u00f1C", "\u00f1D", "\u00f1E", "\u00f1F", "\u00f1G",
+	"\u00f1H", "\u00f1I", "\u00f1J", "\u00f1K", "\u00f1L", "\u00f1M", "\u00f1N", "\u00f1O",
+	"\u00f1P", "\u00f1Q", "\u00f1R", "\u00f1S", "\u00f1T", "\u00f1U", "\u00f1V", "\u00f1W",
+	"\u00f1X", "\u00f1Y", "\u00f1Z", "\u00f2A", "\u00f2B", "\u00f2C", "\u00f2D", "\u00f2E",
+	" ", "\u00f3A", "\u00f3B", "\u00f3C", "\u00f3D", "\u00f3E", "\u00f3F", "\u00f3G",
+	"\u00f3H", "\u00f3I", "\u00f3J", "\u00f3K", "\u00f3L", "-", ".", "\u00f3O",
+	"0", "1", "2", "3", "4", "5", "6", "7",
+	"8", "9", "\u00f3Z", "\u00f2F", "\u00f2G", "\u00f2H", "\u00f2I", "\u00f2J",
+	"\u00f2V", "A", "B", "C", "D", "E", "F", "G",
+	"H", "I", "J", "K", "L", "M", "N", "O",
+	"P", "Q", "R", "S", "T", "U", "V", "W",
+	"X", "Y", "Z", "\u00f2K", "\u00f2L", "\u00f2M", "\u00f2N", "\u00f2O",
+	"\u00f2W", "\u00f4A", "\u00f4B", "\u00f4C", "\u00f4D", "\u00f4E", "\u00f4F", "\u00f4G",
+	"\u00f4H", "\u00f4I", "\u00f4J", "\u00f4K", "\u00f4L", "\u00f4M", "\u00f4N", "\u00f4O",
+	"\u00f4P", "\u00f4Q", "\u00f4R", "\u00f4S", "\u00f4T", "\u00f4U", "\u00f4V", "\u00f4W",
+	"\u00f4X", "\u00f4Y", "\u00f4Z", "\u00f2P", "\u00f2Q", "\u00f2R", "\u00f2S", "\u00f2T",
+}
+
+func prepare(content string) (string, error) {
+	result := ""
+	for _, r := range content {
+		if r > 127 {
+			return "", errors.New("Only ASCII strings can be encoded")
+		}
+		result += extendedTable[int(r)]
+	}
+	return result, nil
+}
+
 // Encode returns a code93 barcode for the given content
-func Encode(content string) (barcode.Barcode, error) {
-	if strings.ContainsRune(content, '*') {
+// if includeChecksum is set to true, two checksum characters are calculated and added to the content
+func Encode(content string, includeChecksum bool, fullASCIIMode bool) (barcode.Barcode, error) {
+	if fullASCIIMode {
+		var err error
+		content, err = prepare(content)
+		if err != nil {
+			return nil, err
+		}
+	} else if strings.ContainsRune(content, '*') {
 		return nil, errors.New("invalid data! content may not contain '*'")
 	}
 

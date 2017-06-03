@@ -6,7 +6,7 @@ import (
 )
 
 func doTest(t *testing.T, data, testResult string) {
-	code, err := Encode(data)
+	code, err := Encode(data, true, false)
 	if err != nil {
 		t.Error(err)
 	}
