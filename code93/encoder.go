@@ -68,20 +68,13 @@ func Encode(content string) (barcode.Barcode, error) {
 	return utils.New1DCode("Code 93", content, result), nil
 }
 
-func reverse(value string) string {
-	data := []rune(value)
-	result := []rune{}
-	for i := len(data) - 1; i >= 0; i-- {
-		result = append(result, data[i])
-	}
-	return string(result)
-}
-
 func getChecksum(content string, maxWeight int) rune {
 	weight := 1
 	total := 0
 
-	for _, r := range reverse(content) {
+	data := []rune(content)
+	for i := len(data) - 1; i >= 0; i-- {
+		r := data[i]
 		info, ok := encodeTable[r]
 		if !ok {
 			return ' '
