@@ -5,6 +5,7 @@ This is a package for GO which can be used to create different types of barcodes
 * Aztec Code
 * Codabar
 * Code 128
+* Code 93
 * Code 39
 * EAN 8
 * EAN 13
