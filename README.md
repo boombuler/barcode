@@ -2,16 +2,17 @@
 This is a package for GO which can be used to create different types of barcodes.
 
 ## Supported Barcode Types ##
+* 2 of 5
 * Aztec Code
 * Codabar
 * Code 128
-* Code 93
 * Code 39
-* EAN 8
-* EAN 13
+* Code 93
 * Datamatrix
-* QR Codes
-* 2 of 5
+* EAN 13
+* EAN 8
+* PDF 417
+* QR Code
 
 ## Example ##
 
