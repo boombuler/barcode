@@ -15,7 +15,7 @@ func compareIntSlice(t *testing.T, expected, actual []int, testStr string) {
 }
 
 func TestHighlevelEncode(t *testing.T) {
-	runTest := func(msg string, expected []int) {
+	runTest := func(msg string, expected ...int) {
 		if codes, err := highlevelEncode(msg); err != nil {
 			t.Error(err)
 		} else {
@@ -23,12 +23,19 @@ func TestHighlevelEncode(t *testing.T) {
 		}
 	}
 
-	runTest("01234", []int{902, 112, 434})
-	runTest("Super !", []int{567, 615, 137, 809, 329})
-	runTest("Super ", []int{567, 615, 137, 809})
-	runTest("ABC123", []int{1, 88, 32, 119})
-	runTest("123ABC", []int{841, 63, 840, 32})
+	runTest("01234", 902, 112, 434)
+	runTest("Super !", 567, 615, 137, 809, 329)
+	runTest("Super ", 567, 615, 137, 809)
+	runTest("ABC123", 1, 88, 32, 119)
+	runTest("123ABC", 841, 63, 840, 32)
+}
 
-	runTest("\x0B", []int{913, 11})
-	runTest("\x0B\x0B\x0B\x0B\x0B\x0B", []int{924, 18, 455, 694, 754, 291})
+func TestBinaryEncoder(t *testing.T) {
+	runTest := func(msg string, expected ...int) {
+		codes := encodeBinary([]byte(msg), encText)
+		compareIntSlice(t, expected, codes, msg)
+	}
+
+	runTest("alcool", 924, 163, 238, 432, 766, 244)
+	runTest("alcoolique", 901, 163, 238, 432, 766, 244, 105, 113, 117, 101)
 }
