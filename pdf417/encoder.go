@@ -21,7 +21,6 @@ func Encode(data string, securityLevel byte) (barcode.Barcode, error) {
 
 	sl := securitylevel(securityLevel)
 
-	//dataEncoder := newDataEncoder()
 	dataWords, err := highlevelEncode(data)
 	if err != nil {
 		return nil, err
