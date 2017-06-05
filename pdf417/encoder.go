@@ -12,7 +12,8 @@ const (
 )
 
 // Encodes the given data as PDF417 barcode.
-// securityLevel can be any value below 9
+// securityLevel should be between 0 and 8. The higher the number, the more
+// additional error-correction codes are added.
 func Encode(data string, securityLevel byte) (barcode.Barcode, error) {
 	if securityLevel >= 9 {
 		return nil, fmt.Errorf("Invalid security level %d", securityLevel)
