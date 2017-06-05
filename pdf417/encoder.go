@@ -1,3 +1,4 @@
+// Package pdf417 can create PDF-417 barcodes
 package pdf417
 
 import (
