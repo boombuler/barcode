@@ -1,3 +1,4 @@
+// Package aztec can create Aztec Code barcodes
 package aztec
 
 import (
