@@ -148,5 +148,5 @@ func Encode(content string, includeChecksum bool, fullASCIIMode bool) (barcode.B
 	if err != nil {
 		checkSum = 0
 	}
-	return utils.New1DCodeIntCheckSum("Code 39", content, result, int(checkSum)), nil
+	return utils.New1DCodeIntCheckSum(barcode.TypeCode39, content, result, int(checkSum)), nil
 }

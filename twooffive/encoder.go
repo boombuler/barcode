@@ -130,9 +130,9 @@ func Encode(content string, interleaved bool) (barcode.Barcode, error) {
 
 	resBits.AddBit(mode.end...)
 
-	kindTxt := ""
 	if interleaved {
-		kindTxt = " (interleaved)"
+		return utils.New1DCode(barcode.Type2of5Interleaved, content, resBits), nil
+	} else {
+		return utils.New1DCode(barcode.Type2of5, content, resBits), nil
 	}
-	return utils.New1DCode("2 of 5"+kindTxt, content, resBits), nil
 }

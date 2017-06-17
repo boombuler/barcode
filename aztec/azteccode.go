@@ -24,7 +24,7 @@ func (c *aztecCode) Content() string {
 }
 
 func (c *aztecCode) Metadata() barcode.Metadata {
-	return barcode.Metadata{"Aztec", 2}
+	return barcode.Metadata{barcode.TypeAztec, 2}
 }
 
 func (c *aztecCode) ColorModel() color.Model {

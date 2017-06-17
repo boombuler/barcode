@@ -180,7 +180,7 @@ func Encode(content string) (barcode.BarcodeIntCS, error) {
 	sum = sum % 103
 	result.AddBit(encodingTable[sum]...)
 	result.AddBit(encodingTable[stopSymbol]...)
-	return utils.New1DCodeIntCheckSum("Code 128", content, result, sum), nil
+	return utils.New1DCodeIntCheckSum(barcode.TypeCode128, content, result, sum), nil
 }
 
 func EncodeWithoutChecksum(content string) (barcode.Barcode, error) {
@@ -199,5 +199,5 @@ func EncodeWithoutChecksum(content string) (barcode.Barcode, error) {
 		result.AddBit(encodingTable[idx]...)
 	}
 	result.AddBit(encodingTable[stopSymbol]...)
-	return utils.New1DCode("Code 128", content, result), nil
+	return utils.New1DCode(barcode.TypeCode128, content, result), nil
 }

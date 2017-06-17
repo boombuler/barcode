@@ -102,7 +102,7 @@ func Encode(content string, includeChecksum bool, fullASCIIMode bool) (barcode.B
 	}
 	result.AddBit(true)
 
-	return utils.New1DCode("Code 93", content, result), nil
+	return utils.New1DCode(barcode.TypeCode93, content, result), nil
 }
 
 func getChecksum(content string, maxWeight int) rune {
