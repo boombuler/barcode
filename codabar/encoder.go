@@ -45,5 +45,5 @@ func Encode(content string) (barcode.Barcode, error) {
 		}
 		resBits.AddBit(encodingTable[r]...)
 	}
-	return utils.New1DCode("Codabar", content, resBits, 0), nil
+	return utils.New1DCode(barcode.TypeCodabar, content, resBits), nil
 }

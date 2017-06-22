@@ -76,7 +76,7 @@ func (bl *BitList) AddByte(b byte) {
 
 // AddBits appends the last (LSB) 'count' bits of 'b' the the end of the list
 func (bl *BitList) AddBits(b int, count byte) {
-	for i := int(count - 1); i >= 0; i-- {
+	for i := int(count) - 1; i >= 0; i-- {
 		bl.AddBit(((b >> uint(i)) & 1) == 1)
 	}
 }

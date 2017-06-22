@@ -1,10 +1,11 @@
 package datamatrix
 
 import (
-	"github.com/boombuler/barcode"
-	"github.com/boombuler/barcode/utils"
 	"image"
 	"image/color"
+
+	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/utils"
 )
 
 type datamatrixCode struct {
@@ -22,7 +23,7 @@ func (c *datamatrixCode) Content() string {
 }
 
 func (c *datamatrixCode) Metadata() barcode.Metadata {
-	return barcode.Metadata{"DataMatrix", 2}
+	return barcode.Metadata{barcode.TypeDataMatrix, 2}
 }
 
 func (c *datamatrixCode) ColorModel() color.Model {
@@ -38,10 +39,6 @@ func (c *datamatrixCode) At(x, y int) color.Color {
 		return color.Black
 	}
 	return color.White
-}
-
-func (c *datamatrixCode) CheckSum() int {
-	return 0
 }
 
 func (c *datamatrixCode) get(x, y int) bool {

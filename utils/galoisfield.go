@@ -2,28 +2,31 @@ package utils
 
 // GaloisField encapsulates galois field arithmetics
 type GaloisField struct {
+	Size    int
+	Base    int
 	ALogTbl []int
 	LogTbl  []int
 }
 
-// NewGaloisField creates a new falois field
-func NewGaloisField(pp int) *GaloisField {
+// NewGaloisField creates a new galois field
+func NewGaloisField(pp, fieldSize, b int) *GaloisField {
 	result := new(GaloisField)
-	fldSize := 256
 
-	result.ALogTbl = make([]int, fldSize)
-	result.LogTbl = make([]int, fldSize)
+	result.Size = fieldSize
+	result.Base = b
+	result.ALogTbl = make([]int, fieldSize)
+	result.LogTbl = make([]int, fieldSize)
 
 	x := 1
-	for i := 0; i < fldSize; i++ {
+	for i := 0; i < fieldSize; i++ {
 		result.ALogTbl[i] = x
 		x = x * 2
-		if x >= fldSize {
-			x = (x ^ pp) & (fldSize - 1)
+		if x >= fieldSize {
+			x = (x ^ pp) & (fieldSize - 1)
 		}
 	}
 
-	for i := 0; i < fldSize; i++ {
+	for i := 0; i < fieldSize; i++ {
 		result.LogTbl[result.ALogTbl[i]] = int(i)
 	}
 
@@ -31,7 +34,7 @@ func NewGaloisField(pp int) *GaloisField {
 }
 
 func (gf *GaloisField) Zero() *GFPoly {
-	return NewGFPoly(gf, []byte{0})
+	return NewGFPoly(gf, []int{0})
 }
 
 // AddOrSub add or substract two numbers
@@ -44,7 +47,7 @@ func (gf *GaloisField) Multiply(a, b int) int {
 	if a == 0 || b == 0 {
 		return 0
 	}
-	return gf.ALogTbl[(gf.LogTbl[a]+gf.LogTbl[b])%255]
+	return gf.ALogTbl[(gf.LogTbl[a]+gf.LogTbl[b])%(gf.Size-1)]
 }
 
 // Divide divides two numbers
@@ -54,9 +57,9 @@ func (gf *GaloisField) Divide(a, b int) int {
 	} else if a == 0 {
 		return 0
 	}
-	return gf.ALogTbl[(gf.LogTbl[a]-gf.LogTbl[b])%255]
+	return gf.ALogTbl[(gf.LogTbl[a]-gf.LogTbl[b])%(gf.Size-1)]
 }
 
 func (gf *GaloisField) Invers(num int) int {
-	return gf.ALogTbl[255-gf.LogTbl[num]]
+	return gf.ALogTbl[(gf.Size-1)-gf.LogTbl[num]]
 }
