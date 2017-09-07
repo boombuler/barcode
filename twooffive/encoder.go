@@ -45,7 +45,7 @@ var (
 			start: []bool{true, false, true, false},
 			end:   []bool{true, true, false, true},
 			widths: map[bool]int{
-				true:  2,
+				true:  3,
 				false: 1,
 			},
 		},
