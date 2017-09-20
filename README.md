@@ -1,4 +1,6 @@
 ## Introduction ##
+
+[![Join the chat at https://gitter.im/golang-barcode/Lobby](https://badges.gitter.im/golang-barcode/Lobby.svg)](https://gitter.im/golang-barcode/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 This is a package for GO which can be used to create different types of barcodes.
 
 ## Supported Barcode Types ##
