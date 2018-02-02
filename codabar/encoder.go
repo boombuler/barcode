@@ -27,7 +27,7 @@ var encodingTable = map[rune][]bool{
 	'.': []bool{true, true, false, true, true, false, true, true, false, true},
 	'+': []bool{true, false, true, true, false, false, true, true, false, false, true, true},
 	'A': []bool{true, false, true, true, false, false, true, false, false, true},
-	'B': []bool{true, false, true, false, false, true, false, false, true, true},
+	'B': []bool{true, false, false, true, false, false, true, false, true, true},
 	'C': []bool{true, false, false, true, false, false, true, false, true, true},
 	'D': []bool{true, false, true, false, false, true, true, false, false, true},
 }
