@@ -150,3 +150,37 @@ func Encode(content string, includeChecksum bool, fullASCIIMode bool) (barcode.B
 	}
 	return utils.New1DCodeIntCheckSum(barcode.TypeCode39, content, result, int(checkSum)), nil
 }
+
+// Encode returns a code39 barcode for the given content and made sure returned value is scalable
+func EncodeWithoutChecksum(content string, fullASCIIMode bool) (barcode.Barcode, error) {
+
+	if fullASCIIMode {
+		var err error
+		content, err = prepare(content)
+		if err != nil {
+			return nil, err
+		}
+	} else if strings.ContainsRune(content, '*') {
+		return nil, errors.New("invalid data! try full ascii mode")
+	}
+
+	data := "*" + content + "*"
+
+	result := new(utils.BitList)
+
+	for i, r := range data {
+		if i != 0 {
+			result.AddBit(false)
+		}
+
+		info, ok := encodeTable[r]
+		if !ok {
+			return nil, errors.New("invalid data! try full ascii mode")
+		}
+		result.AddBit(info.data...)
+	}
+
+	return utils.New1DCode(barcode.TypeCode39, content, result), nil
+}
+
+
