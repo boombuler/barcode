@@ -38,12 +38,15 @@ func main() {
 	// Scale the barcode to 200x200 pixels
 	qrCode, _ = barcode.Scale(qrCode, 200, 200)
 
+	// Optional: Add text to the bottom of the code
+	img := barcode.WithSubtitle(qrCode)
+
 	// create the output file
 	file, _ := os.Create("qrcode.png")
 	defer file.Close()
 
 	// encode the barcode as png
-	png.Encode(file, qrCode)
+	png.Encode(file, img)
 }
 ```
 
