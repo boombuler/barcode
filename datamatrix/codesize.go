@@ -10,19 +10,19 @@ type dmCodeSize struct {
 }
 
 func (s *dmCodeSize) RegionRows() int {
-	return (s.Rows - (s.RegionCountHorizontal * 2)) / s.RegionCountHorizontal
+	return (s.Rows - (s.RegionCountVertical * 2)) / s.RegionCountVertical
 }
 
 func (s *dmCodeSize) RegionColumns() int {
-	return (s.Columns - (s.RegionCountVertical * 2)) / s.RegionCountVertical
+	return (s.Columns - (s.RegionCountHorizontal * 2)) / s.RegionCountHorizontal
 }
 
 func (s *dmCodeSize) MatrixRows() int {
-	return s.RegionRows() * s.RegionCountHorizontal
+	return s.RegionRows() * s.RegionCountVertical
 }
 
 func (s *dmCodeSize) MatrixColumns() int {
-	return s.RegionColumns() * s.RegionCountVertical
+	return s.RegionColumns() * s.RegionCountHorizontal
 }
 
 func (s *dmCodeSize) DataCodewords() int {
