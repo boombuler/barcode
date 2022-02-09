@@ -69,7 +69,12 @@ func addPadding(data []byte, toCount int) []byte {
 	}
 	for len(data) < toCount {
 		R := ((149 * (len(data) + 1)) % 253) + 1
-		data = append(data, byte((129+R)%254))
+		tmp := 129 + R;
+		if (tmp > 254) {
+			tmp = tmp - 254
+		}
+		   
+		data = append(data, byte(tmp))
 	}
 	return data
 }
