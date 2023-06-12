@@ -43,7 +43,7 @@ var (
 		},
 		true: encodeInfo{ // interleaved
 			start: []bool{true, false, true, false},
-			end:   []bool{true, true, false, true},
+			end:   []bool{true, true, true, false, true},
 			widths: map[bool]int{
 				true:  3,
 				false: 1,
