@@ -88,7 +88,9 @@ func Encode(content string, includeChecksum bool, fullASCIIMode bool) (barcode.B
 	}
 
 	data := content + string(getChecksum(content, 20))
-	data += string(getChecksum(data, 15))
+	if includeChecksum {
+		data += string(getChecksum(data, 15))
+	}
 
 	data = "*" + data + "*"
 	result := new(utils.BitList)
