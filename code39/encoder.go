@@ -113,7 +113,7 @@ func prepare(content string) (string, error) {
 
 // Encode returns a code39 barcode for the given content
 // if includeChecksum is set to true, a checksum character is calculated and added to the content
-func Encode(content string, includeChecksum bool, fullASCIIMode bool) (barcode.BarcodeIntCS, error) {
+func EncodeWithDepth(content string, includeChecksum bool, fullASCIIMode bool, depth int) (barcode.BarcodeIntCS, error) {
 	if fullASCIIMode {
 		var err error
 		content, err = prepare(content)
@@ -148,5 +148,11 @@ func Encode(content string, includeChecksum bool, fullASCIIMode bool) (barcode.B
 	if err != nil {
 		checkSum = 0
 	}
-	return utils.New1DCodeIntCheckSum(barcode.TypeCode39, content, result, int(checkSum)), nil
+	return utils.New1DCodeIntCheckSumWithDepth(barcode.TypeCode39, content, result, int(checkSum), depth), nil
+}
+
+// Encode returns a code39 barcode for the given content
+// if includeChecksum is set to true, a checksum character is calculated and added to the content
+func Encode(content string, includeChecksum bool, fullASCIIMode bool) (barcode.BarcodeIntCS, error) {
+	return EncodeWithDepth(content, includeChecksum, fullASCIIMode, 16)
 }

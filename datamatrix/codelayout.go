@@ -11,13 +11,15 @@ type codeLayout struct {
 	matrix *utils.BitList
 	occupy *utils.BitList
 	size   *dmCodeSize
+	depth int
 }
 
-func newCodeLayout(size *dmCodeSize) *codeLayout {
+func newCodeLayout(size *dmCodeSize, depth int) *codeLayout {
 	result := new(codeLayout)
 	result.matrix = utils.NewBitList(size.MatrixColumns() * size.MatrixRows())
 	result.occupy = utils.NewBitList(size.MatrixColumns() * size.MatrixRows())
 	result.size = size
+	result.depth = depth
 	return result
 }
 
@@ -159,7 +161,7 @@ func (l *codeLayout) SetValues(data []byte) {
 }
 
 func (l *codeLayout) Merge() *datamatrixCode {
-	result := newDataMatrixCode(l.size)
+	result := newDataMatrixCodeWithDepth(l.size, l.depth)
 
 	//dotted horizontal lines
 	for r := 0; r < l.size.Rows; r += (l.size.RegionRows() + 2) {

@@ -156,7 +156,7 @@ func getCodeIndexList(content []rune) *utils.BitList {
 }
 
 // Encode creates a Code 128 barcode for the given content
-func Encode(content string) (barcode.BarcodeIntCS, error) {
+func EncodeWithDepth(content string, depth int) (barcode.BarcodeIntCS, error) {
 	contentRunes := strToRunes(content)
 	if len(contentRunes) <= 0 || len(contentRunes) > 80 {
 		return nil, fmt.Errorf("content length should be between 1 and 80 runes but got %d", len(contentRunes))
@@ -180,7 +180,12 @@ func Encode(content string) (barcode.BarcodeIntCS, error) {
 	sum = sum % 103
 	result.AddBit(encodingTable[sum]...)
 	result.AddBit(encodingTable[stopSymbol]...)
-	return utils.New1DCodeIntCheckSum(barcode.TypeCode128, content, result, sum), nil
+	return utils.New1DCodeIntCheckSumWithDepth(barcode.TypeCode128, content, result, sum, depth), nil
+}
+
+// Encode creates a Code 128 barcode for the given content
+func Encode(content string) (barcode.BarcodeIntCS, error) {
+	return EncodeWithDepth(content, 16)
 }
 
 func EncodeWithoutChecksum(content string) (barcode.Barcode, error) {

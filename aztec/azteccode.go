@@ -13,10 +13,11 @@ type aztecCode struct {
 	*utils.BitList
 	size    int
 	content []byte
+	depth int
 }
 
-func newAztecCode(size int) *aztecCode {
-	return &aztecCode{utils.NewBitList(size * size), size, nil}
+func newAztecCode(size int, depth int) *aztecCode {
+	return &aztecCode{utils.NewBitList(size * size), size, nil, 16}
 }
 
 func (c *aztecCode) Content() string {
@@ -28,7 +29,7 @@ func (c *aztecCode) Metadata() barcode.Metadata {
 }
 
 func (c *aztecCode) ColorModel() color.Model {
-	return color.Gray16Model
+	return utils.ColorModel(c.depth)
 }
 
 func (c *aztecCode) Bounds() image.Rectangle {
@@ -37,9 +38,9 @@ func (c *aztecCode) Bounds() image.Rectangle {
 
 func (c *aztecCode) At(x, y int) color.Color {
 	if c.GetBit(x*c.size + y) {
-		return color.Black
+		return utils.BlackColor(c.depth)
 	}
-	return color.White
+	return utils.WhiteColor(c.depth)
 }
 
 func (c *aztecCode) set(x, y int) {

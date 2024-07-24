@@ -123,7 +123,12 @@ func drawBullsEye(matrix *aztecCode, center, size int) {
 }
 
 // Encode returns an aztec barcode with the given content
-func Encode(data []byte, minECCPercent int, userSpecifiedLayers int) (barcode.Barcode, error) {
+func Encode(data []byte, minECCPercent int, userSpecifiedLayers int) (barcode.Barcode, error){
+	return EncodeWithDepth(data, minECCPercent, userSpecifiedLayers, 16)
+}
+
+// Encode returns an aztec barcode with the given content
+func EncodeWithDepth(data []byte, minECCPercent int, userSpecifiedLayers int, depth int) (barcode.Barcode, error) {
 	bits := highlevelEncode(data)
 	eccBits := ((bits.Len() * minECCPercent) / 100) + 11
 	totalSizeBits := bits.Len() + eccBits
@@ -215,7 +220,7 @@ func Encode(data []byte, minECCPercent int, userSpecifiedLayers int) (barcode.Ba
 			alignmentMap[origCenter+i] = center + newOffset + 1
 		}
 	}
-	code := newAztecCode(matrixSize)
+	code := newAztecCode(matrixSize, depth)
 	code.content = data
 
 	// draw data bits

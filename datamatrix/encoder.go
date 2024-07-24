@@ -8,7 +8,7 @@ import (
 )
 
 // Encode returns a Datamatrix barcode for the given content
-func Encode(content string) (barcode.Barcode, error) {
+func EncodeWithDepth(content string, depth int) (barcode.Barcode, error) {
 	data := encodeText(content)
 
 	var size *dmCodeSize
@@ -23,7 +23,7 @@ func Encode(content string) (barcode.Barcode, error) {
 	}
 	data = addPadding(data, size.DataCodewords())
 	data = ec.calcECC(data, size)
-	code := render(data, size)
+	code := render(data, size, depth)
 	if code != nil {
 		code.content = content
 		return code, nil
@@ -31,8 +31,13 @@ func Encode(content string) (barcode.Barcode, error) {
 	return nil, errors.New("unable to render barcode")
 }
 
-func render(data []byte, size *dmCodeSize) *datamatrixCode {
-	cl := newCodeLayout(size)
+// Encode returns a Datamatrix barcode for the given content
+func Encode(content string) (barcode.Barcode, error) {
+	return EncodeWithDepth(content, 16)
+}
+
+func render(data []byte, size *dmCodeSize, depth int) *datamatrixCode {
+	cl := newCodeLayout(size, depth)
 
 	cl.SetValues(data)
 

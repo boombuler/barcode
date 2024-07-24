@@ -13,6 +13,7 @@ type qrcode struct {
 	dimension int
 	data      *utils.BitList
 	content   string
+	depth     int
 }
 
 func (qr *qrcode) Content() string {
@@ -24,7 +25,7 @@ func (qr *qrcode) Metadata() barcode.Metadata {
 }
 
 func (qr *qrcode) ColorModel() color.Model {
-	return color.Gray16Model
+	return utils.ColorModel(qr.depth)
 }
 
 func (qr *qrcode) Bounds() image.Rectangle {
@@ -33,9 +34,9 @@ func (qr *qrcode) Bounds() image.Rectangle {
 
 func (qr *qrcode) At(x, y int) color.Color {
 	if qr.Get(x, y) {
-		return color.Black
+		return utils.BlackColor(qr.depth)
 	}
-	return color.White
+	return utils.WhiteColor(qr.depth)
 }
 
 func (qr *qrcode) Get(x, y int) bool {
@@ -158,9 +159,14 @@ func (qr *qrcode) calcPenaltyRule4() uint {
 	return uint(math.Min(floor, ceil) * 10)
 }
 
-func newBarcode(dim int) *qrcode {
+func newBarCodeWithDepth(dim int, depth int) *qrcode {
 	res := new(qrcode)
 	res.dimension = dim
 	res.data = utils.NewBitList(dim * dim)
+	res.depth = depth
 	return res
+}
+
+func newBarcode(dim int) *qrcode {
+	return newBarCodeWithDepth(dim, 16)
 }

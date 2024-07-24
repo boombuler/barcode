@@ -55,7 +55,7 @@ func (e Encoding) String() string {
 }
 
 // Encode returns a QR barcode with the given content, error correction level and uses the given encoding
-func Encode(content string, level ErrorCorrectionLevel, mode Encoding) (barcode.Barcode, error) {
+func EncodeWithDepth(content string, level ErrorCorrectionLevel, mode Encoding, depth int) (barcode.Barcode, error) {
 	bits, vi, err := mode.getEncoder()(content, level)
 	if err != nil {
 		return nil, err
@@ -63,19 +63,23 @@ func Encode(content string, level ErrorCorrectionLevel, mode Encoding) (barcode.
 
 	blocks := splitToBlocks(bits.IterateBytes(), vi)
 	data := blocks.interleave(vi)
-	result := render(data, vi)
+	result := render(data, vi, depth)
 	result.content = content
 	return result, nil
 }
 
-func render(data []byte, vi *versionInfo) *qrcode {
+func Encode(content string, level ErrorCorrectionLevel, mode Encoding) (barcode.Barcode, error) {
+	return EncodeWithDepth(content, level, mode, 16)
+}
+
+func render(data []byte, vi *versionInfo, depth int) *qrcode {
 	dim := vi.modulWidth()
 	results := make([]*qrcode, 8)
 	for i := 0; i < 8; i++ {
-		results[i] = newBarcode(dim)
+		results[i] = newBarCodeWithDepth(dim, depth)
 	}
 
-	occupied := newBarcode(dim)
+	occupied := newBarCodeWithDepth(dim, depth)
 
 	setAll := func(x int, y int, val bool) {
 		occupied.Set(x, y, true)

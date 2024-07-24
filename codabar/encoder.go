@@ -33,7 +33,7 @@ var encodingTable = map[rune][]bool{
 }
 
 // Encode creates a codabar barcode for the given content
-func Encode(content string) (barcode.Barcode, error) {
+func EncodeWithDepth(content string, depth int) (barcode.Barcode, error) {
 	checkValid, _ := regexp.Compile(`[ABCD][0123456789\-\$\:/\.\+]*[ABCD]$`)
 	if content == "!" || checkValid.ReplaceAllString(content, "!") != "!" {
 		return nil, fmt.Errorf("can not encode \"%s\"", content)
@@ -45,5 +45,10 @@ func Encode(content string) (barcode.Barcode, error) {
 		}
 		resBits.AddBit(encodingTable[r]...)
 	}
-	return utils.New1DCode(barcode.TypeCodabar, content, resBits), nil
+	return utils.New1DCodeWithDepth(barcode.TypeCodabar, content, resBits, depth), nil
+}
+
+// Encode creates a codabar barcode for the given content
+func Encode(content string) (barcode.Barcode, error) {
+	return EncodeWithDepth(content, 16)
 }
