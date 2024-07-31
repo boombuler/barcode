@@ -78,8 +78,8 @@ func AddCheckSum(content string) (string, error) {
 	return content + string(utils.IntToRune(sum%10)), nil
 }
 
-// Encode creates a codabar barcode for the given content and depth
-func EncodeWithDepth(content string, interleaved bool, depth int) (barcode.Barcode, error) {
+// Encode creates a codabar barcode for the given content and color scheme
+func EncodeWithColor(content string, interleaved bool, color barcode.ColorScheme) (barcode.Barcode, error) {
 	if content == "" {
 		return nil, errors.New("content is empty")
 	}
@@ -131,13 +131,13 @@ func EncodeWithDepth(content string, interleaved bool, depth int) (barcode.Barco
 	resBits.AddBit(mode.end...)
 
 	if interleaved {
-		return utils.New1DCodeWithDepth(barcode.Type2of5Interleaved, content, resBits, depth), nil
+		return utils.New1DCodeWithColor(barcode.Type2of5Interleaved, content, resBits, color), nil
 	} else {
-		return utils.New1DCodeWithDepth(barcode.Type2of5, content, resBits, depth), nil
+		return utils.New1DCodeWithColor(barcode.Type2of5, content, resBits, color), nil
 	}
 }
 
 // Encode creates a codabar barcode for the given content
 func Encode(content string, interleaved bool) (barcode.Barcode, error) {
-	return EncodeWithDepth(content, interleaved, 16)
+	return EncodeWithColor(content, interleaved, barcode.ColorScheme16)
 }

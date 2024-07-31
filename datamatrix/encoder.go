@@ -8,7 +8,7 @@ import (
 )
 
 // Encode returns a Datamatrix barcode for the given content
-func EncodeWithDepth(content string, depth int) (barcode.Barcode, error) {
+func EncodeWithColor(content string, color barcode.ColorScheme) (barcode.Barcode, error) {
 	data := encodeText(content)
 
 	var size *dmCodeSize
@@ -23,7 +23,7 @@ func EncodeWithDepth(content string, depth int) (barcode.Barcode, error) {
 	}
 	data = addPadding(data, size.DataCodewords())
 	data = ec.calcECC(data, size)
-	code := render(data, size, depth)
+	code := render(data, size, color)
 	if code != nil {
 		code.content = content
 		return code, nil
@@ -33,11 +33,11 @@ func EncodeWithDepth(content string, depth int) (barcode.Barcode, error) {
 
 // Encode returns a Datamatrix barcode for the given content
 func Encode(content string) (barcode.Barcode, error) {
-	return EncodeWithDepth(content, 16)
+	return EncodeWithColor(content, barcode.ColorScheme16)
 }
 
-func render(data []byte, size *dmCodeSize, depth int) *datamatrixCode {
-	cl := newCodeLayout(size, depth)
+func render(data []byte, size *dmCodeSize, color barcode.ColorScheme) *datamatrixCode {
+	cl := newCodeLayout(size, color)
 
 	cl.SetValues(data)
 
@@ -74,11 +74,11 @@ func addPadding(data []byte, toCount int) []byte {
 	}
 	for len(data) < toCount {
 		R := ((149 * (len(data) + 1)) % 253) + 1
-		tmp := 129 + R;
-		if (tmp > 254) {
+		tmp := 129 + R
+		if tmp > 254 {
 			tmp = tmp - 254
 		}
-		   
+
 		data = append(data, byte(tmp))
 	}
 	return data

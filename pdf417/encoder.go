@@ -15,7 +15,7 @@ const (
 // Encodes the given data as PDF417 barcode.
 // securityLevel should be between 0 and 8. The higher the number, the more
 // additional error-correction codes are added.
-func EncodeWithDepth(data string, securityLevel byte, depth int) (barcode.Barcode, error) {
+func EncodeWithColor(data string, securityLevel byte, color barcode.ColorScheme) (barcode.Barcode, error) {
 	if securityLevel >= 9 {
 		return nil, fmt.Errorf("Invalid security level %d", securityLevel)
 	}
@@ -34,7 +34,7 @@ func EncodeWithDepth(data string, securityLevel byte, depth int) (barcode.Barcod
 
 	barcode := new(pdfBarcode)
 	barcode.data = data
-	barcode.depth = depth
+	barcode.color = color
 
 	codeWords, err := encodeData(dataWords, columns, sl)
 	if err != nil {
@@ -75,7 +75,7 @@ func EncodeWithDepth(data string, securityLevel byte, depth int) (barcode.Barcod
 // securityLevel should be between 0 and 8. The higher the number, the more
 // additional error-correction codes are added.
 func Encode(data string, securityLevel byte) (barcode.Barcode, error) {
-	return EncodeWithDepth(data, securityLevel, 16)
+	return EncodeWithColor(data, securityLevel, barcode.ColorScheme16)
 }
 
 func encodeData(dataWords []int, columns int, sl securitylevel) ([]int, error) {

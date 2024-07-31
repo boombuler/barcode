@@ -12,7 +12,7 @@ type base1DCode struct {
 	*BitList
 	kind    string
 	content string
-	depth   int
+	color   barcode.ColorScheme
 }
 
 type base1DCodeIntCS struct {
@@ -29,7 +29,7 @@ func (c *base1DCode) Metadata() barcode.Metadata {
 }
 
 func (c *base1DCode) ColorModel() color.Model {
-	return ColorModel(c.depth)
+	return c.color.Model
 }
 
 func (c *base1DCode) Bounds() image.Rectangle {
@@ -38,9 +38,9 @@ func (c *base1DCode) Bounds() image.Rectangle {
 
 func (c *base1DCode) At(x, y int) color.Color {
 	if c.GetBit(x) {
-		return BlackColor(c.depth)
+		return c.color.Foreground
 	}
-	return WhiteColor(c.depth)
+	return c.color.Background
 }
 
 func (c *base1DCodeIntCS) CheckSum() int {
@@ -49,20 +49,20 @@ func (c *base1DCodeIntCS) CheckSum() int {
 
 // New1DCodeIntCheckSum creates a new 1D barcode where the bars are represented by the bits in the bars BitList
 func New1DCodeIntCheckSum(codeKind, content string, bars *BitList, checksum int) barcode.BarcodeIntCS {
-	return &base1DCodeIntCS{base1DCode{bars, codeKind, content, 16}, checksum}
+	return &base1DCodeIntCS{base1DCode{bars, codeKind, content, barcode.ColorScheme16}, checksum}
 }
 
 // New1DCodeIntCheckSum creates a new 1D barcode where the bars are represented by the bits in the bars BitList
-func New1DCodeIntCheckSumWithDepth(codeKind, content string, bars *BitList, checksum int, depth int) barcode.BarcodeIntCS {
-	return &base1DCodeIntCS{base1DCode{bars, codeKind, content, depth}, checksum}
+func New1DCodeIntCheckSumWithColor(codeKind, content string, bars *BitList, checksum int, color barcode.ColorScheme) barcode.BarcodeIntCS {
+	return &base1DCodeIntCS{base1DCode{bars, codeKind, content, color}, checksum}
 }
 
 // New1DCode creates a new 1D barcode where the bars are represented by the bits in the bars BitList
 func New1DCode(codeKind, content string, bars *BitList) barcode.Barcode {
-	return &base1DCode{bars, codeKind, content, 16}
+	return &base1DCode{bars, codeKind, content, barcode.ColorScheme16}
 }
 
 // New1DCode creates a new 1D barcode where the bars are represented by the bits in the bars BitList
-func New1DCodeWithDepth(codeKind, content string, bars *BitList, depth int) barcode.Barcode {
-	return &base1DCode{bars, codeKind, content, depth}
+func New1DCodeWithColor(codeKind, content string, bars *BitList, color barcode.ColorScheme) barcode.Barcode {
+	return &base1DCode{bars, codeKind, content, color}
 }

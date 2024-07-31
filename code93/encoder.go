@@ -74,7 +74,7 @@ func prepare(content string) (string, error) {
 	return result, nil
 }
 
-func EncodeWithDepth(content string, includeChecksum bool, fullASCIIMode bool, depth int) (barcode.Barcode, error) {
+func EncodeWithColor(content string, includeChecksum bool, fullASCIIMode bool, color barcode.ColorScheme) (barcode.Barcode, error) {
 	if fullASCIIMode {
 		var err error
 		content, err = prepare(content)
@@ -102,13 +102,13 @@ func EncodeWithDepth(content string, includeChecksum bool, fullASCIIMode bool, d
 	}
 	result.AddBit(true)
 
-	return utils.New1DCodeWithDepth(barcode.TypeCode93, content, result, depth), nil
+	return utils.New1DCodeWithColor(barcode.TypeCode93, content, result, color), nil
 }
 
 // Encode returns a code93 barcode for the given content
 // if includeChecksum is set to true, two checksum characters are calculated and added to the content
 func Encode(content string, includeChecksum bool, fullASCIIMode bool) (barcode.Barcode, error) {
-	return EncodeWithDepth(content, includeChecksum, fullASCIIMode, 16)
+	return EncodeWithColor(content, includeChecksum, fullASCIIMode, barcode.ColorScheme16)
 }
 
 func getChecksum(content string, maxWeight int) rune {

@@ -12,15 +12,15 @@ type datamatrixCode struct {
 	*utils.BitList
 	*dmCodeSize
 	content string
-	depth   int
+	color   barcode.ColorScheme
 }
 
-func newDataMatrixCodeWithDepth(size *dmCodeSize, depth int) *datamatrixCode {
-	return &datamatrixCode{utils.NewBitList(size.Rows * size.Columns), size, "", depth}
+func newDataMatrixCodeWithColor(size *dmCodeSize, color barcode.ColorScheme) *datamatrixCode {
+	return &datamatrixCode{utils.NewBitList(size.Rows * size.Columns), size, "", color}
 }
 
 func newDataMatrixCode(size *dmCodeSize) *datamatrixCode {
-	return &datamatrixCode{utils.NewBitList(size.Rows * size.Columns), size, "", 16}
+	return &datamatrixCode{utils.NewBitList(size.Rows * size.Columns), size, "", barcode.ColorScheme16}
 }
 
 func (c *datamatrixCode) Content() string {
@@ -32,7 +32,7 @@ func (c *datamatrixCode) Metadata() barcode.Metadata {
 }
 
 func (c *datamatrixCode) ColorModel() color.Model {
-	return utils.ColorModel(c.depth)
+	return c.color.Model
 }
 
 func (c *datamatrixCode) Bounds() image.Rectangle {
@@ -41,9 +41,9 @@ func (c *datamatrixCode) Bounds() image.Rectangle {
 
 func (c *datamatrixCode) At(x, y int) color.Color {
 	if c.get(x, y) {
-		return utils.BlackColor(c.depth)
+		return c.color.Foreground
 	}
-	return utils.WhiteColor(c.depth)
+	return c.color.Background
 }
 
 func (c *datamatrixCode) get(x, y int) bool {
