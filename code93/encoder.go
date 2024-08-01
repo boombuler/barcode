@@ -74,6 +74,8 @@ func prepare(content string) (string, error) {
 	return result, nil
 }
 
+// Encode returns a code93 barcode for the given content and color scheme
+// if includeChecksum is set to true, two checksum characters are calculated and added to the content
 func EncodeWithColor(content string, includeChecksum bool, fullASCIIMode bool, color barcode.ColorScheme) (barcode.Barcode, error) {
 	if fullASCIIMode {
 		var err error

@@ -157,7 +157,7 @@ func encodeEAN13(code string) *utils.BitList {
 	return result
 }
 
-// Encode returns a EAN 8 or EAN 13 barcode for the given code
+// Encode returns a EAN 8 or EAN 13 barcode for the given code and color scheme
 func EncodeWithColor(code string, color barcode.ColorScheme) (barcode.BarcodeIntCS, error) {
 	var checkSum int
 	if len(code) == 7 || len(code) == 12 {

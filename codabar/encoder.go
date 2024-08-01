@@ -32,7 +32,7 @@ var encodingTable = map[rune][]bool{
 	'D': []bool{true, false, true, false, false, true, true, false, false, true},
 }
 
-// Encode creates a codabar barcode for the given content
+// Encode creates a codabar barcode for the given content and color scheme
 func EncodeWithColor(content string, color barcode.ColorScheme) (barcode.Barcode, error) {
 	checkValid, _ := regexp.Compile(`[ABCD][0123456789\-\$\:/\.\+]*[ABCD]$`)
 	if content == "!" || checkValid.ReplaceAllString(content, "!") != "!" {

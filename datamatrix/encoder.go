@@ -7,7 +7,7 @@ import (
 	"github.com/boombuler/barcode"
 )
 
-// Encode returns a Datamatrix barcode for the given content
+// Encode returns a Datamatrix barcode for the given content and color scheme
 func EncodeWithColor(content string, color barcode.ColorScheme) (barcode.Barcode, error) {
 	data := encodeText(content)
 

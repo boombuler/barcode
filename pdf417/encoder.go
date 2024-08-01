@@ -12,7 +12,7 @@ const (
 	padding_codeword = 900
 )
 
-// Encodes the given data as PDF417 barcode.
+// Encodes the given data and color scheme as PDF417 barcode.
 // securityLevel should be between 0 and 8. The higher the number, the more
 // additional error-correction codes are added.
 func EncodeWithColor(data string, securityLevel byte, color barcode.ColorScheme) (barcode.Barcode, error) {

@@ -155,7 +155,7 @@ func getCodeIndexList(content []rune) *utils.BitList {
 	return result
 }
 
-// Encode creates a Code 128 barcode for the given content
+// Encode creates a Code 128 barcode for the given content and color scheme
 func EncodeWithColor(content string, color barcode.ColorScheme) (barcode.BarcodeIntCS, error) {
 	contentRunes := strToRunes(content)
 	if len(contentRunes) <= 0 || len(contentRunes) > 80 {

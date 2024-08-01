@@ -127,7 +127,7 @@ func Encode(data []byte, minECCPercent int, userSpecifiedLayers int) (barcode.Ba
 	return EncodeWithColor(data, minECCPercent, userSpecifiedLayers, barcode.ColorScheme16)
 }
 
-// Encode returns an aztec barcode with the given content
+// Encode returns an aztec barcode with the given content and color scheme
 func EncodeWithColor(data []byte, minECCPercent int, userSpecifiedLayers int, color barcode.ColorScheme) (barcode.Barcode, error) {
 	bits := highlevelEncode(data)
 	eccBits := ((bits.Len() * minECCPercent) / 100) + 11

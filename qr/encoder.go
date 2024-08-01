@@ -54,7 +54,7 @@ func (e Encoding) String() string {
 	return ""
 }
 
-// Encode returns a QR barcode with the given content, error correction level and uses the given encoding
+// Encode returns a QR barcode with the given content and color scheme, error correction level and uses the given encoding
 func EncodeWithColor(content string, level ErrorCorrectionLevel, mode Encoding, color barcode.ColorScheme) (barcode.Barcode, error) {
 	bits, vi, err := mode.getEncoder()(content, level)
 	if err != nil {
