@@ -49,7 +49,13 @@ func (bc *intCSscaledBC) CheckSum() int {
 
 // Scale returns a resized barcode with the given width and height.
 func Scale(bc Barcode, width, height int) (Barcode, error) {
-	return ScaleWithFill(bc, width, height, color.White)
+	var fill color.Color
+	if v, ok := bc.(BarcodeColor); ok {
+		fill = v.ColorScheme().Background
+	} else {
+		fill = color.White
+	}
+	return ScaleWithFill(bc, width, height, fill)
 }
 
 // Scale returns a resized barcode with the given width, height and fill color.
