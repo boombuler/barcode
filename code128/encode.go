@@ -189,6 +189,10 @@ func Encode(content string) (barcode.BarcodeIntCS, error) {
 }
 
 func EncodeWithoutChecksum(content string) (barcode.Barcode, error) {
+	return EncodeWithoutChecksumWithColor(content, barcode.ColorScheme16)
+}
+
+func EncodeWithoutChecksumWithColor(content string, color barcode.ColorScheme) (barcode.Barcode, error) {
 	contentRunes := strToRunes(content)
 	if len(contentRunes) <= 0 || len(contentRunes) > 80 {
 		return nil, fmt.Errorf("content length should be between 1 and 80 runes but got %d", len(contentRunes))
@@ -204,5 +208,5 @@ func EncodeWithoutChecksum(content string) (barcode.Barcode, error) {
 		result.AddBit(encodingTable[idx]...)
 	}
 	result.AddBit(encodingTable[stopSymbol]...)
-	return utils.New1DCode(barcode.TypeCode128, content, result), nil
+	return utils.New1DCodeWithColor(barcode.TypeCode128, content, result, color), nil
 }
