@@ -35,6 +35,10 @@ func (c *datamatrixCode) ColorModel() color.Model {
 	return c.color.Model
 }
 
+func (c *datamatrixCode) ColorScheme() barcode.ColorScheme {
+	return c.color
+}
+
 func (c *datamatrixCode) Bounds() image.Rectangle {
 	return image.Rect(0, 0, c.Columns, c.Rows)
 }

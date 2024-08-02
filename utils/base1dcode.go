@@ -32,6 +32,10 @@ func (c *base1DCode) ColorModel() color.Model {
 	return c.color.Model
 }
 
+func (c *base1DCode) ColorScheme() barcode.ColorScheme {
+	return c.color
+}
+
 func (c *base1DCode) Bounds() image.Rectangle {
 	return image.Rect(0, 0, c.Len(), 1)
 }

@@ -28,6 +28,10 @@ func (qr *qrcode) ColorModel() color.Model {
 	return qr.color.Model
 }
 
+func (c *qrcode) ColorScheme() barcode.ColorScheme {
+	return c.color
+}
+
 func (qr *qrcode) Bounds() image.Rectangle {
 	return image.Rect(0, 0, qr.dimension, qr.dimension)
 }

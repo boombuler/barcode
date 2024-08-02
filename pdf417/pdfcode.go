@@ -27,6 +27,10 @@ func (c *pdfBarcode) ColorModel() color.Model {
 	return c.color.Model
 }
 
+func (c *pdfBarcode) ColorScheme() barcode.ColorScheme {
+	return c.color
+}
+
 func (c *pdfBarcode) Bounds() image.Rectangle {
 	height := c.code.Len() / c.width
 

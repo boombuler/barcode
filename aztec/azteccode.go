@@ -32,6 +32,10 @@ func (c *aztecCode) ColorModel() color.Model {
 	return c.color.Model
 }
 
+func (c *aztecCode) ColorScheme() barcode.ColorScheme {
+	return c.color
+}
+
 func (c *aztecCode) Bounds() image.Rectangle {
 	return image.Rect(0, 0, c.size, c.size)
 }
