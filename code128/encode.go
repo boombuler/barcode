@@ -155,8 +155,8 @@ func getCodeIndexList(content []rune) *utils.BitList {
 	return result
 }
 
-// Encode creates a Code 128 barcode for the given content
-func Encode(content string) (barcode.BarcodeIntCS, error) {
+// Encode creates a Code 128 barcode for the given content and color scheme
+func EncodeWithColor(content string, color barcode.ColorScheme) (barcode.BarcodeIntCS, error) {
 	contentRunes := strToRunes(content)
 	if len(contentRunes) <= 0 || len(contentRunes) > 80 {
 		return nil, fmt.Errorf("content length should be between 1 and 80 runes but got %d", len(contentRunes))
@@ -180,10 +180,19 @@ func Encode(content string) (barcode.BarcodeIntCS, error) {
 	sum = sum % 103
 	result.AddBit(encodingTable[sum]...)
 	result.AddBit(encodingTable[stopSymbol]...)
-	return utils.New1DCodeIntCheckSum(barcode.TypeCode128, content, result, sum), nil
+	return utils.New1DCodeIntCheckSumWithColor(barcode.TypeCode128, content, result, sum, color), nil
+}
+
+// Encode creates a Code 128 barcode for the given content
+func Encode(content string) (barcode.BarcodeIntCS, error) {
+	return EncodeWithColor(content, barcode.ColorScheme16)
 }
 
 func EncodeWithoutChecksum(content string) (barcode.Barcode, error) {
+	return EncodeWithoutChecksumWithColor(content, barcode.ColorScheme16)
+}
+
+func EncodeWithoutChecksumWithColor(content string, color barcode.ColorScheme) (barcode.Barcode, error) {
 	contentRunes := strToRunes(content)
 	if len(contentRunes) <= 0 || len(contentRunes) > 80 {
 		return nil, fmt.Errorf("content length should be between 1 and 80 runes but got %d", len(contentRunes))
@@ -199,5 +208,5 @@ func EncodeWithoutChecksum(content string) (barcode.Barcode, error) {
 		result.AddBit(encodingTable[idx]...)
 	}
 	result.AddBit(encodingTable[stopSymbol]...)
-	return utils.New1DCode(barcode.TypeCode128, content, result), nil
+	return utils.New1DCodeWithColor(barcode.TypeCode128, content, result, color), nil
 }

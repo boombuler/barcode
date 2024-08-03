@@ -157,8 +157,8 @@ func encodeEAN13(code string) *utils.BitList {
 	return result
 }
 
-// Encode returns a EAN 8 or EAN 13 barcode for the given code
-func Encode(code string) (barcode.BarcodeIntCS, error) {
+// Encode returns a EAN 8 or EAN 13 barcode for the given code and color scheme
+func EncodeWithColor(code string, color barcode.ColorScheme) (barcode.BarcodeIntCS, error) {
 	var checkSum int
 	if len(code) == 7 || len(code) == 12 {
 		code += string(calcCheckNum(code))
@@ -175,13 +175,18 @@ func Encode(code string) (barcode.BarcodeIntCS, error) {
 	if len(code) == 8 {
 		result := encodeEAN8(code)
 		if result != nil {
-			return utils.New1DCodeIntCheckSum(barcode.TypeEAN8, code, result, checkSum), nil
+			return utils.New1DCodeIntCheckSumWithColor(barcode.TypeEAN8, code, result, checkSum, color), nil
 		}
 	} else if len(code) == 13 {
 		result := encodeEAN13(code)
 		if result != nil {
-			return utils.New1DCodeIntCheckSum(barcode.TypeEAN13, code, result, checkSum), nil
+			return utils.New1DCodeIntCheckSumWithColor(barcode.TypeEAN13, code, result, checkSum, color), nil
 		}
 	}
 	return nil, errors.New("invalid ean code data")
+}
+
+// Encode returns a EAN 8 or EAN 13 barcode for the given code
+func Encode(code string) (barcode.BarcodeIntCS, error) {
+	return EncodeWithColor(code, barcode.ColorScheme16)
 }

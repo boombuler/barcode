@@ -7,8 +7,8 @@ import (
 	"github.com/boombuler/barcode"
 )
 
-// Encode returns a Datamatrix barcode for the given content
-func Encode(content string) (barcode.Barcode, error) {
+// Encode returns a Datamatrix barcode for the given content and color scheme
+func EncodeWithColor(content string, color barcode.ColorScheme) (barcode.Barcode, error) {
 	data := encodeText(content)
 
 	var size *dmCodeSize
@@ -23,7 +23,7 @@ func Encode(content string) (barcode.Barcode, error) {
 	}
 	data = addPadding(data, size.DataCodewords())
 	data = ec.calcECC(data, size)
-	code := render(data, size)
+	code := render(data, size, color)
 	if code != nil {
 		code.content = content
 		return code, nil
@@ -31,8 +31,13 @@ func Encode(content string) (barcode.Barcode, error) {
 	return nil, errors.New("unable to render barcode")
 }
 
-func render(data []byte, size *dmCodeSize) *datamatrixCode {
-	cl := newCodeLayout(size)
+// Encode returns a Datamatrix barcode for the given content
+func Encode(content string) (barcode.Barcode, error) {
+	return EncodeWithColor(content, barcode.ColorScheme16)
+}
+
+func render(data []byte, size *dmCodeSize, color barcode.ColorScheme) *datamatrixCode {
+	cl := newCodeLayout(size, color)
 
 	cl.SetValues(data)
 
@@ -69,11 +74,11 @@ func addPadding(data []byte, toCount int) []byte {
 	}
 	for len(data) < toCount {
 		R := ((149 * (len(data) + 1)) % 253) + 1
-		tmp := 129 + R;
-		if (tmp > 254) {
+		tmp := 129 + R
+		if tmp > 254 {
 			tmp = tmp - 254
 		}
-		   
+
 		data = append(data, byte(tmp))
 	}
 	return data

@@ -12,6 +12,7 @@ type pdfBarcode struct {
 	data  string
 	width int
 	code  *utils.BitList
+	color barcode.ColorScheme
 }
 
 func (c *pdfBarcode) Metadata() barcode.Metadata {
@@ -23,7 +24,11 @@ func (c *pdfBarcode) Content() string {
 }
 
 func (c *pdfBarcode) ColorModel() color.Model {
-	return color.Gray16Model
+	return c.color.Model
+}
+
+func (c *pdfBarcode) ColorScheme() barcode.ColorScheme {
+	return c.color
 }
 
 func (c *pdfBarcode) Bounds() image.Rectangle {
@@ -34,7 +39,7 @@ func (c *pdfBarcode) Bounds() image.Rectangle {
 
 func (c *pdfBarcode) At(x, y int) color.Color {
 	if c.code.GetBit((y/moduleHeight)*c.width + x) {
-		return color.Black
+		return c.color.Foreground
 	}
-	return color.White
+	return c.color.Background
 }

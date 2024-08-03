@@ -1,8 +1,10 @@
 package datamatrix
 
 import (
-	"github.com/boombuler/barcode/utils"
 	"strconv"
+
+	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/utils"
 )
 
 type setValFunc func(byte)
@@ -11,13 +13,15 @@ type codeLayout struct {
 	matrix *utils.BitList
 	occupy *utils.BitList
 	size   *dmCodeSize
+	color  barcode.ColorScheme
 }
 
-func newCodeLayout(size *dmCodeSize) *codeLayout {
+func newCodeLayout(size *dmCodeSize, color barcode.ColorScheme) *codeLayout {
 	result := new(codeLayout)
 	result.matrix = utils.NewBitList(size.MatrixColumns() * size.MatrixRows())
 	result.occupy = utils.NewBitList(size.MatrixColumns() * size.MatrixRows())
 	result.size = size
+	result.color = color
 	return result
 }
 
@@ -159,7 +163,7 @@ func (l *codeLayout) SetValues(data []byte) {
 }
 
 func (l *codeLayout) Merge() *datamatrixCode {
-	result := newDataMatrixCode(l.size)
+	result := newDataMatrixCodeWithColor(l.size, l.color)
 
 	//dotted horizontal lines
 	for r := 0; r < l.size.Rows; r += (l.size.RegionRows() + 2) {
