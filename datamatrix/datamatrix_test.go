@@ -100,3 +100,33 @@ func Test_Issue12(t *testing.T) {
 		}
 	}
 }
+
+func Test_GS1DataMatrix(t *testing.T) {
+	// Example 2 from the GS1 DataMatrix Guideline.
+	//
+	// (01)09501101020917(17)190508(10)ABCD1234(21)10
+	//
+	// See: https://www.gs1.org/standards/gs1-datamatrix-guideline/25#2-Encoding-data+2-3-Human-readable-interpretation-(HRI)
+	data := new(bytes.Buffer)
+	data.WriteByte(FNC1)                 // Start Character
+	data.WriteString("0109501101020917") // AI (01)
+	data.WriteString("17190508")         // AI (17)
+	data.WriteString("10ABCD1234")       // AI (10) does not have pre-defined length
+	data.WriteByte(FNC1)                 // Separator Character
+	data.WriteString("2110")             // AI (20)
+
+	// Codewords from decoding example 2 with "dmtxread -c".
+	wantedData := []byte{
+		232, // FNC1
+		131, 139, 180, 141, 131, 132, 139, 147,
+		147, 149, 135, 138,
+		140, 66, 67, 68, 69, 142, 164,
+		232, // FNC1
+		151, 140,
+	}
+
+	realData := encodeText(data.String())
+	if bytes.Compare(realData, wantedData) != 0 {
+		t.Errorf("GS1 DataMatrix encoding failed\nwant: %v\ngot:  %v\n", wantedData, realData)
+	}
+}
