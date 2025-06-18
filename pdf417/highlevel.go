@@ -243,7 +243,7 @@ func encodeText(text []rune, submode subMode) (subMode, []int) {
 func determineConsecutiveBinaryCount(msg []byte) int {
 	result := 0
 
-	for i, _ := range msg {
+	for i := range msg {
 		numericCount := determineConsecutiveDigitCount([]rune(string(msg[i:])))
 		if numericCount >= min_numeric_count {
 			break
