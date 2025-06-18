@@ -20,7 +20,7 @@ func Test_AlphaNumericEncoding(t *testing.T) {
 
 	x, vi, err := encode("HELLO WORLD", M)
 
-	if x == nil || vi == nil || vi.Version != 1 || bytes.Compare(x.GetBytes(), []byte{32, 91, 11, 120, 209, 114, 220, 77, 67, 64, 236, 17, 236, 17, 236, 17}) != 0 {
+	if x == nil || vi == nil || vi.Version != 1 || !bytes.Equal(x.GetBytes(), []byte{32, 91, 11, 120, 209, 114, 220, 77, 67, 64, 236, 17, 236, 17, 236, 17}) {
 		t.Errorf("\"HELLO WORLD\" failed to encode: %s", err)
 	}
 

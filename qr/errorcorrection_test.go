@@ -9,7 +9,7 @@ func Test_ErrorCorrection(t *testing.T) {
 	doTest := func(b []byte, ecc []byte) {
 		cnt := byte(len(ecc))
 		res := ec.calcECC(b, cnt)
-		if bytes.Compare(res, ecc) != 0 {
+		if !bytes.Equal(res, ecc) {
 			t.Errorf("ECC error!\nGot: %v\nExpected:%v", res, ecc)
 		}
 	}
