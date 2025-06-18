@@ -166,10 +166,8 @@ func encodeText(text []rune, submode subMode) (subMode, []int) {
 				} else {
 					tmp = append(tmp, 29) // punctuation switch
 					tmp = append(tmp, punctMap[ch])
-					break
 				}
 			}
-			break
 		case subLower:
 			if isAlphaLower(ch) {
 				if ch == ' ' {
@@ -181,7 +179,6 @@ func encodeText(text []rune, submode subMode) (subMode, []int) {
 				if isAlphaUpper(ch) {
 					tmp = append(tmp, 27) //upper switch
 					tmp = append(tmp, int(ch-'A'))
-					break
 				} else if isMixed(ch) {
 					submode = subMixed
 					tmp = append(tmp, 28) //mixed latch
@@ -189,10 +186,8 @@ func encodeText(text []rune, submode subMode) (subMode, []int) {
 				} else {
 					tmp = append(tmp, 29) //punctuation switch
 					tmp = append(tmp, punctMap[ch])
-					break
 				}
 			}
-			break
 		case subMixed:
 			if isMixed(ch) {
 				tmp = append(tmp, mixedMap[ch])
@@ -218,14 +213,12 @@ func encodeText(text []rune, submode subMode) (subMode, []int) {
 					tmp = append(tmp, punctMap[ch])
 				}
 			}
-			break
 		default: //subPunct
 			if isPunctuation(ch) {
 				tmp = append(tmp, punctMap[ch])
 			} else {
 				submode = subUpper
 				tmp = append(tmp, 29) //upper latch
-				continue
 			}
 		}
 		idx++

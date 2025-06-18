@@ -100,19 +100,14 @@ func getCodeIndexList(content []rune) *utils.BitList {
 			switch content[i] {
 			case FNC1:
 				idx = 102
-				break
 			case FNC2:
 				idx = 97
-				break
 			case FNC3:
 				idx = 96
-				break
 			case FNC4:
 				idx = 101
-				break
 			default:
 				idx = strings.IndexRune(aTable, content[i])
-				break
 			}
 			if idx < 0 {
 				return nil
@@ -131,19 +126,14 @@ func getCodeIndexList(content []rune) *utils.BitList {
 			switch content[i] {
 			case FNC1:
 				idx = 102
-				break
 			case FNC2:
 				idx = 97
-				break
 			case FNC3:
 				idx = 96
-				break
 			case FNC4:
 				idx = 100
-				break
 			default:
 				idx = strings.IndexRune(bTable, content[i])
-				break
 			}
 
 			if idx < 0 {

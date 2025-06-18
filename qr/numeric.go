@@ -42,10 +42,8 @@ func encodeNumeric(content string, ecl ErrorCorrectionLevel) (*utils.BitList, *v
 			bitCnt = 10
 		case 1:
 			bitCnt = 4
-			break
 		case 2:
 			bitCnt = 7
-			break
 		}
 
 		res.AddBits(i, bitCnt)
