@@ -18,7 +18,7 @@ func encodeNumeric(content string, ecl ErrorCorrectionLevel) (*utils.BitList, *v
 	}
 	vi := findSmallestVersionInfo(ecl, numericMode, contentBitCount)
 	if vi == nil {
-		return nil, nil, errors.New("To much data to encode")
+		return nil, nil, errors.New("too much data to encode")
 	}
 	res := new(utils.BitList)
 	res.AddBits(int(numericMode), 4)
@@ -34,7 +34,7 @@ func encodeNumeric(content string, ecl ErrorCorrectionLevel) (*utils.BitList, *v
 
 		i, err := strconv.Atoi(curStr)
 		if err != nil || i < 0 {
-			return nil, nil, fmt.Errorf("\"%s\" can not be encoded as %s", content, Numeric)
+			return nil, nil, fmt.Errorf("%q can not be encoded as %s", content, Numeric)
 		}
 		var bitCnt byte
 		switch len(curStr) % 3 {

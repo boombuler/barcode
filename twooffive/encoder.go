@@ -71,7 +71,7 @@ func AddCheckSum(content string) (string, error) {
 			}
 			even = !even
 		} else {
-			return "", fmt.Errorf("can not encode \"%s\"", content)
+			return "", fmt.Errorf("can not encode %s", content)
 		}
 	}
 
@@ -105,7 +105,7 @@ func EncodeWithColor(content string, interleaved bool, color barcode.ColorScheme
 				a, o1 = encodingTable[*lastRune]
 				b, o2 = encodingTable[r]
 				if !o1 || !o2 {
-					return nil, fmt.Errorf("can not encode \"%s\"", content)
+					return nil, fmt.Errorf("can not encode %q", content)
 				}
 				lastRune = nil
 			}
@@ -113,7 +113,7 @@ func EncodeWithColor(content string, interleaved bool, color barcode.ColorScheme
 			var ok bool
 			a, ok = encodingTable[r]
 			if !ok {
-				return nil, fmt.Errorf("can not encode \"%s\"", content)
+				return nil, fmt.Errorf("can not encode %q", content)
 			}
 			b = nonInterleavedSpace
 		}

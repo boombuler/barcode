@@ -19,7 +19,7 @@ func EncodeWithColor(content string, color barcode.ColorScheme) (barcode.Barcode
 		}
 	}
 	if size == nil {
-		return nil, errors.New("to much data to encode")
+		return nil, errors.New("too much data to encode")
 	}
 	data = addPadding(data, size.DataCodewords())
 	data = ec.calcECC(data, size)

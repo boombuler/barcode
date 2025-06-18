@@ -154,7 +154,7 @@ func EncodeWithColor(content string, color barcode.ColorScheme) (barcode.Barcode
 	idxList := getCodeIndexList(contentRunes)
 
 	if idxList == nil {
-		return nil, fmt.Errorf("\"%s\" could not be encoded", content)
+		return nil, fmt.Errorf("%q could not be encoded", content)
 	}
 
 	result := new(utils.BitList)
@@ -190,7 +190,7 @@ func EncodeWithoutChecksumWithColor(content string, color barcode.ColorScheme) (
 	idxList := getCodeIndexList(contentRunes)
 
 	if idxList == nil {
-		return nil, fmt.Errorf("\"%s\" could not be encoded", content)
+		return nil, fmt.Errorf("%q could not be encoded", content)
 	}
 
 	result := new(utils.BitList)

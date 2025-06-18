@@ -36,7 +36,7 @@ var encodingTable = map[rune][]bool{
 func EncodeWithColor(content string, color barcode.ColorScheme) (barcode.Barcode, error) {
 	checkValid, _ := regexp.Compile(`[ABCD][0123456789\-\$\:/\.\+]*[ABCD]$`)
 	if content == "!" || checkValid.ReplaceAllString(content, "!") != "!" {
-		return nil, fmt.Errorf("can not encode \"%s\"", content)
+		return nil, fmt.Errorf("can not encode %q", content)
 	}
 	resBits := new(utils.BitList)
 	for i, r := range content {

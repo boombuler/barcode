@@ -19,5 +19,5 @@ func encodeAuto(content string, ecl ErrorCorrectionLevel) (*utils.BitList, *vers
 	if bits != nil && vi != nil {
 		return bits, vi, nil
 	}
-	return nil, nil, fmt.Errorf("No encoding found to encode \"%s\"", content)
+	return nil, nil, fmt.Errorf("no encoding found to encode %q", content)
 }

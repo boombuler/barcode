@@ -67,7 +67,7 @@ func prepare(content string) (string, error) {
 	result := ""
 	for _, r := range content {
 		if r > 127 {
-			return "", errors.New("Only ASCII strings can be encoded")
+			return "", errors.New("only ASCII strings can be encoded")
 		}
 		result += extendedTable[int(r)]
 	}
@@ -98,7 +98,7 @@ func EncodeWithColor(content string, includeChecksum bool, fullASCIIMode bool, c
 	for _, r := range data {
 		info, ok := encodeTable[r]
 		if !ok {
-			return nil, errors.New("invalid data!")
+			return nil, errors.New("invalid data")
 		}
 		result.AddBits(info.data, 9)
 	}

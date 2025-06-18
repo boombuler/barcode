@@ -99,7 +99,7 @@ func prepare(content string) (string, error) {
 	result := ""
 	for _, r := range content {
 		if r > 127 {
-			return "", errors.New("Only ASCII strings can be encoded")
+			return "", errors.New("only ASCII strings can be encoded")
 		}
 		val, ok := extendedTable[r]
 		if ok {
