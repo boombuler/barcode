@@ -2,6 +2,7 @@ package qr
 
 import (
 	"bytes"
+	"strings"
 	"testing"
 )
 
@@ -25,7 +26,7 @@ func Test_NumericEncoding(t *testing.T) {
 	if err == nil {
 		t.Error("Numeric encoding should not be able to encode \"foo\"")
 	}
-	x, vi, err = encode(makeString(14297, "1"), H)
+	x, vi, err = encode(strings.Repeat("1", 14297), H)
 	if x != nil || vi != nil || err == nil {
 		t.Fail()
 	}

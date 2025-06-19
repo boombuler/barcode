@@ -2,18 +2,9 @@ package qr
 
 import (
 	"bytes"
+	"strings"
 	"testing"
 )
-
-func makeString(length int, content string) string {
-	res := ""
-
-	for i := 0; i < length; i++ {
-		res += content
-	}
-
-	return res
-}
 
 func Test_AlphaNumericEncoding(t *testing.T) {
 	encode := AlphaNumeric.getEncoder()
@@ -24,11 +15,11 @@ func Test_AlphaNumericEncoding(t *testing.T) {
 		t.Errorf("\"HELLO WORLD\" failed to encode: %s", err)
 	}
 
-	x, vi, err = encode(makeString(4296, "A"), L)
+	x, vi, err = encode(strings.Repeat("A", 4296), L)
 	if x == nil || vi == nil || err != nil {
 		t.Fail()
 	}
-	x, vi, err = encode(makeString(4297, "A"), L)
+	x, vi, err = encode(strings.Repeat("A", 4297), L)
 	if x != nil || vi != nil || err == nil {
 		t.Fail()
 	}
