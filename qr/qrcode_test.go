@@ -9,6 +9,7 @@ func Test_NewQRCode(t *testing.T) {
 	bc := newBarcode(2)
 	if bc == nil {
 		t.Fail()
+		return
 	}
 	if bc.data.Len() != 4 {
 		t.Fail()
@@ -84,7 +85,7 @@ func Test_Penalty3(t *testing.T) {
 		code, _ := Encode(content, L, AlphaNumeric)
 		qr := code.(*qrcode)
 		if qr.calcPenaltyRule3() != result {
-			t.Errorf("Failed Penalty Rule 3 for content \"%s\" got %d but expected %d", content, qr.calcPenaltyRule3(), result)
+			t.Errorf("Failed Penalty Rule 3 for content %q got %d but expected %d", content, qr.calcPenaltyRule3(), result)
 		}
 	}
 	runTest("A", 80)

@@ -7,8 +7,6 @@ import (
 	"github.com/boombuler/barcode/utils"
 )
 
-type setValFunc func(byte)
-
 type codeLayout struct {
 	matrix *utils.BitList
 	occupy *utils.BitList
@@ -127,7 +125,7 @@ func (l *codeLayout) SetValues(data []byte) {
 			idx++
 		}
 
-		for true {
+		for {
 			if (row < l.size.MatrixRows()) && (col >= 0) && !l.Occupied(row, col) {
 				l.SetSimple(row, col, data[idx])
 				idx++
@@ -141,7 +139,7 @@ func (l *codeLayout) SetValues(data []byte) {
 		row += 1
 		col += 3
 
-		for true {
+		for {
 			if (row >= 0) && (col < l.size.MatrixColumns()) && !l.Occupied(row, col) {
 				l.SetSimple(row, col, data[idx])
 				idx++

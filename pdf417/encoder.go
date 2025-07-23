@@ -17,7 +17,7 @@ const (
 // additional error-correction codes are added.
 func EncodeWithColor(data string, securityLevel byte, color barcode.ColorScheme) (barcode.Barcode, error) {
 	if securityLevel >= 9 {
-		return nil, fmt.Errorf("Invalid security level %d", securityLevel)
+		return nil, fmt.Errorf("invalid security level %d", securityLevel)
 	}
 
 	sl := securitylevel(securityLevel)
@@ -29,7 +29,7 @@ func EncodeWithColor(data string, securityLevel byte, color barcode.ColorScheme)
 
 	columns, rows := calcDimensions(len(dataWords), sl.ErrorCorrectionWordCount())
 	if columns < minCols || columns > maxCols || rows < minRows || rows > maxRows {
-		return nil, fmt.Errorf("Unable to fit data in barcode")
+		return nil, fmt.Errorf("unable to fit data in barcode")
 	}
 
 	barcode := new(pdfBarcode)

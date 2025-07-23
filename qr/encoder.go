@@ -143,25 +143,18 @@ func setMasked(x, y int, val bool, mask int, set func(int, int, bool)) {
 	switch mask {
 	case 0:
 		val = val != (((y + x) % 2) == 0)
-		break
 	case 1:
 		val = val != ((y % 2) == 0)
-		break
 	case 2:
 		val = val != ((x % 3) == 0)
-		break
 	case 3:
 		val = val != (((y + x) % 3) == 0)
-		break
 	case 4:
 		val = val != (((y/2 + x/3) % 2) == 0)
-		break
 	case 5:
 		val = val != (((y*x)%2)+((y*x)%3) == 0)
-		break
 	case 6:
 		val = val != ((((y*x)%2)+((y*x)%3))%2 == 0)
-		break
 	case 7:
 		val = val != ((((y+x)%2)+((y*x)%3))%2 == 0)
 	}
@@ -176,7 +169,7 @@ func iterateModules(occupied *qrcode) <-chan image.Point {
 		curY := occupied.dimension - 1
 		isUpward := true
 
-		for true {
+		for {
 			if isUpward {
 				allPoints <- image.Pt(curX, curY)
 				allPoints <- image.Pt(curX-1, curY)

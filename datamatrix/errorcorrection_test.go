@@ -18,11 +18,11 @@ func Test_CalcECC(t *testing.T) {
 		t.Error("size not found")
 	}
 
-	if bytes.Compare(ec.calcECC(data, size), []byte{142, 164, 186, 114, 25, 5, 88, 102}) != 0 {
+	if !bytes.Equal(ec.calcECC(data, size), []byte{142, 164, 186, 114, 25, 5, 88, 102}) {
 		t.Error("ECC Test 1 failed")
 	}
 	data = []byte{66, 129, 70}
-	if bytes.Compare(ec.calcECC(data, size), []byte{66, 129, 70, 138, 234, 82, 82, 95}) != 0 {
+	if !bytes.Equal(ec.calcECC(data, size), []byte{66, 129, 70, 138, 234, 82, 82, 95}) {
 		t.Error("ECC Test 2 failed")
 	}
 }

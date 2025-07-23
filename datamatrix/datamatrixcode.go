@@ -28,7 +28,7 @@ func (c *datamatrixCode) Content() string {
 }
 
 func (c *datamatrixCode) Metadata() barcode.Metadata {
-	return barcode.Metadata{barcode.TypeDataMatrix, 2}
+	return barcode.Metadata{CodeKind: barcode.TypeDataMatrix, Dimensions: 2}
 }
 
 func (c *datamatrixCode) ColorModel() color.Model {

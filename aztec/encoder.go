@@ -143,17 +143,17 @@ func EncodeWithColor(data []byte, minECCPercent int, userSpecifiedLayers int, co
 			layers = userSpecifiedLayers
 		}
 		if (compact && layers > max_nb_bits_compact) || (!compact && layers > max_nb_bits) {
-			return nil, fmt.Errorf("Illegal value %d for layers", userSpecifiedLayers)
+			return nil, fmt.Errorf("illegal value %d for layers", userSpecifiedLayers)
 		}
 		TotalBitsInLayer = totalBitsInLayer(layers, compact)
 		wordSize = word_size[layers]
 		usableBitsInLayers := TotalBitsInLayer - (TotalBitsInLayer % wordSize)
 		stuffedBits = stuffBits(bits, wordSize)
 		if stuffedBits.Len()+eccBits > usableBitsInLayers {
-			return nil, fmt.Errorf("Data to large for user specified layer")
+			return nil, fmt.Errorf("data too large for user specified layer")
 		}
 		if compact && stuffedBits.Len() > wordSize*64 {
-			return nil, fmt.Errorf("Data to large for user specified layer")
+			return nil, fmt.Errorf("data too large for user specified layer")
 		}
 	} else {
 		wordSize = 0
@@ -163,7 +163,7 @@ func EncodeWithColor(data []byte, minECCPercent int, userSpecifiedLayers int, co
 		// is the same size, but has more data.
 		for i := 0; ; i++ {
 			if i > max_nb_bits {
-				return nil, fmt.Errorf("Data too large for an aztec code")
+				return nil, fmt.Errorf("data too large for an aztec code")
 			}
 			compact = i <= 3
 			layers = i

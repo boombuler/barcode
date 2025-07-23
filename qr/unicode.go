@@ -11,7 +11,7 @@ func encodeUnicode(content string, ecl ErrorCorrectionLevel) (*utils.BitList, *v
 
 	vi := findSmallestVersionInfo(ecl, byteMode, len(data)*8)
 	if vi == nil {
-		return nil, nil, errors.New("To much data to encode")
+		return nil, nil, errors.New("too much data to encode")
 	}
 
 	// It's not correct to add the unicode bytes to the result directly but most readers can't handle the

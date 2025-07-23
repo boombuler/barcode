@@ -35,7 +35,7 @@ func encodeAlphaNumeric(content string, ecl ErrorCorrectionLevel) (*utils.BitLis
 	}
 	vi := findSmallestVersionInfo(ecl, alphaNumericMode, contentBitCount)
 	if vi == nil {
-		return nil, nil, errors.New("To much data to encode")
+		return nil, nil, errors.New("too much data to encode")
 	}
 
 	res := new(utils.BitList)
@@ -48,14 +48,14 @@ func encodeAlphaNumeric(content string, ecl ErrorCorrectionLevel) (*utils.BitLis
 		c1 := <-encoder
 		c2 := <-encoder
 		if c1 < 0 || c2 < 0 {
-			return nil, nil, fmt.Errorf("\"%s\" can not be encoded as %s", content, AlphaNumeric)
+			return nil, nil, fmt.Errorf("%q can not be encoded as %s", content, AlphaNumeric)
 		}
 		res.AddBits(c1*45+c2, 11)
 	}
 	if contentLenIsOdd {
 		c := <-encoder
 		if c < 0 {
-			return nil, nil, fmt.Errorf("\"%s\" can not be encoded as %s", content, AlphaNumeric)
+			return nil, nil, fmt.Errorf("%q can not be encoded as %s", content, AlphaNumeric)
 		}
 		res.AddBits(c, 6)
 	}
