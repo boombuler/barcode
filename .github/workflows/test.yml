@@ -1,0 +1,39 @@
+name: Test
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Test currently supported Go releases.
+        #
+        # See: https://go.dev/doc/devel/release#policy
+        go-version:
+          - stable
+          - oldstable
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go ${{ matrix.go-version }}
+      uses: actions/setup-go@v5
+      with:
+        go-version: ${{ matrix.go-version }}
+        # Caching isn't really needed without any dependencies,
+        # and without a go.sum this action will emit warnings.
+        #
+        # See: https://github.com/actions/setup-go/issues/476
+        cache: false
+
+    - name: Test
+      run: go test -v ./...
