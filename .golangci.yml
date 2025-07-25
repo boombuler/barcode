@@ -1,0 +1,23 @@
+# Configuration of formatting and linting using https://golangci-lint.run/.
+version: "2"
+
+linters:
+  default: none
+  enable:
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+
+issues:
+  # Show only new issues created after the introduction of the linter.
+  new-from-rev: ea5ac7e13561f6334938261321e13a725d1c0180
+
+  # Show issues in any part of update files (requires new-from-rev or new-from-patch).
+  whole-files: true
