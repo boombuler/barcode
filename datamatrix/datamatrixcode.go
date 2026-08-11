@@ -15,6 +15,8 @@ type datamatrixCode struct {
 	color   barcode.ColorScheme
 }
 
+var _ image.PalettedImage = (*datamatrixCode)(nil)
+
 func newDataMatrixCodeWithColor(size *dmCodeSize, color barcode.ColorScheme) *datamatrixCode {
 	return &datamatrixCode{utils.NewBitList(size.Rows * size.Columns), size, "", color}
 }
@@ -48,6 +50,13 @@ func (c *datamatrixCode) At(x, y int) color.Color {
 		return c.color.Foreground
 	}
 	return c.color.Background
+}
+
+func (c *datamatrixCode) ColorIndexAt(x, y int) uint8 {
+	if c.get(x, y) {
+		return 1
+	}
+	return 0
 }
 
 func (c *datamatrixCode) get(x, y int) bool {

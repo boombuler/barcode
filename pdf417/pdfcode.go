@@ -15,6 +15,8 @@ type pdfBarcode struct {
 	color barcode.ColorScheme
 }
 
+var _ image.PalettedImage = (*pdfBarcode)(nil)
+
 func (c *pdfBarcode) Metadata() barcode.Metadata {
 	return barcode.Metadata{CodeKind: barcode.TypePDF, Dimensions: 2}
 }
@@ -42,4 +44,11 @@ func (c *pdfBarcode) At(x, y int) color.Color {
 		return c.color.Foreground
 	}
 	return c.color.Background
+}
+
+func (c *pdfBarcode) ColorIndexAt(x, y int) uint8 {
+	if c.code.GetBit((y/moduleHeight)*c.width + x) {
+		return 1
+	}
+	return 0
 }
