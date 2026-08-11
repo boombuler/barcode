@@ -17,7 +17,7 @@ type aztecCode struct {
 }
 
 func newAztecCode(size int, color barcode.ColorScheme) *aztecCode {
-	return &aztecCode{utils.NewBitList(size * size), size, nil, barcode.ColorScheme16}
+	return &aztecCode{utils.NewBitList(size * size), size, nil, color}
 }
 
 func (c *aztecCode) Content() string {
