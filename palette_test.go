@@ -98,7 +98,7 @@ func BenchmarkGenerateBarcode(b *testing.B) {
 		scheme barcode.ColorScheme
 	}{
 		{name: "gray16", scheme: barcode.ColorScheme16},
-		{name: "palette", scheme: barcode.ColorSchemePalette},
+		{name: "palette", scheme: barcode.ColorScheme1},
 	}
 
 	for _, tc := range barcodeCases {

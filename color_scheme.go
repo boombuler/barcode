@@ -10,7 +10,7 @@ type ColorScheme struct {
 	// A color.Palette makes the barcodes render as paletted images. Such a
 	// palette must list Background as its first and Foreground as its second
 	// entry, as that is the order the barcodes report their palette indexes in.
-	// Use NewPaletteColorScheme to build a palette which holds to that order.
+	// Use NewPalettedColorScheme to build a palette which holds to that order.
 	Model      color.Model
 	Background color.Color // Color of the background
 	Foreground color.Color // Color of the foreground (e.g., bars in a barcode)
@@ -44,10 +44,10 @@ var ColorScheme32 = ColorScheme{
 	Foreground: color.RGBA{0, 0, 0, 255},
 }
 
-// NewPaletteColorScheme returns a color scheme which renders paletted images
+// NewPalettedColorScheme returns a color scheme which renders paletted images
 // using the given background and foreground colors, with the palette in the
 // order the barcodes report their color indexes in.
-func NewPaletteColorScheme(background, foreground color.Color) ColorScheme {
+func NewPalettedColorScheme(background, foreground color.Color) ColorScheme {
 	return ColorScheme{
 		Model:      color.Palette{background, foreground},
 		Background: background,
@@ -55,8 +55,8 @@ func NewPaletteColorScheme(background, foreground color.Color) ColorScheme {
 	}
 }
 
-// ColorSchemePalette represents a black on white color scheme that uses a
+// ColorScheme1 represents a 1-bit black on white color scheme that uses a
 // palette of colors. Encoders which support paletted images store a palette
 // index per pixel instead of a full color, so a two color barcode needs a
 // single bit per pixel.
-var ColorSchemePalette = NewPaletteColorScheme(color.White, color.Black)
+var ColorScheme1 = NewPalettedColorScheme(color.White, color.Black)
