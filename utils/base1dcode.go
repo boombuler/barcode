@@ -20,6 +20,11 @@ type base1DCodeIntCS struct {
 	checksum int
 }
 
+var (
+	_ image.PalettedImage = (*base1DCode)(nil)
+	_ image.PalettedImage = (*base1DCodeIntCS)(nil)
+)
+
 func (c *base1DCode) Content() string {
 	return c.content
 }
@@ -45,6 +50,13 @@ func (c *base1DCode) At(x, y int) color.Color {
 		return c.color.Foreground
 	}
 	return c.color.Background
+}
+
+func (c *base1DCode) ColorIndexAt(x, y int) uint8 {
+	if c.GetBit(x) {
+		return 1
+	}
+	return 0
 }
 
 func (c *base1DCodeIntCS) CheckSum() int {

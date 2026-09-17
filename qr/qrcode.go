@@ -16,6 +16,8 @@ type qrcode struct {
 	color     barcode.ColorScheme
 }
 
+var _ image.PalettedImage = (*qrcode)(nil)
+
 func (qr *qrcode) Content() string {
 	return qr.content
 }
@@ -41,6 +43,13 @@ func (qr *qrcode) At(x, y int) color.Color {
 		return qr.color.Foreground
 	}
 	return qr.color.Background
+}
+
+func (qr *qrcode) ColorIndexAt(x, y int) uint8 {
+	if qr.Get(x, y) {
+		return 1
+	}
+	return 0
 }
 
 func (qr *qrcode) Get(x, y int) bool {

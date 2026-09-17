@@ -14,11 +14,18 @@ type scaledBarcode struct {
 	wrapped     Barcode
 	wrapperFunc wrapFunc
 	rect        image.Rectangle
+	// palette of the wrapped barcode, nil if it does not render paletted images
+	palette color.Palette
 }
 
 type intCSscaledBC struct {
 	scaledBarcode
 }
+
+var (
+	_ image.PalettedImage = (*scaledBarcode)(nil)
+	_ image.PalettedImage = (*intCSscaledBC)(nil)
+)
 
 func (bc *scaledBarcode) Content() string {
 	return bc.wrapped.Content()
@@ -38,6 +45,19 @@ func (bc *scaledBarcode) Bounds() image.Rectangle {
 
 func (bc *scaledBarcode) At(x, y int) color.Color {
 	return bc.wrapperFunc(x, y)
+}
+
+// ColorIndexAt looks the color of a pixel up in the palette of the wrapped
+// barcode. Resolving it through At keeps the index in sync with the rendered
+// color and covers the fill around the barcode, which is not required to be
+// part of the palette.
+func (bc *scaledBarcode) ColorIndexAt(x, y int) uint8 {
+	// palettes larger than 256 entries can not be addressed by a uint8 index
+	// and are not renderable, so those fall back to the first entry.
+	if idx := bc.palette.Index(bc.At(x, y)); idx >= 0 && idx <= 255 {
+		return uint8(idx)
+	}
+	return 0
 }
 
 func (bc *intCSscaledBC) CheckSum() int {
@@ -76,6 +96,7 @@ func newScaledBC(wrapped Barcode, wrapperFunc wrapFunc, rect image.Rectangle) Ba
 		wrapperFunc: wrapperFunc,
 		rect:        rect,
 	}
+	result.palette, _ = wrapped.ColorModel().(color.Palette)
 
 	if _, ok := wrapped.(BarcodeIntCS); ok {
 		return &intCSscaledBC{*result}

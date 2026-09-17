@@ -16,8 +16,10 @@ type aztecCode struct {
 	color   barcode.ColorScheme
 }
 
+var _ image.PalettedImage = (*aztecCode)(nil)
+
 func newAztecCode(size int, color barcode.ColorScheme) *aztecCode {
-	return &aztecCode{utils.NewBitList(size * size), size, nil, barcode.ColorScheme16}
+	return &aztecCode{utils.NewBitList(size * size), size, nil, color}
 }
 
 func (c *aztecCode) Content() string {
@@ -45,6 +47,13 @@ func (c *aztecCode) At(x, y int) color.Color {
 		return c.color.Foreground
 	}
 	return c.color.Background
+}
+
+func (c *aztecCode) ColorIndexAt(x, y int) uint8 {
+	if c.GetBit(x*c.size + y) {
+		return 1
+	}
+	return 0
 }
 
 func (c *aztecCode) set(x, y int) {
