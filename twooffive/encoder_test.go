@@ -9,6 +9,12 @@ func Test_AddCheckSum(t *testing.T) {
 	if sum, err := AddCheckSum("1234567"); err != nil || sum != "12345670" {
 		t.Fail()
 	}
+	if sum, err := AddCheckSum("1"); err != nil || sum != "17" {
+		t.Errorf("AddCheckSum(1) = %q, %v", sum, err)
+	}
+	if sum, err := AddCheckSum("1456995111617"); err != nil || sum != "14569951116176" {
+		t.Errorf("AddCheckSum(GTIN) = %q, %v", sum, err)
+	}
 	if _, err := AddCheckSum("1ABC"); err == nil {
 		t.Fail()
 	}

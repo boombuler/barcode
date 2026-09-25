@@ -75,7 +75,8 @@ func AddCheckSum(content string) (string, error) {
 		}
 	}
 
-	return content + string(utils.IntToRune(sum%10)), nil
+	check := (10 - (sum % 10)) % 10
+	return content + string(utils.IntToRune(check)), nil
 }
 
 // Encode creates a codabar barcode for the given content and color scheme
