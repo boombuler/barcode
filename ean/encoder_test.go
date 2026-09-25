@@ -23,6 +23,32 @@ func testHelper(t *testing.T, testCode, testResult, kind string, checkMetadata b
 	}
 }
 
+func Test_EncodeChecksum(t *testing.T) {
+	short8, err := Encode("5512345")
+	if err != nil {
+		t.Fatal(err)
+	}
+	full8, err := Encode("55123457")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if short8.Content() != "55123457" || short8.CheckSum() != full8.CheckSum() {
+		t.Errorf("EAN-8 short content %q checksum %d, full checksum %d", short8.Content(), short8.CheckSum(), full8.CheckSum())
+	}
+
+	short13, err := Encode("590123412345")
+	if err != nil {
+		t.Fatal(err)
+	}
+	full13, err := Encode("5901234123457")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if short13.Content() != "5901234123457" || short13.CheckSum() != 7 || short13.CheckSum() != full13.CheckSum() {
+		t.Errorf("EAN-13 short content %q checksum %d, full checksum %d", short13.Content(), short13.CheckSum(), full13.CheckSum())
+	}
+}
+
 func Test_EncodeEAN(t *testing.T) {
 	testHelper(t, "5901234123457", "10100010110100111011001100100110111101001110101010110011011011001000010101110010011101000100101", "EAN 13", true)
 	testHelper(t, "55123457", "1010110001011000100110010010011010101000010101110010011101000100101", "EAN 8", true)
