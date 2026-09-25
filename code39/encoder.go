@@ -3,7 +3,6 @@ package code39
 
 import (
 	"errors"
-	"strconv"
 	"strings"
 
 	"github.com/boombuler/barcode"
@@ -144,11 +143,13 @@ func EncodeWithColor(content string, includeChecksum bool, fullASCIIMode bool, c
 		result.AddBit(info.data...)
 	}
 
-	checkSum, err := strconv.ParseInt(getChecksum(content), 10, 64)
-	if err != nil {
-		checkSum = 0
+	checkSum := 0
+	if cs := []rune(getChecksum(content)); len(cs) == 1 {
+		if info, ok := encodeTable[cs[0]]; ok && info.value >= 0 {
+			checkSum = info.value
+		}
 	}
-	return utils.New1DCodeIntCheckSumWithColor(barcode.TypeCode39, content, result, int(checkSum), color), nil
+	return utils.New1DCodeIntCheckSumWithColor(barcode.TypeCode39, content, result, checkSum, color), nil
 }
 
 // Encode returns a code39 barcode for the given content

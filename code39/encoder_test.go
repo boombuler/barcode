@@ -20,6 +20,24 @@ func doTest(t *testing.T, addCS, fullASCII bool, data, testResult string) {
 	}
 }
 
+func Test_ChecksumValue(t *testing.T) {
+	letter, err := Encode("A", true, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if letter.CheckSum() != 10 {
+		t.Errorf("Encode(A) checksum = %d, want 10", letter.CheckSum())
+	}
+
+	digit, err := Encode("1", false, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if digit.CheckSum() != 1 {
+		t.Errorf("Encode(1) checksum = %d, want 1", digit.CheckSum())
+	}
+}
+
 func Test_Encode(t *testing.T) {
 	doTest(t, false, false, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
 		"1001011011010110101001011010110100101101101101001010101011001011011010110010101"+
