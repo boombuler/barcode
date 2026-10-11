@@ -24,7 +24,7 @@ func bitStr(bl *utils.BitList) string {
 func testHighLevelEncodeString(t *testing.T, s, expectedBits string) {
 	bits := highlevelEncode([]byte(s))
 	result := bitStr(bits)
-	expectedBits = strings.Replace(expectedBits, " ", "", -1)
+	expectedBits = strings.ReplaceAll(expectedBits, " ", "")
 
 	if result != expectedBits {
 		t.Errorf("invalid result for highlevelEncode(%q). Got:\n%s", s, result)

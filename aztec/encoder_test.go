@@ -18,7 +18,7 @@ func Test_StuffBits(t *testing.T) {
 			}
 		}
 		stuffed := stuffBits(bl, wordSize)
-		expectedBits := strings.Replace(expected, " ", "", -1)
+		expectedBits := strings.ReplaceAll(expected, " ", "")
 		result := bitStr(stuffed)
 
 		if result != expectedBits {
@@ -46,7 +46,7 @@ func Test_StuffBits(t *testing.T) {
 func Test_ModeMessage(t *testing.T) {
 	testModeMessage := func(compact bool, layers, words int, expected string) {
 		result := bitStr(generateModeMessage(compact, layers, words))
-		expectedBits := strings.Replace(expected, " ", "", -1)
+		expectedBits := strings.ReplaceAll(expected, " ", "")
 		if result != expectedBits {
 			t.Errorf("generateModeMessage(%v, %d, %d) failed.\nGot:%s", compact, layers, words, result)
 		}
