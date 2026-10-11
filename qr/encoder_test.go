@@ -17,7 +17,7 @@ type test struct {
 }
 
 var tests = []test{
-	test{
+	{
 		Text: "hello world",
 		Mode: Unicode,
 		ECL:  H,
