@@ -16,61 +16,61 @@ type encodedNumber struct {
 }
 
 var encoderTable = map[rune]encodedNumber{
-	'0': encodedNumber{
+	'0': {
 		[]bool{false, false, false, true, true, false, true},
 		[]bool{false, true, false, false, true, true, true},
 		[]bool{true, true, true, false, false, true, false},
 		[]bool{false, false, false, false, false, false},
 	},
-	'1': encodedNumber{
+	'1': {
 		[]bool{false, false, true, true, false, false, true},
 		[]bool{false, true, true, false, false, true, true},
 		[]bool{true, true, false, false, true, true, false},
 		[]bool{false, false, true, false, true, true},
 	},
-	'2': encodedNumber{
+	'2': {
 		[]bool{false, false, true, false, false, true, true},
 		[]bool{false, false, true, true, false, true, true},
 		[]bool{true, true, false, true, true, false, false},
 		[]bool{false, false, true, true, false, true},
 	},
-	'3': encodedNumber{
+	'3': {
 		[]bool{false, true, true, true, true, false, true},
 		[]bool{false, true, false, false, false, false, true},
 		[]bool{true, false, false, false, false, true, false},
 		[]bool{false, false, true, true, true, false},
 	},
-	'4': encodedNumber{
+	'4': {
 		[]bool{false, true, false, false, false, true, true},
 		[]bool{false, false, true, true, true, false, true},
 		[]bool{true, false, true, true, true, false, false},
 		[]bool{false, true, false, false, true, true},
 	},
-	'5': encodedNumber{
+	'5': {
 		[]bool{false, true, true, false, false, false, true},
 		[]bool{false, true, true, true, false, false, true},
 		[]bool{true, false, false, true, true, true, false},
 		[]bool{false, true, true, false, false, true},
 	},
-	'6': encodedNumber{
+	'6': {
 		[]bool{false, true, false, true, true, true, true},
 		[]bool{false, false, false, false, true, false, true},
 		[]bool{true, false, true, false, false, false, false},
 		[]bool{false, true, true, true, false, false},
 	},
-	'7': encodedNumber{
+	'7': {
 		[]bool{false, true, true, true, false, true, true},
 		[]bool{false, false, true, false, false, false, true},
 		[]bool{true, false, false, false, true, false, false},
 		[]bool{false, true, false, true, false, true},
 	},
-	'8': encodedNumber{
+	'8': {
 		[]bool{false, true, true, false, true, true, true},
 		[]bool{false, false, false, true, false, false, true},
 		[]bool{true, false, false, true, false, false, false},
 		[]bool{false, true, false, true, true, false},
 	},
-	'9': encodedNumber{
+	'9': {
 		[]bool{false, false, false, true, false, true, true},
 		[]bool{false, false, true, false, true, true, true},
 		[]bool{true, true, true, false, true, false, false},
