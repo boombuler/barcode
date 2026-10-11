@@ -196,9 +196,10 @@ func (s *state) addBinaryShiftChar(index int) *state {
 		mode = mode_upper
 	}
 	deltaBitCount := 8
-	if s.bShiftByteCount == 0 || s.bShiftByteCount == 31 {
+	switch s.bShiftByteCount {
+	case 0, 31:
 		deltaBitCount = 18
-	} else if s.bShiftByteCount == 62 {
+	case 62:
 		deltaBitCount = 9
 	}
 	result := &state{

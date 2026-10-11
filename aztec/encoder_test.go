@@ -11,9 +11,10 @@ func Test_StuffBits(t *testing.T) {
 	testStuffBits := func(wordSize int, bits string, expected string) {
 		bl := new(utils.BitList)
 		for _, r := range bits {
-			if r == 'X' {
+			switch r {
+			case 'X':
 				bl.AddBit(true)
-			} else if r == '.' {
+			case '.':
 				bl.AddBit(false)
 			}
 		}

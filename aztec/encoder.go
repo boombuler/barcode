@@ -41,13 +41,14 @@ func stuffBits(bits *utils.BitList, wordSize int) *utils.BitList {
 				word |= 1 << uint(wordSize-1-j)
 			}
 		}
-		if (word & mask) == mask {
+		switch word & mask {
+		case mask:
 			out.AddBits(word&mask, byte(wordSize))
 			i--
-		} else if (word & mask) == 0 {
+		case 0:
 			out.AddBits(word|1, byte(wordSize))
 			i--
-		} else {
+		default:
 			out.AddBits(word, byte(wordSize))
 		}
 	}
