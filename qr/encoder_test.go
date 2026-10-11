@@ -1,8 +1,8 @@
 package qr
 
 import (
-	"fmt"
 	"image/png"
+	"log"
 	"os"
 	"testing"
 
@@ -17,7 +17,7 @@ type test struct {
 }
 
 var tests = []test{
-	test{
+	{
 		Text: "hello world",
 		Mode: Unicode,
 		ECL:  H,
@@ -82,9 +82,10 @@ func Test_InvalidEncoding(t *testing.T) {
 func imgStrToBools(str string) []bool {
 	res := make([]bool, 0, len(str))
 	for _, r := range str {
-		if r == '+' {
+		switch r {
+		case '+':
 			res = append(res, true)
-		} else if r == '.' {
+		case '.':
 			res = append(res, false)
 		}
 	}
@@ -117,18 +118,27 @@ func Test_Encode(t *testing.T) {
 }
 
 func ExampleEncode() {
-	f, _ := os.Create("qrcode.png")
-	defer f.Close()
-
 	qrcode, err := Encode("hello world", L, Auto)
 	if err != nil {
-		fmt.Println(err)
-	} else {
-		qrcode, err = barcode.Scale(qrcode, 100, 100)
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			png.Encode(f, qrcode)
-		}
+		log.Fatal(err)
+	}
+
+	qrcode, err = barcode.Scale(qrcode, 100, 100)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	f, err := os.Create("qrcode.png")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err := png.Encode(f, qrcode); err != nil {
+		_ = f.Close()
+		log.Fatal(err)
+	}
+
+	if err := f.Close(); err != nil {
+		log.Fatal(err)
 	}
 }

@@ -126,7 +126,7 @@ func Test_GS1DataMatrix(t *testing.T) {
 	}
 
 	realData := encodeText(data.String())
-	if bytes.Compare(realData, wantedData) != 0 {
+	if !bytes.Equal(realData, wantedData) {
 		t.Errorf("GS1 DataMatrix encoding failed\nwant: %v\ngot:  %v\n", wantedData, realData)
 	}
 }

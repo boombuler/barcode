@@ -26,22 +26,22 @@ const (
 )
 
 var encodeTable = map[rune]encodeInfo{
-	'0': encodeInfo{0, 0x114}, '1': encodeInfo{1, 0x148}, '2': encodeInfo{2, 0x144},
-	'3': encodeInfo{3, 0x142}, '4': encodeInfo{4, 0x128}, '5': encodeInfo{5, 0x124},
-	'6': encodeInfo{6, 0x122}, '7': encodeInfo{7, 0x150}, '8': encodeInfo{8, 0x112},
-	'9': encodeInfo{9, 0x10A}, 'A': encodeInfo{10, 0x1A8}, 'B': encodeInfo{11, 0x1A4},
-	'C': encodeInfo{12, 0x1A2}, 'D': encodeInfo{13, 0x194}, 'E': encodeInfo{14, 0x192},
-	'F': encodeInfo{15, 0x18A}, 'G': encodeInfo{16, 0x168}, 'H': encodeInfo{17, 0x164},
-	'I': encodeInfo{18, 0x162}, 'J': encodeInfo{19, 0x134}, 'K': encodeInfo{20, 0x11A},
-	'L': encodeInfo{21, 0x158}, 'M': encodeInfo{22, 0x14C}, 'N': encodeInfo{23, 0x146},
-	'O': encodeInfo{24, 0x12C}, 'P': encodeInfo{25, 0x116}, 'Q': encodeInfo{26, 0x1B4},
-	'R': encodeInfo{27, 0x1B2}, 'S': encodeInfo{28, 0x1AC}, 'T': encodeInfo{29, 0x1A6},
-	'U': encodeInfo{30, 0x196}, 'V': encodeInfo{31, 0x19A}, 'W': encodeInfo{32, 0x16C},
-	'X': encodeInfo{33, 0x166}, 'Y': encodeInfo{34, 0x136}, 'Z': encodeInfo{35, 0x13A},
-	'-': encodeInfo{36, 0x12E}, '.': encodeInfo{37, 0x1D4}, ' ': encodeInfo{38, 0x1D2},
-	'$': encodeInfo{39, 0x1CA}, '/': encodeInfo{40, 0x16E}, '+': encodeInfo{41, 0x176},
-	'%': encodeInfo{42, 0x1AE}, FNC1: encodeInfo{43, 0x126}, FNC2: encodeInfo{44, 0x1DA},
-	FNC3: encodeInfo{45, 0x1D6}, FNC4: encodeInfo{46, 0x132}, '*': encodeInfo{47, 0x15E},
+	'0': {0, 0x114}, '1': {1, 0x148}, '2': {2, 0x144},
+	'3': {3, 0x142}, '4': {4, 0x128}, '5': {5, 0x124},
+	'6': {6, 0x122}, '7': {7, 0x150}, '8': {8, 0x112},
+	'9': {9, 0x10A}, 'A': {10, 0x1A8}, 'B': {11, 0x1A4},
+	'C': {12, 0x1A2}, 'D': {13, 0x194}, 'E': {14, 0x192},
+	'F': {15, 0x18A}, 'G': {16, 0x168}, 'H': {17, 0x164},
+	'I': {18, 0x162}, 'J': {19, 0x134}, 'K': {20, 0x11A},
+	'L': {21, 0x158}, 'M': {22, 0x14C}, 'N': {23, 0x146},
+	'O': {24, 0x12C}, 'P': {25, 0x116}, 'Q': {26, 0x1B4},
+	'R': {27, 0x1B2}, 'S': {28, 0x1AC}, 'T': {29, 0x1A6},
+	'U': {30, 0x196}, 'V': {31, 0x19A}, 'W': {32, 0x16C},
+	'X': {33, 0x166}, 'Y': {34, 0x136}, 'Z': {35, 0x13A},
+	'-': {36, 0x12E}, '.': {37, 0x1D4}, ' ': {38, 0x1D2},
+	'$': {39, 0x1CA}, '/': {40, 0x16E}, '+': {41, 0x176},
+	'%': {42, 0x1AE}, FNC1: {43, 0x126}, FNC2: {44, 0x1DA},
+	FNC3: {45, 0x1D6}, FNC4: {46, 0x132}, '*': {47, 0x15E},
 }
 
 var extendedTable = []string{

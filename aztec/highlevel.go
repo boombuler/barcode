@@ -59,7 +59,7 @@ func simplifyStates(states stateSlice) stateSlice {
 			if add && oldState.isBetterThanOrEqualTo(newState) {
 				add = false
 			}
-			if !(add && newState.isBetterThanOrEqualTo(oldState)) {
+			if !add || !newState.isBetterThanOrEqualTo(oldState) {
 				newResult = append(newResult, oldState)
 			}
 		}
