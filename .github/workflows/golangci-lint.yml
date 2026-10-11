@@ -19,14 +19,16 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # The Go version must match the one golangci-lint was built with,
+      # so bump them together. It is shown by `golangci-lint version`.
       - uses: actions/setup-go@v7
         with:
-          go-version: stable
+          go-version: "1.27"
 
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9.3.0
         with:
-          version: v2.13.2
+          version: v2.14.0
           # Show only new issues until the entire repository
           # is compliant with the new linting rules.
           only-new-issues: true
