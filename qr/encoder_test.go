@@ -82,9 +82,10 @@ func Test_InvalidEncoding(t *testing.T) {
 func imgStrToBools(str string) []bool {
 	res := make([]bool, 0, len(str))
 	for _, r := range str {
-		if r == '+' {
+		switch r {
+		case '+':
 			res = append(res, true)
-		} else if r == '.' {
+		case '.':
 			res = append(res, false)
 		}
 	}
