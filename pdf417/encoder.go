@@ -101,7 +101,7 @@ func getLeftCodeWord(rowNum int, rows int, columns int, securityLevel byte) int 
 
 	switch tableId {
 	case 0:
-		x = (rows - 3) / 3
+		x = (rows - 1) / 3
 	case 1:
 		x = int(securityLevel) * 3
 		x += (rows - 1) % 3
