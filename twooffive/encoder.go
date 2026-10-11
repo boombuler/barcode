@@ -20,20 +20,20 @@ type encodeInfo struct {
 
 var (
 	encodingTable = map[rune]pattern{
-		'0': pattern{false, false, true, true, false},
-		'1': pattern{true, false, false, false, true},
-		'2': pattern{false, true, false, false, true},
-		'3': pattern{true, true, false, false, false},
-		'4': pattern{false, false, true, false, true},
-		'5': pattern{true, false, true, false, false},
-		'6': pattern{false, true, true, false, false},
-		'7': pattern{false, false, false, true, true},
-		'8': pattern{true, false, false, true, false},
-		'9': pattern{false, true, false, true, false},
+		'0': {false, false, true, true, false},
+		'1': {true, false, false, false, true},
+		'2': {false, true, false, false, true},
+		'3': {true, true, false, false, false},
+		'4': {false, false, true, false, true},
+		'5': {true, false, true, false, false},
+		'6': {false, true, true, false, false},
+		'7': {false, false, false, true, true},
+		'8': {true, false, false, true, false},
+		'9': {false, true, false, true, false},
 	}
 
 	modes = map[bool]encodeInfo{
-		false: encodeInfo{ // non-interleaved
+		false: { // non-interleaved
 			start: []bool{true, true, false, true, true, false, true, false},
 			end:   []bool{true, true, false, true, false, true, true},
 			widths: map[bool]int{
@@ -41,7 +41,7 @@ var (
 				false: 1,
 			},
 		},
-		true: encodeInfo{ // interleaved
+		true: { // interleaved
 			start: []bool{true, false, true, false},
 			end:   []bool{true, true, true, false, true},
 			widths: map[bool]int{
