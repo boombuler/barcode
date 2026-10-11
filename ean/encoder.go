@@ -161,8 +161,9 @@ func encodeEAN13(code string) *utils.BitList {
 func EncodeWithColor(code string, color barcode.ColorScheme) (barcode.BarcodeIntCS, error) {
 	var checkSum int
 	if len(code) == 7 || len(code) == 12 {
-		code += string(calcCheckNum(code))
-		checkSum = utils.RuneToInt(calcCheckNum(code))
+		digit := calcCheckNum(code)
+		code += string(digit)
+		checkSum = utils.RuneToInt(digit)
 	} else if len(code) == 8 || len(code) == 13 {
 		check := code[0 : len(code)-1]
 		check += string(calcCheckNum(check))
