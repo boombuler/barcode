@@ -29,6 +29,3 @@ jobs:
         uses: golangci/golangci-lint-action@v9.3.0
         with:
           version: v2.14.0
-          # Show only new issues until the entire repository
-          # is compliant with the new linting rules.
-          only-new-issues: true
