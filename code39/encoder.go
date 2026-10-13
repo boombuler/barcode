@@ -113,6 +113,8 @@ func prepare(content string) (string, error) {
 // Encode returns a code39 barcode for the given content and color scheme
 // if includeChecksum is set to true, a checksum character is calculated and added to the content
 func EncodeWithColor(content string, includeChecksum bool, fullASCIIMode bool, color barcode.ColorScheme) (barcode.BarcodeIntCS, error) {
+	// Content() reports the text as given; only the bars use the full ASCII shift sequences.
+	original := content
 	if fullASCIIMode {
 		var err error
 		content, err = prepare(content)
@@ -145,7 +147,7 @@ func EncodeWithColor(content string, includeChecksum bool, fullASCIIMode bool, c
 	}
 
 	checkSum := encodeTable[checkChar].value
-	return utils.New1DCodeIntCheckSumWithColor(barcode.TypeCode39, content, result, checkSum, color), nil
+	return utils.New1DCodeIntCheckSumWithColor(barcode.TypeCode39, original, result, checkSum, color), nil
 }
 
 // Encode returns a code39 barcode for the given content
