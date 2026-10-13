@@ -3,7 +3,6 @@ package code39
 
 import (
 	"errors"
-	"strconv"
 	"strings"
 
 	"github.com/boombuler/barcode"
@@ -75,12 +74,12 @@ var extendedTable = map[rune]string{
 	127: `%T`,
 }
 
-func getChecksum(content string) string {
+func getChecksum(content string) rune {
 	sum := 0
 	for _, r := range content {
 		info, ok := encodeTable[r]
 		if !ok || info.value < 0 {
-			return "#"
+			return 0
 		}
 
 		sum += info.value
@@ -89,10 +88,10 @@ func getChecksum(content string) string {
 	sum = sum % 43
 	for r, v := range encodeTable {
 		if v.value == sum {
-			return string(r)
+			return r
 		}
 	}
-	return "#"
+	return 0
 }
 
 func prepare(content string) (string, error) {
@@ -124,9 +123,10 @@ func EncodeWithColor(content string, includeChecksum bool, fullASCIIMode bool, c
 		return nil, errors.New("invalid data! try full ascii mode")
 	}
 
+	checkChar := getChecksum(content)
 	data := "*" + content
 	if includeChecksum {
-		data += getChecksum(content)
+		data += string(checkChar)
 	}
 	data += "*"
 
@@ -144,11 +144,8 @@ func EncodeWithColor(content string, includeChecksum bool, fullASCIIMode bool, c
 		result.AddBit(info.data...)
 	}
 
-	checkSum, err := strconv.ParseInt(getChecksum(content), 10, 64)
-	if err != nil {
-		checkSum = 0
-	}
-	return utils.New1DCodeIntCheckSumWithColor(barcode.TypeCode39, content, result, int(checkSum), color), nil
+	checkSum := encodeTable[checkChar].value
+	return utils.New1DCodeIntCheckSumWithColor(barcode.TypeCode39, content, result, checkSum, color), nil
 }
 
 // Encode returns a code39 barcode for the given content
