@@ -37,3 +37,15 @@ func Test_Encode(t *testing.T) {
 			"101001010010001010001001010000101001010001001001001001000101010100001000100101000010"+
 			"101001110101010000101010111101")
 }
+
+func TestContentInFullASCIIMode(t *testing.T) {
+	for _, checksum := range []bool{false, true} {
+		code, err := Encode("hello world", checksum, true)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := code.Content(); got != "hello world" {
+			t.Errorf("Content() with checksum=%v = %q, want %q", checksum, got, "hello world")
+		}
+	}
+}
