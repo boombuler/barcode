@@ -47,3 +47,15 @@ func Test_Encode(t *testing.T) {
 			"110101010011011010101010011011010110100101011010110010101101101100101010101001101011"+
 			"011010011010101011001101010101001011011011010010110101011001011010100101101101")
 }
+
+func TestContentInFullASCIIMode(t *testing.T) {
+	for _, checksum := range []bool{false, true} {
+		code, err := Encode("lower case", checksum, true)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := code.Content(); got != "lower case" {
+			t.Errorf("Content() with checksum=%v = %q, want %q", checksum, got, "lower case")
+		}
+	}
+}
