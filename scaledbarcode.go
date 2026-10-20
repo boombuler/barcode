@@ -78,7 +78,17 @@ func Scale(bc Barcode, width, height int) (Barcode, error) {
 	return ScaleWithFill(bc, width, height, fill)
 }
 
-// Scale returns a resized barcode with the given width, height and fill color.
+// ScaleWithFill returns a resized barcode with the given width, height and fill
+// color. The fill is used for padding around the scaled barcode.
+//
+// The result retains bc's color model. ScaleWithFill does not check whether that
+// model can represent fill. Image encoders may convert the fill to the model,
+// changing its color or discarding transparency. For example, a barcode using
+// ColorScheme16 cannot preserve a transparent fill when encoded as PNG.
+//
+// For colored or transparent padding, create the barcode with a suitable color
+// scheme, such as ColorScheme32, before scaling it. For a paletted barcode, the
+// fill must be representable by its palette to preserve the requested color.
 func ScaleWithFill(bc Barcode, width, height int, fill color.Color) (Barcode, error) {
 	switch bc.Metadata().Dimensions {
 	case 1:
