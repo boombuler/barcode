@@ -51,3 +51,16 @@ func main() {
 See [GoDoc](https://godoc.org/github.com/boombuler/barcode)
 
 To create a barcode use the Encode function from one of the subpackages.
+
+### Scaling with a fill color ###
+
+`ScaleWithFill` adds padding using the requested fill but keeps the barcode's
+original color model. A fill outside that model can change color or lose
+transparency when the image is encoded. For example, the default QR code uses
+grayscale (`ColorScheme16`), so transparent padding becomes opaque in a PNG.
+
+Use `qr.EncodeWithColor` with `barcode.ColorScheme32` before calling
+`ScaleWithFill` when you need colored or transparent padding. This changes the
+color model; the barcode's background remains white unless you also customize
+the color scheme. See the executable
+[`ScaleWithFill` example](https://pkg.go.dev/github.com/boombuler/barcode#example-ScaleWithFill).
