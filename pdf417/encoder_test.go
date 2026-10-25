@@ -41,3 +41,18 @@ func TestRowIndicatorCodewords(t *testing.T) {
 		})
 	}
 }
+
+func TestMinimumRows(t *testing.T) {
+	// ISO/IEC 15438 symbols have at least 3 rows; readers reject 2-row symbols
+	for _, data := range []string{"0", "A", "AB", "Hell", "0123"} {
+		for securityLevel := byte(0); securityLevel <= 2; securityLevel++ {
+			code, err := Encode(data, securityLevel)
+			if err != nil {
+				t.Fatalf("Encode(%q, %d): %v", data, securityLevel, err)
+			}
+			if rows := code.Bounds().Dy() / moduleHeight; rows < 3 {
+				t.Errorf("Encode(%q, %d) has %d rows, want at least 3", data, securityLevel, rows)
+			}
+		}
+	}
+}

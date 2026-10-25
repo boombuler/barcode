@@ -36,7 +36,7 @@ func EncodeWithColor(data string, securityLevel byte, color barcode.ColorScheme)
 	barcode.data = data
 	barcode.color = color
 
-	codeWords, err := encodeData(dataWords, columns, sl)
+	codeWords, err := encodeData(dataWords, columns, rows, sl)
 	if err != nil {
 		return nil, err
 	}
@@ -78,12 +78,12 @@ func Encode(data string, securityLevel byte) (barcode.Barcode, error) {
 	return EncodeWithColor(data, securityLevel, barcode.ColorScheme16)
 }
 
-func encodeData(dataWords []int, columns int, sl securitylevel) ([]int, error) {
+func encodeData(dataWords []int, columns int, rows int, sl securitylevel) ([]int, error) {
 	dataCount := len(dataWords)
 
 	ecCount := sl.ErrorCorrectionWordCount()
 
-	padWords := getPadding(dataCount, ecCount, columns)
+	padWords := getPadding(dataCount, ecCount, columns, rows)
 	dataWords = append(dataWords, padWords...)
 
 	length := len(dataWords) + 1
@@ -137,14 +137,13 @@ func min(a, b int) int {
 	return b
 }
 
-func getPadding(dataCount int, ecCount int, columns int) []int {
+func getPadding(dataCount int, ecCount int, columns int, rows int) []int {
 	totalCount := dataCount + ecCount + 1
-	mod := totalCount % columns
+	padCount := columns*rows - totalCount
 
 	padding := []int{}
 
-	if mod > 0 {
-		padCount := columns - mod
+	if padCount > 0 {
 		padding = make([]int, padCount)
 		for i := 0; i < padCount; i++ {
 			padding[i] = padding_codeword
