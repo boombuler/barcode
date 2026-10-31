@@ -34,6 +34,23 @@ func TestHighlevelEncode(t *testing.T) {
 	runTest("F41", 178, 121)    // combined "F<ml>" and "41" examples
 	runTest("A7;", 28, 239, 29) // "A" to latch mixed, then ";" to shift punc
 	runTest("PDF417", 453, 178, 121, 239)
+
+	// Example interaction between Text Compaction padding and Byte Compaction Mode Shift.
+	runTest("1<->@\x80aaaaaaa",
+		// <ml> "1"
+		841,
+		// <pl> "<"
+		751,
+		// "->"
+		482,
+		// "@" <al> (padding)
+		119,
+		// Byte Compaction Mode Shift (913) for single byte: 0x80
+		913, 128,
+		// Return to text compaction mode and alpha sub-mode.
+		// <ll> "aaaaaaa"
+		810, 0, 0, 0,
+	)
 }
 
 func TestBinaryEncoder(t *testing.T) {

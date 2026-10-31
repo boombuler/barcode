@@ -230,18 +230,42 @@ func encodeText(text []rune, submode subMode) (subMode, []int) {
 		idx++
 	}
 
-	h := 0
-	result := []int{}
-	for i, val := range tmp {
-		if i%2 != 0 {
-			h = (h * 30) + val
-			result = append(result, h)
-		} else {
-			h = val
+	// Pad the character sequence to ensure an even number of values.
+	//
+	// In most cases, leaving Text Compaction mode means that
+	// another mode is latched and latching with 900 will reset
+	// the sub-mode.
+	//
+	// When a single byte is encoded, then mode shift 913 is used
+	// before returning to Text Compaction mode.
+	//
+	// In the case of alpha, lower, and mixed sub-modes, the value
+	// 29 is a punctuation shift.
+	//
+	// In the case of the punctuation sub-mode, the value 29 is an
+	// alpha (upper) latch, so the sub-mode is changed.
+	//
+	// See: ISO/IEC 15438:2015 §5.4.4.2
+	if len(tmp)%2 == 1 {
+		tmp = append(tmp, 29) // punctuation switch / upper latch
+
+		switch submode {
+		case subPunct:
+			// return to alpha sub-mode in response to upper latch
+			submode = subUpper
+		default:
+			// ignore <ps>; either codeword 913 occurs or a new mode is latched
 		}
 	}
-	if len(tmp)%2 != 0 {
-		result = append(result, (h*30)+29)
+
+	// Encode pairs of data characters.
+	//
+	// See: ISO/IEC 15438:2015 §5.4.2.2
+	var result []int
+	for i := 0; i < len(tmp); i += 2 {
+		h, l := tmp[i], tmp[i+1]
+		d := h*30 + l
+		result = append(result, d)
 	}
 	return submode, result
 }

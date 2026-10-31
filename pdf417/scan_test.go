@@ -79,8 +79,7 @@ var scanTests = []scanTest{
 		skip: "39d842a dropped a continue"},
 	// Leaves punctuation through the odd-length pad, where 29 is the upper
 	// latch, then a byte shift. Present since dbbaa13 (v1.0.0).
-	{name: "text/punct-leave-padding", data: "0;;;;\x80abcdefghij", level: 2,
-		skip: "encodeText reports punctuation after the pad latches to upper"},
+	{name: "text/punct-leave-padding", data: "0;;;;\x80abcdefghij", level: 2},
 
 	// Numeric compaction.
 	{name: "numeric/between-text", data: "ABC1234567890123DEF", level: 2},        // 13 digits: the shortest run that latches
