@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/utils"
 )
 
-func encodeNumeric(content string, ecl ErrorCorrectionLevel) (*utils.BitList, *versionInfo, error) {
+func encodeNumeric(content string, ecl ErrorCorrectionLevel, eci barcode.ECI) (*utils.BitList, *versionInfo, error) {
 	contentBitCount := (len(content) / 3) * 10
 	switch len(content) % 3 {
 	case 1:
@@ -16,11 +17,11 @@ func encodeNumeric(content string, ecl ErrorCorrectionLevel) (*utils.BitList, *v
 	case 2:
 		contentBitCount += 7
 	}
-	vi := findSmallestVersionInfo(ecl, numericMode, contentBitCount)
+	res := eciHeader(eci)
+	vi := findSmallestVersionInfo(ecl, numericMode, res.Len()+contentBitCount)
 	if vi == nil {
 		return nil, nil, errors.New("too much data to encode")
 	}
-	res := new(utils.BitList)
 	res.AddBits(int(numericMode), 4)
 	res.AddBits(len(content), vi.charCountBits(numericMode))
 

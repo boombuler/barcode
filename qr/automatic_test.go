@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"strings"
 	"testing"
+
+	"github.com/boombuler/barcode"
 )
 
 func Test_AutomaticEncoding(t *testing.T) {
@@ -15,9 +17,9 @@ func Test_AutomaticEncoding(t *testing.T) {
 	}
 
 	for str, enc := range tests {
-		testValue, _, _ := Auto.getEncoder()(str, M)
+		testValue, _, _ := Auto.getEncoder()(str, M, barcode.NoECI)
 		if enc != nil {
-			correctValue, _, _ := enc(str, M)
+			correctValue, _, _ := enc(str, M, barcode.NoECI)
 			if testValue == nil || !bytes.Equal(correctValue.GetBytes(), testValue.GetBytes()) {
 				t.Errorf("wrong encoding used for '%s'", str)
 			}

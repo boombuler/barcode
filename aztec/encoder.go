@@ -130,7 +130,23 @@ func Encode(data []byte, minECCPercent int, userSpecifiedLayers int) (barcode.Ba
 
 // Encode returns an aztec barcode with the given content and color scheme
 func EncodeWithColor(data []byte, minECCPercent int, userSpecifiedLayers int, color barcode.ColorScheme) (barcode.Barcode, error) {
-	bits := highlevelEncode(data)
+	return EncodeWithECIAndColor(data, minECCPercent, userSpecifiedLayers, barcode.NoECI, color)
+}
+
+// EncodeWithECI returns an aztec barcode like Encode, but whose data open
+// with the given ECI, so that a reader knows which character set the
+// content's bytes are in.  barcode.NoECI writes no ECI.
+func EncodeWithECI(data []byte, minECCPercent int, userSpecifiedLayers int, eci barcode.ECI) (barcode.Barcode, error) {
+	return EncodeWithECIAndColor(data, minECCPercent, userSpecifiedLayers, eci, barcode.ColorScheme16)
+}
+
+// EncodeWithECIAndColor returns an aztec barcode like EncodeWithECI,
+// in the given color scheme.
+func EncodeWithECIAndColor(data []byte, minECCPercent int, userSpecifiedLayers int, eci barcode.ECI, color barcode.ColorScheme) (barcode.Barcode, error) {
+	if !eci.Valid() {
+		return nil, fmt.Errorf("invalid ECI %d", eci)
+	}
+	bits := highlevelEncode(data, eci)
 	eccBits := ((bits.Len() * minECCPercent) / 100) + 11
 	totalSizeBits := bits.Len() + eccBits
 	var layers, TotalBitsInLayer, wordSize int

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/utils"
 )
 
@@ -26,19 +27,19 @@ func stringToAlphaIdx(content string) <-chan int {
 	return result
 }
 
-func encodeAlphaNumeric(content string, ecl ErrorCorrectionLevel) (*utils.BitList, *versionInfo, error) {
+func encodeAlphaNumeric(content string, ecl ErrorCorrectionLevel, eci barcode.ECI) (*utils.BitList, *versionInfo, error) {
 
 	contentLenIsOdd := len(content)%2 == 1
 	contentBitCount := (len(content) / 2) * 11
 	if contentLenIsOdd {
 		contentBitCount += 6
 	}
-	vi := findSmallestVersionInfo(ecl, alphaNumericMode, contentBitCount)
+	res := eciHeader(eci)
+	vi := findSmallestVersionInfo(ecl, alphaNumericMode, res.Len()+contentBitCount)
 	if vi == nil {
 		return nil, nil, errors.New("too much data to encode")
 	}
 
-	res := new(utils.BitList)
 	res.AddBits(int(alphaNumericMode), 4)
 	res.AddBits(len(content), vi.charCountBits(alphaNumericMode))
 

@@ -1,11 +1,16 @@
 package aztec
 
 import (
+	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/utils"
 )
 
-func highlevelEncode(data []byte) *utils.BitList {
-	states := stateSlice{initialState}
+func highlevelEncode(data []byte, eci barcode.ECI) *utils.BitList {
+	start := initialState
+	if eci != barcode.NoECI {
+		start = start.appendFLGn(int(eci))
+	}
+	states := stateSlice{start}
 
 	for index := 0; index < len(data); index++ {
 		pairCode := 0

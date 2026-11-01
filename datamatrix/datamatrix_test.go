@@ -3,6 +3,8 @@ package datamatrix
 import (
 	"bytes"
 	"testing"
+
+	"github.com/boombuler/barcode"
 )
 
 func codeFromStr(str string, size *dmCodeSize) *datamatrixCode {
@@ -28,7 +30,7 @@ func codeFromStr(str string, size *dmCodeSize) *datamatrixCode {
 
 func Test_Issue12(t *testing.T) {
 	data := `{"po":12,"batchAction":"start_end"}`
-	realData := addPadding(encodeText(data), 36)
+	realData := addPadding(encodeText(data, barcode.NoECI), 36)
 	wantedData := []byte{124, 35, 113, 112, 35, 59, 142, 45, 35, 99, 98, 117, 100, 105, 66, 100, 117, 106, 112, 111, 35, 59, 35, 116, 117, 98, 115, 117, 96, 102, 111, 101, 35, 126, 129, 181}
 
 	if !bytes.Equal(realData, wantedData) {
@@ -125,7 +127,7 @@ func Test_GS1DataMatrix(t *testing.T) {
 		151, 140,
 	}
 
-	realData := encodeText(data.String())
+	realData := encodeText(data.String(), barcode.NoECI)
 	if !bytes.Equal(realData, wantedData) {
 		t.Errorf("GS1 DataMatrix encoding failed\nwant: %v\ngot:  %v\n", wantedData, realData)
 	}

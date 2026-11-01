@@ -2,13 +2,14 @@
 package qr
 
 import (
+	"fmt"
 	"image"
 
 	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/utils"
 )
 
-type encodeFn func(content string, eccLevel ErrorCorrectionLevel) (*utils.BitList, *versionInfo, error)
+type encodeFn func(content string, eccLevel ErrorCorrectionLevel, eci barcode.ECI) (*utils.BitList, *versionInfo, error)
 
 // Encoding mode for QR Codes.
 type Encoding byte
@@ -56,7 +57,33 @@ func (e Encoding) String() string {
 
 // Encode returns a QR barcode with the given content and color scheme, error correction level and uses the given encoding
 func EncodeWithColor(content string, level ErrorCorrectionLevel, mode Encoding, color barcode.ColorScheme) (barcode.Barcode, error) {
-	bits, vi, err := mode.getEncoder()(content, level)
+	return EncodeWithECIAndColor(content, level, mode, barcode.NoECI, color)
+}
+
+// EncodeWithECI returns a QR barcode like Encode, but whose data open
+// with the given ECI, so that a reader knows which character set the
+// content's bytes are in.  The content is encoded as the bytes it holds,
+// without conversion.  barcode.NoECI writes no ECI.
+//
+// Auto uses numeric or alphanumeric mode only under an ECI whose
+// character set reads digits and uppercase letters as ASCII does,
+// such as ISO 8859-1 or UTF-8.  Under any other ECI, such as UTF-16,
+// it uses byte mode.
+func EncodeWithECI(content string, level ErrorCorrectionLevel, mode Encoding, eci barcode.ECI) (barcode.Barcode, error) {
+	return EncodeWithECIAndColor(content, level, mode, eci, barcode.ColorScheme16)
+}
+
+// EncodeWithECIAndColor returns a QR barcode like EncodeWithECI,
+// in the given color scheme.
+func EncodeWithECIAndColor(content string, level ErrorCorrectionLevel, mode Encoding, eci barcode.ECI, color barcode.ColorScheme) (barcode.Barcode, error) {
+	if !eci.Valid() {
+		return nil, fmt.Errorf("invalid ECI %d", eci)
+	}
+	encoder := mode.getEncoder()
+	if encoder == nil {
+		return nil, fmt.Errorf("unknown encoding %d", mode)
+	}
+	bits, vi, err := encoder(content, level, eci)
 	if err != nil {
 		return nil, err
 	}
@@ -392,6 +419,28 @@ func drawVersionInfo(vi *versionInfo, set func(int, int, bool)) {
 		}
 	}
 
+}
+
+// eciHeader returns the bits that open the data of a symbol carrying
+// an ECI: the ECI mode indicator and the designator in one, two or three
+// bytes.  It returns no bits for barcode.NoECI.
+func eciHeader(eci barcode.ECI) *utils.BitList {
+	res := new(utils.BitList)
+	if eci == barcode.NoECI {
+		return res
+	}
+	res.AddBits(int(eciMode), 4)
+	switch {
+	case eci < 1<<7:
+		res.AddBits(int(eci), 8)
+	case eci < 1<<14:
+		res.AddBits(0b10, 2)
+		res.AddBits(int(eci), 14)
+	default:
+		res.AddBits(0b110, 3)
+		res.AddBits(int(eci), 21)
+	}
+	return res
 }
 
 func addPaddingAndTerminator(bl *utils.BitList, vi *versionInfo) {
