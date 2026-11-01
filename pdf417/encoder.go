@@ -10,19 +10,45 @@ import (
 
 const (
 	padding_codeword = 900
+
+	// The codewords that open an ECI, for the designators
+	// from 0 to 899, from 900 to 810899, and from 810900 to 811799.
+	eci_charset         = 927
+	eci_general_purpose = 926
+	eci_user_defined    = 925
 )
 
 // Encodes the given data and color scheme as PDF417 barcode.
 // securityLevel should be between 0 and 8. The higher the number, the more
 // additional error-correction codes are added.
 func EncodeWithColor(data string, securityLevel byte, color barcode.ColorScheme) (barcode.Barcode, error) {
+	return EncodeWithECIAndColor(data, securityLevel, barcode.NoECI, color)
+}
+
+// EncodeWithECI encodes the given data as PDF417 barcode like Encode,
+// but whose data open with the given ECI, so that a reader knows which
+// character set the data's bytes are in.  The data are encoded as the
+// bytes they hold, without conversion.  barcode.NoECI writes no ECI.
+//
+// PDF417 can carry designators from 0 to 811799 only.
+func EncodeWithECI(data string, securityLevel byte, eci barcode.ECI) (barcode.Barcode, error) {
+	return EncodeWithECIAndColor(data, securityLevel, eci, barcode.ColorScheme16)
+}
+
+// EncodeWithECIAndColor encodes the given data as PDF417 barcode
+// like EncodeWithECI, in the given color scheme.
+func EncodeWithECIAndColor(data string, securityLevel byte, eci barcode.ECI, color barcode.ColorScheme) (barcode.Barcode, error) {
 	if securityLevel >= 9 {
 		return nil, fmt.Errorf("invalid security level %d", securityLevel)
 	}
 
+	if !eci.Valid() {
+		return nil, fmt.Errorf("invalid ECI %d", eci)
+	}
+
 	sl := securitylevel(securityLevel)
 
-	dataWords, err := highlevelEncode(data)
+	dataWords, err := dataCodewords(data, eci)
 	if err != nil {
 		return nil, err
 	}
@@ -76,6 +102,45 @@ func EncodeWithColor(data string, securityLevel byte, color barcode.ColorScheme)
 // additional error-correction codes are added.
 func Encode(data string, securityLevel byte) (barcode.Barcode, error) {
 	return EncodeWithColor(data, securityLevel, barcode.ColorScheme16)
+}
+
+// dataCodewords returns the data codewords of a symbol.
+//
+// They are the ECI's codewords, if any, followed by
+// the high-level encoding of the data.
+func dataCodewords(data string, eci barcode.ECI) ([]int, error) {
+	eciWords, err := eciCodewords(eci)
+	if err != nil {
+		return nil, err
+	}
+	words, err := highlevelEncode(data)
+	if err != nil {
+		return nil, err
+	}
+	if len(eciWords) == 0 {
+		return words, nil
+	}
+	return append(eciWords, words...), nil
+}
+
+// eciCodewords returns the codewords that open the data of a symbol
+// carrying an ECI: the ECI codeword for the designator's range and the
+// designator in one or two codewords.  It returns none for barcode.NoECI
+// and an error for any other value outside 0 to 811799.
+func eciCodewords(eci barcode.ECI) ([]int, error) {
+	value := int(eci)
+	switch {
+	case eci == barcode.NoECI:
+		return nil, nil
+	case value < 0 || value > 811799:
+		return nil, fmt.Errorf(
+			"ECI %d is outside 0 to 811799, the range PDF417 can carry", eci)
+	case value < 900:
+		return []int{eci_charset, value}, nil
+	case value < 810900:
+		return []int{eci_general_purpose, value/900 - 1, value % 900}, nil
+	}
+	return []int{eci_user_defined, value - 810900}, nil
 }
 
 func encodeData(dataWords []int, columns int, sl securitylevel) ([]int, error) {

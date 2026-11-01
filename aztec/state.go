@@ -2,6 +2,7 @@ package aztec
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/boombuler/barcode/utils"
 )
@@ -180,6 +181,24 @@ func (s *state) shiftAndAppend(mode encodingMode, value int) *state {
 		tokens:          tokens,
 		bShiftByteCount: 0,
 		bitCount:        s.bitCount + int(s.mode.BitCount()) + 5,
+	}
+}
+
+// Create a new state representing this state with an ECI appended:
+// a shift to PUNCT, FLG(n), the number n of digits in the designator,
+// and the designator's digits in DIGIT codes.  The state stays in its mode.
+func (s *state) appendFLGn(eci int) *state {
+	digits := strconv.Itoa(eci)
+	result := s.shiftAndAppend(mode_punct, 0) // FLG(n)
+	tokens := newSimpleToken(result.tokens, len(digits), 3)
+	for _, digit := range digits {
+		tokens = newSimpleToken(tokens, int(digit-'0')+2, mode_digit.BitCount())
+	}
+	return &state{
+		mode:            result.mode,
+		tokens:          tokens,
+		bShiftByteCount: 0,
+		bitCount:        result.bitCount + 3 + len(digits)*int(mode_digit.BitCount()),
 	}
 }
 

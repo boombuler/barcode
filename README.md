@@ -47,6 +47,23 @@ func main() {
 }
 ```
 
+## ECI ##
+
+QR Code, Data Matrix, Aztec Code and PDF417 symbols can open with an
+Extended Channel Interpretation (ECI), which tells a reader which
+character set the data are in.  Without one, a QR Code, Data Matrix,
+or Aztec Code reader that follows the standard reads the bytes as
+ISO 8859-1.  Use `EncodeWithECI` from the symbology's package
+to write one:
+
+```go
+// "Café" in ISO 8859-1, which the ECI names.
+qrCode, _ := qr.EncodeWithECI("Caf\xe9", qr.M, qr.Auto, barcode.ECIISO8859_1)
+```
+
+The content is written as the bytes it holds, without conversion,
+so it has to be in the character set the ECI names.
+
 ## Documentation ##
 See [GoDoc](https://godoc.org/github.com/boombuler/barcode)
 

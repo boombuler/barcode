@@ -5,6 +5,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/utils"
 )
 
@@ -22,7 +23,7 @@ func bitStr(bl *utils.BitList) string {
 }
 
 func testHighLevelEncodeString(t *testing.T, s, expectedBits string) {
-	bits := highlevelEncode([]byte(s))
+	bits := highlevelEncode([]byte(s), barcode.NoECI)
 	result := bitStr(bits)
 	expectedBits = strings.ReplaceAll(expectedBits, " ", "")
 
@@ -31,7 +32,7 @@ func testHighLevelEncodeString(t *testing.T, s, expectedBits string) {
 	}
 }
 func testHighLevelEncodeStringCnt(t *testing.T, s string, expectedBitCnt int) {
-	bits := highlevelEncode([]byte(s))
+	bits := highlevelEncode([]byte(s), barcode.NoECI)
 
 	if bits.Len() != expectedBitCnt {
 		t.Errorf("invalid result for highlevelEncode(%q). Got %d, expected %d bits", s, bits.Len(), expectedBitCnt)

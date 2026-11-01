@@ -36,6 +36,7 @@ const (
 	numericMode      encodingMode = 1
 	alphaNumericMode encodingMode = 2
 	byteMode         encodingMode = 4
+	eciMode          encodingMode = 7
 	kanjiMode        encodingMode = 8
 )
 

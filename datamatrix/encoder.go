@@ -3,6 +3,7 @@ package datamatrix
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/boombuler/barcode"
 )
@@ -14,9 +15,35 @@ import (
 // strings.
 const FNC1 byte = 232
 
+// eciCodeword is the codeword that opens an ECI.
+const eciCodeword byte = 241
+
 // Encode returns a Datamatrix barcode for the given content and color scheme
 func EncodeWithColor(content string, color barcode.ColorScheme) (barcode.Barcode, error) {
-	data := encodeText(content)
+	return EncodeWithECIAndColor(content, barcode.NoECI, color)
+}
+
+// EncodeWithECI returns a Datamatrix barcode like Encode, but whose data
+// open with the given ECI, so that a reader knows which character set
+// the content's bytes are in.  The content is encoded as the bytes it
+// holds, without conversion.  barcode.NoECI writes no ECI.
+//
+// A GS1 symbol cannot carry an ECI, so the content is never read as GS1:
+// a leading FNC1 byte is encoded as data, like every other byte.
+// Use Encode for GS1 content.  This way UTF-8 text can start with a
+// character from U+8000 to U+8FFF, such as many common CJK ideographs,
+// whose first byte is the same as FNC1.
+func EncodeWithECI(content string, eci barcode.ECI) (barcode.Barcode, error) {
+	return EncodeWithECIAndColor(content, eci, barcode.ColorScheme16)
+}
+
+// EncodeWithECIAndColor returns a Datamatrix barcode like EncodeWithECI,
+// in the given color scheme.
+func EncodeWithECIAndColor(content string, eci barcode.ECI, color barcode.ColorScheme) (barcode.Barcode, error) {
+	if !eci.Valid() {
+		return nil, fmt.Errorf("invalid ECI %d", eci)
+	}
+	data := encodeText(content, eci)
 
 	var size *dmCodeSize
 	for _, s := range codeSizes {
@@ -51,11 +78,11 @@ func render(data []byte, size *dmCodeSize, color barcode.ColorScheme) *datamatri
 	return cl.Merge()
 }
 
-func encodeText(content string) []byte {
-	var result []byte
+func encodeText(content string, eci barcode.ECI) []byte {
+	result := eciCodewords(eci)
 	input := []byte(content)
 
-	isGS1 := len(input) > 0 && input[0] == FNC1
+	isGS1 := eci == barcode.NoECI && len(input) > 0 && input[0] == FNC1
 
 	for i := 0; i < len(input); {
 		c := input[i]
@@ -77,6 +104,26 @@ func encodeText(content string) []byte {
 		}
 	}
 	return result
+}
+
+// eciCodewords returns the codewords that open the data of a symbol
+// carrying an ECI: the ECI codeword and the designator in one, two,
+// or three codewords.  It returns none for barcode.NoECI.
+func eciCodewords(eci barcode.ECI) []byte {
+	value := int(eci)
+	switch {
+	case eci == barcode.NoECI:
+		return nil
+	case value <= 126:
+		return []byte{eciCodeword, byte(value + 1)}
+	case value <= 16382:
+		value -= 127
+		return []byte{eciCodeword, byte(value/254 + 128), byte(value%254 + 1)}
+	default:
+		value -= 16383
+		return []byte{eciCodeword, byte(value/64516 + 192),
+			byte(value/254%254 + 1), byte(value%254 + 1)}
+	}
 }
 
 func addPadding(data []byte, toCount int) []byte {
