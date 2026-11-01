@@ -51,6 +51,17 @@ func TestHighlevelEncode(t *testing.T) {
 		// <ll> "aaaaaaa"
 		810, 0, 0, 0,
 	)
+
+	// Leaving punctuation sub-mode must still encode the character that caused the latch.
+	runTest("1<-->abc",
+		// <ml> "1"
+		841,
+		// <pl> "<"
+		751,
+		// "--" ">" <al>
+		496, 89,
+		// <ll> "a" "bc"
+		810, 32)
 }
 
 func TestBinaryEncoder(t *testing.T) {

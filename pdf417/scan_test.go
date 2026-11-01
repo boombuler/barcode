@@ -73,10 +73,8 @@ var scanTests = []scanTest{
 	{name: "text/mixed-to-punct-latch", data: "1((", level: 2},
 	// Leaving punctuation. 39d842a, which is not in any release, dropped the
 	// continue after the upper latch, losing the next character.
-	{name: "text/punct-latch-leave", data: "1((A", level: 2,
-		skip: "39d842a dropped a continue"},
-	{name: "text/json", data: `{"a":[1,2],"b":3}`, level: 2,
-		skip: "39d842a dropped a continue"},
+	{name: "text/punct-latch-leave", data: "1((A", level: 2},
+	{name: "text/json", data: `{"a":[1,2],"b":3}`, level: 2},
 	// Leaves punctuation through the odd-length pad, where 29 is the upper
 	// latch, then a byte shift. Present since dbbaa13 (v1.0.0).
 	{name: "text/punct-leave-padding", data: "0;;;;\x80abcdefghij", level: 2},
