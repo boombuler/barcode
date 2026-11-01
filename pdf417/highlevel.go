@@ -9,18 +9,22 @@ import (
 
 type encodingMode byte
 
-type subMode byte
-
 const (
 	encText encodingMode = iota
 	encNumeric
 	encBinary
+)
 
+type subMode byte
+
+const (
 	subUpper subMode = iota
 	subLower
 	subMixed
 	subPunct
+)
 
+const (
 	latch_to_text        = 900
 	latch_to_byte_padded = 901
 	latch_to_numeric     = 902
@@ -213,13 +217,15 @@ func encodeText(text []rune, submode subMode) (subMode, []int) {
 					tmp = append(tmp, punctMap[ch])
 				}
 			}
-		default: //subPunct
+		case subPunct:
 			if isPunctuation(ch) {
 				tmp = append(tmp, punctMap[ch])
 			} else {
 				submode = subUpper
 				tmp = append(tmp, 29) //upper latch
 			}
+		default:
+			panic("unreachable")
 		}
 		idx++
 	}
