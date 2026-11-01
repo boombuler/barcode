@@ -28,6 +28,12 @@ func TestHighlevelEncode(t *testing.T) {
 	runTest("Super ", 567, 615, 137, 809)
 	runTest("ABC123", 1, 88, 32, 119)
 	runTest("123ABC", 841, 63, 840, 32)
+
+	// Add Text Compaction examples from ISO/IEC 15438:2015 Table 6.
+	runTest("PD", 453)
+	runTest("F41", 178, 121)    // combined "F<ml>" and "41" examples
+	runTest("A7;", 28, 239, 29) // "A" to latch mixed, then ";" to shift punc
+	runTest("PDF417", 453, 178, 121, 239)
 }
 
 func TestBinaryEncoder(t *testing.T) {
