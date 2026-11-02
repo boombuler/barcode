@@ -94,8 +94,7 @@ var scanTests = []scanTest{
 	{name: "level/8", data: "Security level", level: 8},
 
 	// The smallest symbol. ISO/IEC 15438:2015 §5.2.1 requires at least 3 rows.
-	{name: "dims/min-rows", data: "A", level: 0,
-		skip: "minRows = 2 gives 2 rows, which ZXingReader can't find"},
+	{name: "dims/min-rows", data: "A", level: 0},
 }
 
 func TestScanZXing(t *testing.T) {

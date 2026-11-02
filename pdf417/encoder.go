@@ -137,6 +137,10 @@ func min(a, b int) int {
 	return b
 }
 
+// getPadding returns the pad codewords that fill the symbol. A symbol of
+// rows by columns holds columns*rows codewords: the symbol length
+// descriptor, the data codewords, the pad codewords and the error
+// correction codewords.
 func getPadding(dataCount int, ecCount int, columns int, rows int) []int {
 	totalCount := dataCount + ecCount + 1
 	padCount := columns*rows - totalCount
