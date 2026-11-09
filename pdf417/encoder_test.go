@@ -1,8 +1,7 @@
 package pdf417
 
 import (
-	"fmt"
-	"strings"
+	"reflect"
 	"testing"
 )
 
@@ -61,43 +60,125 @@ func TestMinimumRows(t *testing.T) {
 	}
 }
 
-func TestEncodeDataFillsSymbol(t *testing.T) {
-	// The codewords fill the symbol: the symbol length descriptor, which
-	// counts itself, the data and the pad codewords, then the data, then pad
-	// codewords up to the error correction codewords at the end.
-	for _, data := range []string{"A", "AB", "Hell", "0123", "Hello, World!", strings.Repeat("1234567890", 10)} {
-		for securityLevel := byte(0); securityLevel <= 4; securityLevel++ {
-			sl := securitylevel(securityLevel)
-			dataWords, err := highlevelEncode(data)
-			if err != nil {
-				t.Fatalf("highlevelEncode(%q): %v", data, err)
+// TestEncodeData checks the data codewords that §5.9.2 lays out, and that
+// error correction codewords complete the symbol (§5.10). The columns,
+// rows and level are inputs, so each case chooses the layout it tests.
+func TestEncodeData(t *testing.T) {
+	tests := []struct {
+		name          string
+		data          []int
+		columns, rows int
+		level         securitylevel
+		// Symbol Length Descriptor, the source data, any pad codewords
+		want []int
+	}{
+		{
+			// The smallest symbol, 2x3, holds up to 3 data words at level 0.
+			name:    "no pad",
+			data:    []int{10, 20, 30},
+			columns: 2,
+			rows:    3,
+			level:   0,
+			want:    []int{4, 10, 20, 30},
+		},
+		{
+			// The smallest symbol, 2x3, has 1 pad with 2 data words.
+			name:    "one pad",
+			data:    []int{10, 20},
+			columns: 2,
+			rows:    3,
+			level:   0,
+			want:    []int{4, 10, 20, 900},
+		},
+		{
+			// The smallest symbol, 2x3, has 2 pads with 1 data word.
+			name:    "two pads",
+			data:    []int{10},
+			columns: 2,
+			rows:    3,
+			level:   0,
+			want:    []int{4, 10, 900, 900},
+		},
+		{
+			// The pad value 900 is still data, so it should be followed by a pad.
+			// This ensures the test measures padding correctly.
+			name:    "data word with the pad value",
+			data:    []int{10, 900},
+			columns: 2,
+			rows:    3,
+			level:   0,
+			want:    []int{4, 10, 900, 900},
+		},
+		{
+			// A 3x3 symbol holds 9 codewords, with level 1 using 4 for error
+			// correction, so it can fit 4 data words without padding.
+			name:    "level 1, no pad",
+			data:    []int{10, 20, 30, 40},
+			columns: 3,
+			rows:    3,
+			level:   1,
+			want:    []int{5, 10, 20, 30, 40},
+		},
+		{
+			// A 3x3 symbol holds 9 codewords, with level 1 using 4 for error
+			// correction, so 3 data words leave 1 pad.
+			name:    "level 1, one pad",
+			data:    []int{10, 20, 30},
+			columns: 3,
+			rows:    3,
+			level:   1,
+			want:    []int{5, 10, 20, 30, 900},
+		},
+		{
+			// The highest level uses 512 error correction codewords,
+			// so 20x26 = 520 leaves n = 8: the descriptor, 1 data word and 6 pads.
+			name:    "level 8",
+			data:    []int{10},
+			columns: 20,
+			rows:    26,
+			level:   8,
+			want:    []int{8, 10, 900, 900, 900, 900, 900, 900},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := encodeData(tt.data, tt.columns, tt.rows, tt.level)
+			if len(got) != tt.columns*tt.rows {
+				t.Fatalf("%d codewords, want %d to fill %dx%d", len(got), tt.columns*tt.rows, tt.columns, tt.rows)
 			}
-			ecCount := sl.ErrorCorrectionWordCount()
-			columns, rows := calcDimensions(len(dataWords), ecCount)
 
-			codeWords, err := encodeData(dataWords, columns, rows, sl)
-			if err != nil {
-				t.Fatalf("encodeData(%q, %d): %v", data, securityLevel, err)
+			k := tt.level.ErrorCorrectionWordCount()
+			if data := got[:len(got)-k]; !reflect.DeepEqual(data, tt.want) {
+				t.Errorf("data codewords (n = %d, m = %d) = %v, want %v", len(tt.want), len(tt.data), data, tt.want)
 			}
+			checkErrorCorrection(t, got, k)
+		})
+	}
+}
 
-			name := fmt.Sprintf("%q at level %d (%d columns, %d rows)", data, securityLevel, columns, rows)
-			if len(codeWords) != columns*rows {
-				t.Errorf("%s: %d codewords, want %d", name, len(codeWords), columns*rows)
-				continue
-			}
-			if want := columns*rows - ecCount; codeWords[0] != want {
-				t.Errorf("%s: symbol length descriptor %d, want %d", name, codeWords[0], want)
-			}
-			for i, word := range dataWords {
-				if codeWords[1+i] != word {
-					t.Errorf("%s: codeword %d is %d, want the data codeword %d", name, 1+i, codeWords[1+i], word)
-				}
-			}
-			for i, word := range codeWords[1+len(dataWords) : columns*rows-ecCount] {
-				if word != padding_codeword {
-					t.Errorf("%s: codeword %d is %d, want the pad codeword %d", name, 1+len(dataWords)+i, word, padding_codeword)
-				}
-			}
+// checkErrorCorrection checks the error correction codewords against
+// §5.10. The codewords are the coefficients of a polynomial C(x), highest
+// power first, which must be divisible by the generator polynomial
+//
+//	g(x) = (x - 3)(x - 3^2)...(x - 3^k)
+//
+// so C(x) is zero at each root 3^i when there are no errors.
+func checkErrorCorrection(t *testing.T, codewords []int, k int) {
+	t.Helper()
+
+	const modulus = 929 // §5.10: GF(929)
+
+	root := 1
+	for i := 1; i <= k; i++ {
+		root = root * 3 % modulus // 3^i
+
+		// Horner's method: C(x) = (...((c0*x + c1)*x + c2)...)*x + cN
+		got := 0
+		for _, c := range codewords {
+			got = (got*root + c) % modulus
+		}
+		if got != 0 {
+			t.Errorf("C(3^%d) = %d, want 0", i, got)
 		}
 	}
 }
