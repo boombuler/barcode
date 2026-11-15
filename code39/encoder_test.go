@@ -3,6 +3,9 @@ package code39
 import (
 	"image/color"
 	"testing"
+
+	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/internal/imagetest"
 )
 
 func doTest(t *testing.T, addCS, fullASCII bool, data, testResult string) {
@@ -58,4 +61,15 @@ func TestContentInFullASCIIMode(t *testing.T) {
 			t.Errorf("Content() with checksum=%v = %q, want %q", checksum, got, "lower case")
 		}
 	}
+}
+
+func TestImage(t *testing.T) {
+	imagetest.Run(t, imagetest.Encoder{
+		Encode: func() (barcode.Barcode, error) {
+			return Encode("1234567890", false, false)
+		},
+		EncodeWithColor: func(s barcode.ColorScheme) (barcode.Barcode, error) {
+			return EncodeWithColor("1234567890", false, false, s)
+		},
+	})
 }

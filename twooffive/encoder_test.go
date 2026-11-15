@@ -3,6 +3,9 @@ package twooffive
 import (
 	"image/color"
 	"testing"
+
+	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/internal/imagetest"
 )
 
 func Test_AddCheckSum(t *testing.T) {
@@ -48,4 +51,15 @@ func Test_Encode(t *testing.T) {
 
 	testEncode(false, "12345670", "1101101011101010101110101110101011101110111010101010101110101110111010111010101011101110101010101011101110101011101110101101011")
 	testEncode(true, "12345670", "101011101000101011100011101110100010100011101000111000101010101000111000111011101")
+}
+
+func TestImage(t *testing.T) {
+	imagetest.Run(t, imagetest.Encoder{
+		Encode: func() (barcode.Barcode, error) {
+			return Encode("1234567890", false)
+		},
+		EncodeWithColor: func(s barcode.ColorScheme) (barcode.Barcode, error) {
+			return EncodeWithColor("1234567890", false, s)
+		},
+	})
 }
