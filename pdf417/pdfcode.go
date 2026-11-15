@@ -46,9 +46,8 @@ func (c *pdfBarcode) At(x, y int) color.Color {
 	return c.color.Background
 }
 
+// ColorIndexAt implements [image.PalettedImage].
 func (c *pdfBarcode) ColorIndexAt(x, y int) uint8 {
-	if c.code.GetBit((y/moduleHeight)*c.width + x) {
-		return 1
-	}
-	return 0
+	p, _ := c.color.Model.(color.Palette)
+	return uint8(p.Index(c.At(x, y)))
 }
