@@ -52,11 +52,10 @@ func (c *datamatrixCode) At(x, y int) color.Color {
 	return c.color.Background
 }
 
+// ColorIndexAt implements [image.PalettedImage].
 func (c *datamatrixCode) ColorIndexAt(x, y int) uint8 {
-	if c.get(x, y) {
-		return 1
-	}
-	return 0
+	p, _ := c.color.Model.(color.Palette)
+	return uint8(p.Index(c.At(x, y)))
 }
 
 func (c *datamatrixCode) get(x, y int) bool {
