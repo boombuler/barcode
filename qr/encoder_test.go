@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/internal/imagetest"
 )
 
 type test struct {
@@ -141,4 +142,15 @@ func ExampleEncode() {
 	if err := f.Close(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func TestImage(t *testing.T) {
+	imagetest.Run(t, imagetest.Encoder{
+		Encode: func() (barcode.Barcode, error) {
+			return Encode("1234567890", M, Auto)
+		},
+		EncodeWithColor: func(s barcode.ColorScheme) (barcode.Barcode, error) {
+			return EncodeWithColor("1234567890", M, Auto, s)
+		},
+	})
 }

@@ -45,11 +45,10 @@ func (qr *qrcode) At(x, y int) color.Color {
 	return qr.color.Background
 }
 
+// ColorIndexAt implements [image.PalettedImage].
 func (qr *qrcode) ColorIndexAt(x, y int) uint8 {
-	if qr.Get(x, y) {
-		return 1
-	}
-	return 0
+	p, _ := qr.color.Model.(color.Palette)
+	return uint8(p.Index(qr.At(x, y)))
 }
 
 func (qr *qrcode) Get(x, y int) bool {
