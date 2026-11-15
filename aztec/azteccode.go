@@ -49,11 +49,10 @@ func (c *aztecCode) At(x, y int) color.Color {
 	return c.color.Background
 }
 
+// ColorIndexAt implements [image.PalettedImage].
 func (c *aztecCode) ColorIndexAt(x, y int) uint8 {
-	if c.GetBit(x*c.size + y) {
-		return 1
-	}
-	return 0
+	p, _ := c.color.Model.(color.Palette)
+	return uint8(p.Index(c.At(x, y)))
 }
 
 func (c *aztecCode) set(x, y int) {
