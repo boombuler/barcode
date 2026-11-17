@@ -3,6 +3,9 @@ package codabar
 import (
 	"image/color"
 	"testing"
+
+	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/internal/imagetest"
 )
 
 func Test_Encode(t *testing.T) {
@@ -29,4 +32,15 @@ func Test_Encode(t *testing.T) {
 	}
 
 	testEncode("A40156B", "10110010010101101001010101001101010110010110101001010010101101001001011")
+}
+
+func TestImage(t *testing.T) {
+	imagetest.Run(t, imagetest.Encoder{
+		Encode: func() (barcode.Barcode, error) {
+			return Encode("A12345B")
+		},
+		EncodeWithColor: func(s barcode.ColorScheme) (barcode.Barcode, error) {
+			return EncodeWithColor("A12345B", s)
+		},
+	})
 }

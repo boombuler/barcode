@@ -4,6 +4,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/internal/imagetest"
 	"github.com/boombuler/barcode/utils"
 )
 
@@ -56,4 +58,15 @@ func Test_ModeMessage(t *testing.T) {
 	testModeMessage(true, 4, 64, "XX XXXXXX .X.. ...X ..XX .X.. XX..")
 	testModeMessage(false, 21, 660, "X.X.. .X.X..X..XX .XXX ..X.. .XXX. .X... ..XXX")
 	testModeMessage(false, 32, 4096, "XXXXX XXXXXXXXXXX X.X. ..... XXX.X ..X.. X.XXX")
+}
+
+func TestImage(t *testing.T) {
+	imagetest.Run(t, imagetest.Encoder{
+		Encode: func() (barcode.Barcode, error) {
+			return Encode([]byte("1234567890"), 23, DEFAULT_LAYERS)
+		},
+		EncodeWithColor: func(s barcode.ColorScheme) (barcode.Barcode, error) {
+			return EncodeWithColor([]byte("1234567890"), 23, DEFAULT_LAYERS, s)
+		},
+	})
 }

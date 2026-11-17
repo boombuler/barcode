@@ -3,6 +3,9 @@ package ean
 import (
 	"image/color"
 	"testing"
+
+	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/internal/imagetest"
 )
 
 func testHelper(t *testing.T, testCode, testResult, kind string, checkMetadata bool) {
@@ -69,4 +72,15 @@ func Test_EncodeEAN(t *testing.T) {
 	if bits != nil {
 		t.Error("\"invalid error\" should not be encodable")
 	}
+}
+
+func TestImage(t *testing.T) {
+	imagetest.Run(t, imagetest.Encoder{
+		Encode: func() (barcode.Barcode, error) {
+			return Encode("5901234123457")
+		},
+		EncodeWithColor: func(s barcode.ColorScheme) (barcode.Barcode, error) {
+			return EncodeWithColor("5901234123457", s)
+		},
+	})
 }

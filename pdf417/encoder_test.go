@@ -3,6 +3,9 @@ package pdf417
 import (
 	"reflect"
 	"testing"
+
+	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/internal/imagetest"
 )
 
 func TestRowIndicatorCodewords(t *testing.T) {
@@ -181,4 +184,15 @@ func checkErrorCorrection(t *testing.T, codewords []int, k int) {
 			t.Errorf("C(3^%d) = %d, want 0", i, got)
 		}
 	}
+}
+
+func TestImage(t *testing.T) {
+	imagetest.Run(t, imagetest.Encoder{
+		Encode: func() (barcode.Barcode, error) {
+			return Encode("1234567890123456789012345678901234567890", 3)
+		},
+		EncodeWithColor: func(s barcode.ColorScheme) (barcode.Barcode, error) {
+			return EncodeWithColor("1234567890123456789012345678901234567890", 3, s)
+		},
+	})
 }

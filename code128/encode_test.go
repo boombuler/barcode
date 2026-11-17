@@ -3,6 +3,9 @@ package code128
 import (
 	"image/color"
 	"testing"
+
+	"github.com/boombuler/barcode"
+	"github.com/boombuler/barcode/internal/imagetest"
 )
 
 func testEncode(t *testing.T, txt, testResult string) {
@@ -128,4 +131,15 @@ func Test_Datalogic(t *testing.T) {
 			"11110111010"+ // <CR>
 			"10110001000"+ // checksum = 'D'
 			"1100011101011") // STOP
+}
+
+func TestImage(t *testing.T) {
+	imagetest.Run(t, imagetest.Encoder{
+		Encode: func() (barcode.Barcode, error) {
+			return Encode("1234567890123456")
+		},
+		EncodeWithColor: func(s barcode.ColorScheme) (barcode.Barcode, error) {
+			return EncodeWithColor("1234567890123456", s)
+		},
+	})
 }

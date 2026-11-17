@@ -78,7 +78,13 @@ func Scale(bc Barcode, width, height int) (Barcode, error) {
 	return ScaleWithFill(bc, width, height, fill)
 }
 
-// Scale returns a resized barcode with the given width, height and fill color.
+// ScaleWithFill returns a resized barcode with the given width and height,
+// with fill as the padding around it.
+//
+// The result keeps the barcode's [color.Model], so the fill is encoded as
+// that model's conversion of it. To keep a fill such as [color.Transparent],
+// use a model that holds it, such as [ColorScheme32] or a palette that
+// includes it.
 func ScaleWithFill(bc Barcode, width, height int, fill color.Color) (Barcode, error) {
 	switch bc.Metadata().Dimensions {
 	case 1:

@@ -7,10 +7,8 @@ import "image/color"
 type ColorScheme struct {
 	// Color model to be used (e.g., grayscale, RGB, RGBA)
 	//
-	// A color.Palette makes the barcodes render as paletted images. Such a
-	// palette must list Background as its first and Foreground as its second
-	// entry, as that is the order the barcodes report their palette indexes in.
-	// Use NewPalettedColorScheme to build a palette which holds to that order.
+	// A [color.Palette] makes the barcodes render as paletted images, with
+	// Background and Foreground in any order.
 	Model      color.Model
 	Background color.Color // Color of the background
 	Foreground color.Color // Color of the foreground (e.g., bars in a barcode)
@@ -45,8 +43,7 @@ var ColorScheme32 = ColorScheme{
 }
 
 // NewPalettedColorScheme returns a color scheme which renders paletted images
-// using the given background and foreground colors, with the palette in the
-// order the barcodes report their color indexes in.
+// using the given background and foreground colors.
 func NewPalettedColorScheme(background, foreground color.Color) ColorScheme {
 	return ColorScheme{
 		Model:      color.Palette{background, foreground},
