@@ -7,27 +7,48 @@ import (
 )
 
 func Test_NumericEncoding(t *testing.T) {
+	tests := []struct {
+		content     string
+		wantVersion byte
+		wantBytes   []byte
+		wantErr     string
+	}{
+		// Example for Version 1-H symbol from ISO/IEC 18004:2015 §7.4.3
+		{
+			content:     "01234567",
+			wantVersion: 1,
+			wantBytes:   []byte{16, 32, 12, 86, 97, 128, 236, 17, 236},
+		},
+		{
+			content:     "0123456789012345",
+			wantVersion: 1,
+			wantBytes:   []byte{16, 64, 12, 86, 106, 110, 20, 234, 80},
+		},
+		{content: "foo", wantErr: `"foo" can not be encoded as Numeric`},
+		{content: strings.Repeat("1", 14297), wantErr: "too much data to encode"},
+	}
+
 	encode := Numeric.getEncoder()
-	x, vi, err := encode("01234567", H)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if x == nil || vi == nil || vi.Version != 1 || !bytes.Equal(x.GetBytes(), []byte{16, 32, 12, 86, 97, 128, 236, 17, 236}) {
-		t.Error("\"01234567\" failed to encode")
-	}
-	x, vi, err = encode("0123456789012345", H)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if x == nil || vi == nil || vi.Version != 1 || !bytes.Equal(x.GetBytes(), []byte{16, 64, 12, 86, 106, 110, 20, 234, 80}) {
-		t.Error("\"0123456789012345\" failed to encode")
-	}
-	_, _, err = encode("foo", H)
-	if err == nil {
-		t.Error("Numeric encoding should not be able to encode \"foo\"")
-	}
-	x, vi, err = encode(strings.Repeat("1", 14297), H)
-	if x != nil || vi != nil || err == nil {
-		t.Fail()
+	for _, tt := range tests {
+		x, vi, err := encode(tt.content, H)
+		if tt.wantErr != "" {
+			if err == nil || err.Error() != tt.wantErr {
+				t.Errorf("encode(%q) error = %v, want %q", tt.content, err, tt.wantErr)
+			}
+			if x != nil || vi != nil {
+				t.Errorf("encode(%q) returned non-nil result alongside error", tt.content)
+			}
+			continue
+		}
+		if err != nil {
+			t.Errorf("encode(%q) failed: %v", tt.content, err)
+			continue
+		}
+		if vi.Version != tt.wantVersion {
+			t.Errorf("encode(%q) version = %d, want %d", tt.content, vi.Version, tt.wantVersion)
+		}
+		if got := x.GetBytes(); !bytes.Equal(got, tt.wantBytes) {
+			t.Errorf("encode(%q) bytes = %v, want %v", tt.content, got, tt.wantBytes)
+		}
 	}
 }
