@@ -3,12 +3,15 @@ package qr
 import (
 	"errors"
 	"fmt"
-	"strconv"
 
 	"github.com/boombuler/barcode/utils"
 )
 
 func encodeNumeric(content string, ecl ErrorCorrectionLevel) (*utils.BitList, *versionInfo, error) {
+	if !isNumeric(content) {
+		return nil, nil, fmt.Errorf("\"%s\" can not be encoded as %s", content, Numeric)
+	}
+
 	contentBitCount := (len(content) / 3) * 10
 	switch len(content) % 3 {
 	case 1:
@@ -32,10 +35,11 @@ func encodeNumeric(content string, ecl ErrorCorrectionLevel) (*utils.BitList, *v
 			group = content[pos:]
 		}
 
-		value, err := strconv.Atoi(group)
-		if err != nil || value < 0 {
-			return nil, nil, fmt.Errorf("\"%s\" can not be encoded as %s", content, Numeric)
+		var value int
+		for _, c := range group {
+			value = value*10 + int(c-'0')
 		}
+
 		var bitCnt byte
 		switch len(group) % 3 {
 		case 0:
@@ -53,4 +57,13 @@ func encodeNumeric(content string, ecl ErrorCorrectionLevel) (*utils.BitList, *v
 
 	addPaddingAndTerminator(res, vi)
 	return res, vi, nil
+}
+
+func isNumeric(s string) bool {
+	for _, c := range s {
+		if c < '0' || c > '9' {
+			return false
+		}
+	}
+	return true
 }
