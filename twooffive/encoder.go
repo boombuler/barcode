@@ -71,7 +71,7 @@ func AddCheckSum(content string) (string, error) {
 			}
 			even = !even
 		} else {
-			return "", fmt.Errorf("can not encode %s", content)
+			return "", fmt.Errorf("can not encode %q", content)
 		}
 	}
 
