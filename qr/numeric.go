@@ -25,19 +25,19 @@ func encodeNumeric(content string, ecl ErrorCorrectionLevel) (*utils.BitList, *v
 	res.AddBits(len(content), vi.charCountBits(numericMode))
 
 	for pos := 0; pos < len(content); pos += 3 {
-		var curStr string
+		var group string
 		if pos+3 <= len(content) {
-			curStr = content[pos : pos+3]
+			group = content[pos : pos+3]
 		} else {
-			curStr = content[pos:]
+			group = content[pos:]
 		}
 
-		i, err := strconv.Atoi(curStr)
-		if err != nil || i < 0 {
+		value, err := strconv.Atoi(group)
+		if err != nil || value < 0 {
 			return nil, nil, fmt.Errorf("%q can not be encoded as %s", content, Numeric)
 		}
 		var bitCnt byte
-		switch len(curStr) % 3 {
+		switch len(group) % 3 {
 		case 0:
 			bitCnt = 10
 		case 1:
@@ -46,7 +46,7 @@ func encodeNumeric(content string, ecl ErrorCorrectionLevel) (*utils.BitList, *v
 			bitCnt = 7
 		}
 
-		res.AddBits(i, bitCnt)
+		res.AddBits(value, bitCnt)
 	}
 
 	addPaddingAndTerminator(res, vi)
