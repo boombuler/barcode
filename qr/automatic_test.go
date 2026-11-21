@@ -10,6 +10,7 @@ func Test_AutomaticEncoding(t *testing.T) {
 	tests := map[string]encodeFn{
 		"0123456789":      Numeric.getEncoder(),
 		"ALPHA NUMERIC":   AlphaNumeric.getEncoder(),
+		"+21":             AlphaNumeric.getEncoder(),
 		"unicode encoing": Unicode.getEncoder(),
 		"very long unicode encoding" + strings.Repeat("A", 3000): nil,
 	}
