@@ -3,12 +3,15 @@ package qr
 import (
 	"errors"
 	"fmt"
-	"strconv"
 
 	"github.com/boombuler/barcode/utils"
 )
 
 func encodeNumeric(content string, ecl ErrorCorrectionLevel) (*utils.BitList, *versionInfo, error) {
+	if !isNumeric(content) {
+		return nil, nil, fmt.Errorf("%q can not be encoded as %s", content, Numeric)
+	}
+
 	contentBitCount := (len(content) / 3) * 10
 	switch len(content) % 3 {
 	case 1:
@@ -25,19 +28,20 @@ func encodeNumeric(content string, ecl ErrorCorrectionLevel) (*utils.BitList, *v
 	res.AddBits(len(content), vi.charCountBits(numericMode))
 
 	for pos := 0; pos < len(content); pos += 3 {
-		var curStr string
+		var group string
 		if pos+3 <= len(content) {
-			curStr = content[pos : pos+3]
+			group = content[pos : pos+3]
 		} else {
-			curStr = content[pos:]
+			group = content[pos:]
 		}
 
-		i, err := strconv.Atoi(curStr)
-		if err != nil || i < 0 {
-			return nil, nil, fmt.Errorf("%q can not be encoded as %s", content, Numeric)
+		var value int
+		for _, c := range group {
+			value = value*10 + int(c-'0')
 		}
+
 		var bitCnt byte
-		switch len(curStr) % 3 {
+		switch len(group) % 3 {
 		case 0:
 			bitCnt = 10
 		case 1:
@@ -46,9 +50,18 @@ func encodeNumeric(content string, ecl ErrorCorrectionLevel) (*utils.BitList, *v
 			bitCnt = 7
 		}
 
-		res.AddBits(i, bitCnt)
+		res.AddBits(value, bitCnt)
 	}
 
 	addPaddingAndTerminator(res, vi)
 	return res, vi, nil
+}
+
+func isNumeric(s string) bool {
+	for _, c := range s {
+		if c < '0' || c > '9' {
+			return false
+		}
+	}
+	return true
 }
