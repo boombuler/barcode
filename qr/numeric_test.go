@@ -26,7 +26,7 @@ func Test_NumericEncoding(t *testing.T) {
 		},
 		{content: "foo", wantErr: `"foo" can not be encoded as Numeric`},
 		{content: strings.Repeat("1", 14297), wantErr: "too much data to encode"},
-		// Regression test for #115: signed numbers are not valid as numeric data.
+		// Regression test for #112: signed numbers are not valid as numeric data.
 		{content: "+21", wantErr: `"+21" can not be encoded as Numeric`},
 		{content: "-0", wantErr: `"-0" can not be encoded as Numeric`},
 		{content: "123+45", wantErr: `"123+45" can not be encoded as Numeric`},
